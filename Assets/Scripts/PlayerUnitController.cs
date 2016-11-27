@@ -43,6 +43,7 @@ public class PlayerUnitController : MonoBehaviour {
     private Coordinates coordinates;
 
     private List<Tile> validMoves;
+    private List<GameObject> highlights;
 
     TileMapBuilder _tileMapBuilder;
 
@@ -56,6 +57,7 @@ public class PlayerUnitController : MonoBehaviour {
         movesLeft = maxMovement;
         coordinates = new Coordinates(5, -5); //in battle map vertices
         validMoves = new List<Tile>();
+        highlights = new List<GameObject>();
     }
 	
 	void Update () {
@@ -67,6 +69,11 @@ public class PlayerUnitController : MonoBehaviour {
             }
             if (Input.GetMouseButtonDown(0))
             {
+                foreach(GameObject plane in highlights)
+                {
+                    Destroy(plane);
+                }
+                highlights.Clear();
                 Mouse = GameObject.Find("BattleGrounds");
                 MouseHighlight ass = Mouse.GetComponent("MouseHighlight") as MouseHighlight;
                 Transform mousePositin = ass.getHighlightSelection();
@@ -122,6 +129,7 @@ public class PlayerUnitController : MonoBehaviour {
             plane.transform.position = new Vector3(plane.transform.position.x + 0.5f, plane.transform.position.y, plane.transform.position.z + 0.5f);
             plane.GetComponent<Renderer>().material.color = new Color(0.5f, 0.85f, 0.0f, 0.5f);
             plane.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
+            highlights.Add(plane);
         }
     }
 }
