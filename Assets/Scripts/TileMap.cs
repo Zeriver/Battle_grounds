@@ -28,9 +28,17 @@ public class TileMap
             for (int y = 0; y < size_y; y++)
             {
                 // Add logic for different kind of tiles TODO
+                if (x == 7 && y == 7)
+                {
+                    map_data[x, y] = 3;
+                    tile_data.Add(new Tile(3, x, y));
+                } else
+                {
+                    map_data[x, y] = 0;
+                    tile_data.Add(new Tile(0, x, y));
+                }
 
-                map_data[x, y] = 0;
-                tile_data.Add(new Tile(0, x, y));
+                
             }
         }
     }

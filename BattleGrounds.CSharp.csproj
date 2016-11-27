@@ -70,6 +70,8 @@
     <Compile Include="Assets\Scripts\TileHighlight.cs" />
     <Compile Include="Assets\Scripts\TileMap.cs" />
     <Compile Include="Assets\Scripts\TileMapBuilder.cs" />
+    <Compile Include="Assets\Scripts\TilePath.cs" />
+    <Compile Include="Assets\Scripts\TilePathFinder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
