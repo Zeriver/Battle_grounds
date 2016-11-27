@@ -43,35 +43,20 @@ public class TileMap
     static public List<Tile> GetListOfAdjacentTiles(int x, int y)
     {
         List<Tile> adjacentTile = new List<Tile>();
-        Tile tile = getTile(x, y);
 
-                    //add conditions checking for out of borders TODO
-
-       /* Tile tile1 = getTile(x + 1, y);
+        Tile tile1 = getTile(x + 1, y);
         Tile tile2 = getTile(x - 1, y);
         Tile tile3 = getTile(x, y + 1);
         Tile tile4 = getTile(x, y - 1);
         if (tile1 != null)
-        {
             adjacentTile.Add(tile1);
-        }
         if (tile2 != null)
-        {
             adjacentTile.Add(tile2);
-        }
         if (tile3 != null)
-        {
             adjacentTile.Add(tile3);
-        }
         if (tile4 != null)
-        {
             adjacentTile.Add(tile4);
-        }*/
-        adjacentTile.Add(getTile(x + 1, y));
-        adjacentTile.Add(getTile(x - 1, y));
-        adjacentTile.Add(getTile(x, y + 1));
-        adjacentTile.Add(getTile(x, y - 1));
-        
+
         return adjacentTile;
     }
 
@@ -82,14 +67,14 @@ public class TileMap
         y = Math.Abs(y);
         foreach (Tile curentTile in tile_data)
         {
-            if (curentTile.getX() == x && curentTile.getY() == y)
+            if (curentTile.PosX == x && curentTile.PosY == y)
             {
                 tile = curentTile;
             }
         }
         if (tile == null)
         {
-            //throw exception TODO
+            Debug.Log("Warning: returned tile is null!");
         }
         return tile;
     }

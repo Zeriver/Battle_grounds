@@ -21,7 +21,7 @@ public class TilePath
 
     public void addTile(Tile t)
     {
-        costOfPath += t.getMoveCost();
+        costOfPath += t.MoveCost;
         listOfTiles.Add(t);
         lastTile = t;
     }
@@ -63,7 +63,7 @@ public class TileHighlight
 
             closed.Add(current.lastTile);
 
-            foreach (Tile t in TileMap.GetListOfAdjacentTiles(current.lastTile.getX(), current.lastTile.getY()))
+            foreach (Tile t in TileMap.GetListOfAdjacentTiles(current.lastTile.PosX, current.lastTile.PosY))
             {
                 TilePath newTilePath = new TilePath(current);
                 newTilePath.addTile(t);

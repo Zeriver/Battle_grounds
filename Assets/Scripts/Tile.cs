@@ -37,23 +37,27 @@ public class Tile {
         }
     }
 
-    public int getX()
+    public int PosX
     {
-        return posX;
+        get { return posX; }
+        set { posX = value; }
     }
 
-    public int getY()
+    public int PosY
     {
-        return posY;
+        get { return posY; }
+        set { posY = value; }
     }
 
-    public int getId()
+    public int Id
     {
-        return id;
+        get { return id; }
+        set { id = value; }
     }
 
-    public int getMoveCost()
+    public int MoveCost
     {
-        return 1;
+        get { return moveCost; }
+        set { moveCost = value; }
     }
 }

@@ -14,7 +14,7 @@ public class TileMapBuilder : MonoBehaviour {
     private int tileResolution = 128;
 
     void Start () {
-        BuildMesh(30, 30);
+
     }
 
 

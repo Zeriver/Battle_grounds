@@ -6,8 +6,6 @@ public class PlayerUnitController : MonoBehaviour {
 
     GameObject Mouse; // Must be moved to BattleGroundController TODO
 
-    int counter = 0;
-
     class Coordinates
     {
         int posX, posY;
@@ -18,22 +16,16 @@ public class PlayerUnitController : MonoBehaviour {
             posY = y;
         }
 
-        public int getX()
+        public int PosX
         {
-            return posX;
-        }
-        public void setX(int x)
-        {
-            posX = x;
+            get { return posX; }
+            set { posX = value; }
         }
 
-        public int getY()
+        public int PosY
         {
-            return posY;
-        }
-        public void setY(int y)
-        {
-            posY = y;
+            get { return posY; }
+            set { posY = value; }
         }
     }
 
@@ -48,14 +40,18 @@ public class PlayerUnitController : MonoBehaviour {
     TileMapBuilder _tileMapBuilder;
 
 
-    void Start () {
+    void Start() {
 
+    }   
+
+    public void createPlayerUnit(int x, int y, int moves)
+    {
         _tileMapBuilder = GetComponent<TileMapBuilder>();
         isSelected = true;
         showMoves = true;
-        maxMovement = 10;
+        maxMovement = moves;
         movesLeft = maxMovement;
-        coordinates = new Coordinates(5, -5); //in battle map vertices
+        coordinates = new Coordinates(x, y); //in battle map vertices
         validMoves = new List<Tile>();
         highlights = new List<GameObject>();
     }
@@ -77,9 +73,8 @@ public class PlayerUnitController : MonoBehaviour {
                 Mouse = GameObject.Find("BattleGrounds");
                 MouseHighlight ass = Mouse.GetComponent("MouseHighlight") as MouseHighlight;
                 Transform mousePositin = ass.getHighlightSelection();
-                coordinates.setX((int)mousePositin.position.x);
-                coordinates.setY((int)mousePositin.position.z);
-                Debug.Log(coordinates.getX() + "    " + coordinates.getY());
+                coordinates.PosX = ((int)mousePositin.position.x);
+                coordinates.PosY = ((int)mousePositin.position.z);
                 showMoves = true;
             }
         }
@@ -88,18 +83,33 @@ public class PlayerUnitController : MonoBehaviour {
     private void showAllowedMovements()
     {
         validMoves.Clear();
-        validMoves = TileHighlight.FindHighlight(TileMap.getTile(coordinates.getX(), coordinates.getY()), movesLeft);
-        //getValidMoves(TileMap.getTile(coordinates.getX(), coordinates.getY()), movesLeft);
+        validMoves = TileHighlight.FindHighlight(TileMap.getTile(coordinates.PosX, coordinates.PosY), movesLeft);
         highlightAvailableMoves();
         showMoves = false;
     }
 
+    private void highlightAvailableMoves()
+    {
+        foreach(Tile tile in validMoves)
+        {
+            int x = Mathf.FloorToInt(tile.PosX / _tileMapBuilder.tileSize);
+            int z = Mathf.FloorToInt(tile.PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
+            GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            plane.transform.localScale = new Vector3(0.1f, 1.0f, 0.1f);
+            plane.transform.position = new Vector3(x, 0.05f, z) * _tileMapBuilder.tileSize;
+            plane.transform.position = new Vector3(plane.transform.position.x + 0.5f, plane.transform.position.y, plane.transform.position.z + 0.5f);
+            plane.GetComponent<Renderer>().material.color = new Color(0.5f, 0.85f, 0.0f, 0.5f);
+            plane.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
+            highlights.Add(plane);
+        }
+    }
+
+
+    /*                                      WORKS ONLY IF NOT NEAR EDGE OF THE MAP
     private void getValidMoves(Tile currentTile, int movePoints)
     {
-        counter++;
-        Debug.Log(counter + "        " + currentTile.getX() + " : " + currentTile.getY());
         validMoves.Add(currentTile);
-        foreach(Tile tile in TileMap.GetListOfAdjacentTiles(currentTile.getX(), currentTile.getY()))            // MUST IMPROVE TODO
+        foreach(Tile tile in TileMap.GetListOfAdjacentTiles(currentTile.getX(), currentTile.getY()))
         {
             if (tile != null)
             {
@@ -110,26 +120,10 @@ public class PlayerUnitController : MonoBehaviour {
                 }
             } else
             {
-                Debug.Log("NOT GUT");
                 return;
             }
-            
-        }
-    }
 
-    private void highlightAvailableMoves()
-    {
-        foreach(Tile tile in validMoves)
-        {
-            int x = Mathf.FloorToInt(tile.getX() / _tileMapBuilder.tileSize);
-            int z = Mathf.FloorToInt(tile.getY()*(-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
-            GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            plane.transform.localScale = new Vector3(0.1f, 1.0f, 0.1f);
-            plane.transform.position = new Vector3(x, 0.05f, z) * _tileMapBuilder.tileSize;
-            plane.transform.position = new Vector3(plane.transform.position.x + 0.5f, plane.transform.position.y, plane.transform.position.z + 0.5f);
-            plane.GetComponent<Renderer>().material.color = new Color(0.5f, 0.85f, 0.0f, 0.5f);
-            plane.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
-            highlights.Add(plane);
         }
-    }
+    }*/
+
 }

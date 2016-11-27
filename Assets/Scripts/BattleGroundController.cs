@@ -1,11 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(TileMapBuilder))]
+[RequireComponent(typeof(PlayerUnitController))]
 public class BattleGroundController : MonoBehaviour {
 
-                                    /// ALL TODO
-	void Start () {
-        createBattleGround(10, 10);
+    TileMapBuilder _tileMapBuilder;
+    PlayerUnitController _playerUnitController;
+
+    void Start () {
+        _tileMapBuilder = GetComponent<TileMapBuilder>();
+        _playerUnitController = GetComponent<PlayerUnitController>();
+        createBattleGround(30, 30);
 	}
 	
 	void Update () {
@@ -14,10 +20,15 @@ public class BattleGroundController : MonoBehaviour {
 
     public void createBattleGround(int wdith, int height)
     {
-        //TileMapBuilder tileMapBuilder = new TileMapBuilder();
+        _tileMapBuilder.BuildMesh(wdith, height);
 
-        //Create characters
+        //Create units (player units and enemies)
+        _playerUnitController.createPlayerUnit(5, -5, 5);
+
+        
         //Create interface
+
+
         //Set Camera
     }
 
