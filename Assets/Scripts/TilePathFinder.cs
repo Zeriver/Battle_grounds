@@ -7,7 +7,7 @@ public class TilePathFinder : MonoBehaviour
 {
 
     public static List<Tile> FindPath(Tile originTile, Tile destinationTile)
-    {
+    {       
         List<Tile> closed = new List<Tile>();
         List<TilePath> open = new List<TilePath>();
 
@@ -36,6 +36,7 @@ public class TilePathFinder : MonoBehaviour
 
             foreach (Tile t in TileMap.GetListOfAdjacentTiles(current.lastTile.PosX, current.lastTile.PosY))
             {
+                if (!t.IsWalkable) continue;
                 TilePath newTilePath = new TilePath(current);
                 newTilePath.addTile(t);
                 open.Add(newTilePath);

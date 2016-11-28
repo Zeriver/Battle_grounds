@@ -2,15 +2,13 @@
 using System.Collections;
 
 [RequireComponent(typeof(TileMapBuilder))]
-[RequireComponent(typeof(PlayerUnitController))]
 public class BattleGroundController : MonoBehaviour {
 
     TileMapBuilder _tileMapBuilder;
-    PlayerUnitController _playerUnitController;
+    public GameObject _playerUnit;
 
     void Start () {
         _tileMapBuilder = GetComponent<TileMapBuilder>();
-        _playerUnitController = GetComponent<PlayerUnitController>();
         createBattleGround(30, 30);
 	}
 	
@@ -23,9 +21,14 @@ public class BattleGroundController : MonoBehaviour {
         _tileMapBuilder.BuildMesh(wdith, height);
 
         //Create units (player units and enemies)
-        _playerUnitController.createPlayerUnit(5, -5, 5);
+        GameObject playerUnit = Instantiate(_playerUnit) as GameObject;
+        PlayerUnitController playerUnitController = playerUnit.GetComponent<PlayerUnitController>();
 
-        
+        playerUnitController.createPlayerUnit(5, -5, 5);
+
+        //playerUnitController.createPlayerUnit(10, -10, 3);
+
+
         //Create interface
 
 

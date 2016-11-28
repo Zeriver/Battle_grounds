@@ -14,12 +14,14 @@ public class Tile {
     private int moveCost;
     private int id;
     private int posX, posY;
+    private bool isWalkable;
 
     public Tile(int id, int x, int y)
     {
         posX = x;
         posY = y;
         this.id = id;
+        isWalkable = true;
         switch (id)
         {
             case 1:
@@ -30,6 +32,7 @@ public class Tile {
                 break;
             case 3:
                 moveCost = 999;  // not walkable
+                isWalkable = false;
                 break;
             default:
                 moveCost = 1;
@@ -59,5 +62,11 @@ public class Tile {
     {
         get { return moveCost; }
         set { moveCost = value; }
+    }
+
+    public bool IsWalkable
+    {
+        get { return isWalkable; }
+        set { isWalkable = value; }
     }
 }

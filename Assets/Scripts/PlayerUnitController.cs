@@ -3,19 +3,19 @@ using System.Collections.Generic;
 
 public class PlayerUnitController : MonoBehaviour {
 
+    // mouse events must be moved to BattleGroundController TODO
 
-    GameObject Mouse; // Must be moved to BattleGroundController TODO
-
-
+    GameObject BattleGroundObject; 
     private bool isSelected, showMoves;
     private int maxMovement, movesLeft;
     private Vector3 coordinates;
 
     private List<Tile> validMoves;
     private List<GameObject> highlights;
-    public List<Vector3> positionQueue;
+    private List<Vector3> positionQueue;
 
     TileMapBuilder _tileMapBuilder;
+    MouseHighlight _mouseHiglight;
 
 
     void Start() {
@@ -24,12 +24,16 @@ public class PlayerUnitController : MonoBehaviour {
 
     public void createPlayerUnit(int x, int y, int moves)
     {
-        _tileMapBuilder = GetComponent<TileMapBuilder>();
+        BattleGroundObject = GameObject.Find("BattleGrounds");
+        _mouseHiglight = BattleGroundObject.GetComponent("MouseHighlight") as MouseHighlight;
+        _tileMapBuilder = BattleGroundObject.GetComponent("TileMapBuilder") as TileMapBuilder;
+
         isSelected = true;
         showMoves = true;
         maxMovement = moves;
         movesLeft = maxMovement;
         coordinates = new Vector3(x, 0.0f, y); //in battle map vertices
+        transform.position = new Vector3(coordinates.x + 0.5f, coordinates.y, coordinates.z + 0.5f);
         validMoves = new List<Tile>();
         highlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
@@ -45,21 +49,20 @@ public class PlayerUnitController : MonoBehaviour {
             }
             if (Input.GetMouseButtonDown(0))
             {
-                foreach(GameObject plane in highlights)
-                {
-                    Destroy(plane);
-                }
-                highlights.Clear();
-                Mouse = GameObject.Find("BattleGrounds");
-                MouseHighlight ass = Mouse.GetComponent("MouseHighlight") as MouseHighlight;
-                Transform mousePositin = ass.getHighlightSelection();
+                Transform mousePositin = _mouseHiglight.getHighlightSelection();
                 Tile destinationTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
-                foreach (Tile t in TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), destinationTile))
+                if (validMoves.Contains(destinationTile))
                 {
-                    positionQueue.Add(new Vector3(t.PosX, 0.0f, t.PosY));
+                    foreach (GameObject plane in highlights)
+                    {
+                        Destroy(plane);
+                    }
+                    highlights.Clear();
+                    foreach (Tile t in TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), destinationTile))
+                    {
+                        positionQueue.Add(new Vector3(t.PosX, 0.0f, t.PosY));
+                    }
                 }
-                //coordinates.PosX = ((int)mousePositin.position.x);
-                //coordinates.PosY = ((int)mousePositin.position.z);
             }
             if (positionQueue.Count > 0)
             {
@@ -72,6 +75,7 @@ public class PlayerUnitController : MonoBehaviour {
                 if (Vector3.Distance(positionQueue[0], coordinates) <= 0.1f)
                 {
                     coordinates = positionQueue[0];
+                    transform.position = new Vector3(positionQueue[0].x + 0.5f, positionQueue[0].y, -positionQueue[0].z + 0.5f);
                     positionQueue.RemoveAt(0);
                 }
                 //movesLeft--;
