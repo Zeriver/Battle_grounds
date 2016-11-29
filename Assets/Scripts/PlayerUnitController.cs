@@ -5,7 +5,7 @@ public class PlayerUnitController : MonoBehaviour {
 
     // mouse events must be moved to BattleGroundController TODO
 
-    GameObject BattleGroundObject; 
+    private GameObject BattleGroundObject;
     private bool isSelected, showMoves;
     private int maxMovement, movesLeft;
     private Vector3 coordinates;
@@ -14,8 +14,8 @@ public class PlayerUnitController : MonoBehaviour {
     private List<GameObject> highlights;
     private List<Vector3> positionQueue;
 
-    TileMapBuilder _tileMapBuilder;
-    MouseHighlight _mouseHiglight;
+    private TileMapBuilder _tileMapBuilder;
+    private MouseHighlight _mouseHiglight;
 
 
     void Start() {
@@ -28,8 +28,8 @@ public class PlayerUnitController : MonoBehaviour {
         _mouseHiglight = BattleGroundObject.GetComponent("MouseHighlight") as MouseHighlight;
         _tileMapBuilder = BattleGroundObject.GetComponent("TileMapBuilder") as TileMapBuilder;
 
-        isSelected = true;
-        showMoves = true;
+        isSelected = false;
+        showMoves = false;
         maxMovement = moves;
         movesLeft = maxMovement;
         coordinates = new Vector3(x, 0.0f, y); //in battle map vertices
@@ -111,6 +111,12 @@ public class PlayerUnitController : MonoBehaviour {
             plane.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
             highlights.Add(plane);
         }
+    }
+
+    public void setPlayerUnitActive()
+    {
+        isSelected = true;
+        showMoves = true;
     }
 
 
