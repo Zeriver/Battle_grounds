@@ -86,4 +86,14 @@ public class TileMap
         }
         return tile;
     }
+
+    public static void setTileNotWalkable(int x, int y)
+    {
+        getTile(x, y).IsWalkable = false;
+    }
+
+    public static void setTileWalkable(int x, int y)
+    {
+        getTile(x, y).IsWalkable = true;
+    }
 }

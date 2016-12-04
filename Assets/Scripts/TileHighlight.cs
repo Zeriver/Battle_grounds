@@ -37,9 +37,12 @@ public class TileHighlight
 
             foreach (Tile t in TileMap.GetListOfAdjacentTiles(current.lastTile.PosX, current.lastTile.PosY))
             {
-                TilePath newTilePath = new TilePath(current);
-                newTilePath.addTile(t);
-                open.Add(newTilePath);
+                if (t.IsWalkable)
+                {
+                    TilePath newTilePath = new TilePath(current);
+                    newTilePath.addTile(t);
+                    open.Add(newTilePath);
+                }
             }
         }
         closed.Remove(originTile);

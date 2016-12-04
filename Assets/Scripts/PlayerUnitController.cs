@@ -6,7 +6,7 @@ public class PlayerUnitController : MonoBehaviour {
     // mouse events must be moved to BattleGroundController TODO
 
     private GameObject BattleGroundObject;
-    private bool isSelected, showMoves;
+    public bool isSelected, showMoves;
     private int maxMovement, movesLeft;
     private Vector3 coordinates;
 
@@ -37,6 +37,7 @@ public class PlayerUnitController : MonoBehaviour {
         validMoves = new List<Tile>();
         highlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
+        TileMap.setTileNotWalkable(x, y);
         //showAllowedMovements();
     }
 	
@@ -47,12 +48,13 @@ public class PlayerUnitController : MonoBehaviour {
             {
                 showAllowedMovements();
             }
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0)
             {
                 Transform mousePositin = _mouseHiglight.getHighlightSelection();
                 Tile destinationTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
                 if (validMoves.Contains(destinationTile))
                 {
+                    TileMap.setTileWalkable((int)coordinates.x, (int)coordinates.z);
                     foreach (GameObject plane in highlights)
                     {
                         Destroy(plane);
@@ -66,17 +68,16 @@ public class PlayerUnitController : MonoBehaviour {
             }
             if (positionQueue.Count > 0)
             {
-                foreach(Vector3 v in positionQueue)
-                {
-                    Debug.Log(v);
-                }
-                 
                 coordinates += (positionQueue[0] - coordinates).normalized * 15.0f * Time.deltaTime;
                 if (Vector3.Distance(positionQueue[0], coordinates) <= 0.1f)
                 {
                     coordinates = positionQueue[0];
                     transform.position = new Vector3(positionQueue[0].x + 0.5f, positionQueue[0].y, -positionQueue[0].z + 0.5f);
                     positionQueue.RemoveAt(0);
+                }
+                if (positionQueue.Count == 0)
+                {
+                    TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
                 }
                 //movesLeft--;
                 showMoves = true;
@@ -117,6 +118,16 @@ public class PlayerUnitController : MonoBehaviour {
     {
         isSelected = true;
         showMoves = true;
+    }
+    public void deactivatePlayerUnit()
+    {
+        isSelected = false;
+        showMoves = false;
+
+        foreach (GameObject plane in highlights)
+        {
+            Destroy(plane);
+        }
     }
 
 
