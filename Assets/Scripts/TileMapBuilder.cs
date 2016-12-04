@@ -39,9 +39,9 @@ public class TileMapBuilder : MonoBehaviour {
         {
             for (x = 0; x < vsize_x; x++)
             {
-                vertices[z * vsize_x + x] = new Vector3(x * tileSize, 0.0f, -z * tileSize);
+                vertices[z * vsize_x + x] = new Vector3(x * tileSize, 0.0f, -z * tileSize +1.0f);
                 normals[z * vsize_x + x] = Vector3.up;
-                uv[z * vsize_x + x] = new Vector2((float)x / size_x, 1.0f - (float)z / size_z);
+                uv[z * vsize_x + x] = new Vector2((float)x / size_x, 1.0f - (float)-z / size_z - 128);
             }
         }
 
@@ -115,7 +115,6 @@ public class TileMapBuilder : MonoBehaviour {
                 tiles[y * numTiles + x] = terrainTiles.GetPixels(x * tileResolution, y * tileResolution, tileResolution, tileResolution);
             }
         }
-
         return tiles;
     }
 

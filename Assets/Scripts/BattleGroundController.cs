@@ -48,7 +48,7 @@ public class BattleGroundController : MonoBehaviour {
         _tileMapBuilder.BuildMesh(wdith, height);
 
         //Create units (player units and enemies)
-        GameObject playerUnit = Instantiate(_playerUnit) as GameObject;
+        GameObject playerUnit = _playerUnit as GameObject;
         PlayerUnitController playerUnitController = playerUnit.GetComponent<PlayerUnitController>();
 
 
