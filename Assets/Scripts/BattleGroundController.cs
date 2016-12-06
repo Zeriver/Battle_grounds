@@ -170,6 +170,7 @@ public class BattleGroundController : MonoBehaviour {
 
     public void endPlayerTurn()
     {
+        deactivatePlayerUnits();
         playerTurn = false;
         enemyTurn = true;
         playerUI.IsOpen = false;

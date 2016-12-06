@@ -54,14 +54,15 @@ public class PlayerUnitController : MonoBehaviour {
                 if (validMoves.Contains(destinationTile))
                 {
                     TileMap.setTileWalkable((int)coordinates.x, (int)coordinates.z);
-                    foreach (GameObject plane in highlights)
+                    for (int i = 0; i < highlights.Count; i++)
                     {
-                        Destroy(plane);
+                        Destroy(highlights[i]);
                     }
                     highlights.Clear();
-                    foreach (Tile t in TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), destinationTile))
-                    {
-                        positionQueue.Add(new Vector3(t.PosX, 0.0f, t.PosY));
+                    List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), destinationTile);
+                    for (int i = 0; i < path.Count; i++)
+                    { 
+                        positionQueue.Add(new Vector3(path[i].PosX, 0.0f, path[i].PosY));
                     }
                     movesLeft -= positionQueue.Count;
                 }
@@ -86,9 +87,9 @@ public class PlayerUnitController : MonoBehaviour {
 
     private void showAllowedMovements()
     {
-        foreach (GameObject plane in highlights)
+        for (int i = 0; i < highlights.Count; i++)
         {
-            Destroy(plane);
+            Destroy(highlights[i]);
         }
         highlights.Clear();
         validMoves.Clear();
@@ -99,10 +100,10 @@ public class PlayerUnitController : MonoBehaviour {
 
     private void highlightAvailableMoves()
     {
-        foreach(Tile tile in validMoves)
+        for (int i = 0; i < validMoves.Count; i++)
         {
-            int x = Mathf.FloorToInt(tile.PosX / _tileMapBuilder.tileSize);
-            int z = Mathf.FloorToInt(tile.PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
+            int x = Mathf.FloorToInt(validMoves[i].PosX / _tileMapBuilder.tileSize);
+            int z = Mathf.FloorToInt(validMoves[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
             GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
             plane.transform.localScale = new Vector3(0.1f, 1.0f, 0.1f);
             plane.transform.position = new Vector3(x, 0.05f, z) * _tileMapBuilder.tileSize;
@@ -123,17 +124,17 @@ public class PlayerUnitController : MonoBehaviour {
         isSelected = false;
         showMoves = false;
 
-        foreach (GameObject plane in highlights)
+        for (int i = 0; i < highlights.Count; i++)
         {
-            Destroy(plane);
+            Destroy(highlights[i]);
         }
     }
 
     public void resetAfterTurn()
     {
-        foreach (GameObject plane in highlights)
+        for (int i = 0; i < highlights.Count; i++)
         {
-            Destroy(plane);
+            Destroy(highlights[i]);
         }
         movesLeft = maxMovement;
 

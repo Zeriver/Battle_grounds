@@ -35,12 +35,13 @@ public class TileHighlight
 
             closed.Add(current.lastTile);
 
-            foreach (Tile t in TileMap.GetListOfAdjacentTiles(current.lastTile.PosX, current.lastTile.PosY))
+            List<Tile> adjacentTiles = TileMap.GetListOfAdjacentTiles(current.lastTile.PosX, current.lastTile.PosY);
+            for (int i = 0; i < adjacentTiles.Count; i ++)
             {
-                if (t.IsWalkable)
+                if (adjacentTiles[i].IsWalkable)
                 {
                     TilePath newTilePath = new TilePath(current);
-                    newTilePath.addTile(t);
+                    newTilePath.addTile(adjacentTiles[i]);
                     open.Add(newTilePath);
                 }
             }

@@ -73,11 +73,11 @@ public class TileMap
         Tile tile = null;
         x = Math.Abs(x);
         y = Math.Abs(y);
-        foreach (Tile curentTile in tile_data)
+        for (int i = 0; i < tile_data.Count; i++)
         {
-            if (curentTile.PosX == x && curentTile.PosY == y)
+            if (tile_data[i].PosX == x && tile_data[i].PosY == y)
             {
-                tile = curentTile;
+                tile = tile_data[i];
             }
         }
         if (tile == null)
