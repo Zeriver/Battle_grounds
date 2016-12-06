@@ -38,7 +38,6 @@ public class PlayerUnitController : MonoBehaviour {
         highlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
         TileMap.setTileNotWalkable(x, y);
-        //showAllowedMovements();
     }
 	
 	void Update () {
@@ -64,6 +63,7 @@ public class PlayerUnitController : MonoBehaviour {
                     {
                         positionQueue.Add(new Vector3(t.PosX, 0.0f, t.PosY));
                     }
+                    movesLeft -= positionQueue.Count;
                 }
             }
             if (positionQueue.Count > 0)
@@ -79,7 +79,6 @@ public class PlayerUnitController : MonoBehaviour {
                 {
                     TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
                 }
-                //movesLeft--;
                 showMoves = true;
             }
         }
@@ -128,6 +127,16 @@ public class PlayerUnitController : MonoBehaviour {
         {
             Destroy(plane);
         }
+    }
+
+    public void resetAfterTurn()
+    {
+        foreach (GameObject plane in highlights)
+        {
+            Destroy(plane);
+        }
+        movesLeft = maxMovement;
+
     }
 
 

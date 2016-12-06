@@ -19,7 +19,7 @@ public class CameraController : MonoBehaviour {
 
         minCameraHeight = 9.0f;
         maxCameraHeight = 18.0f;
-        cameraEdgeOffset = 35.0f;
+        cameraEdgeOffset = 5.0f;
         cameraEdgeSpeed = 0.08f;
     }
 	
@@ -41,40 +41,43 @@ public class CameraController : MonoBehaviour {
                 Camera.main.transform.position = target;
                 movingToActive = false;
             }
-        } else
+        }
+        //Something fucky is going on here, event thougth it should not entering this code while camera is moving to unit, it somehow passes the condition and it allows moving camera via scroll or edge mouse TODO
+
+        //Mouse on edge
+        if (Input.mousePosition.x >= Screen.width - cameraEdgeOffset || Input.GetKey("right"))  //Need to detect Edge of the map and not allowing pass it TODO
         {
-            //Something fucky is going on here, event thougth it should not entering this code while camera is moving to unit, it somehow passes the condition and it allows moving camera via scroll or edge mouse TODO
+            Camera.main.transform.position = Camera.main.transform.position + new Vector3(cameraEdgeSpeed, 0.0f, -cameraEdgeSpeed);
+            movingToActive = false;
+        }
+        if (Input.mousePosition.x <= 0 + cameraEdgeOffset || Input.GetKey("left"))
+        {
+            Camera.main.transform.position = Camera.main.transform.position + new Vector3(-cameraEdgeSpeed, 0.0f, cameraEdgeSpeed);
+            movingToActive = false;
+        }
+        if (Input.mousePosition.y >= Screen.height - cameraEdgeOffset || Input.GetKey("up"))
+        {
+            Camera.main.transform.position = Camera.main.transform.position + new Vector3(cameraEdgeSpeed, 0.0f, cameraEdgeSpeed);
+            movingToActive = false;
+        }
+        if (Input.mousePosition.y <= 0 + cameraEdgeOffset || Input.GetKey("down"))
+        {
+            Camera.main.transform.position = Camera.main.transform.position + new Vector3(-cameraEdgeSpeed, 0.0f, -cameraEdgeSpeed);
+            movingToActive = false;
+        }
 
-            //Mouse on edge
-            if (Input.mousePosition.x >= Screen.width - cameraEdgeOffset || Input.GetKey("right"))  //Need to detect Edge of the map and not allowing pass it TODO
-            {
-                Camera.main.transform.position = Camera.main.transform.position + new Vector3(cameraEdgeSpeed, 0.0f, -cameraEdgeSpeed);
-            }
-            if (Input.mousePosition.x <= 0 + cameraEdgeOffset || Input.GetKey("left"))
-            {
-                Camera.main.transform.position = Camera.main.transform.position + new Vector3(-cameraEdgeSpeed, 0.0f, cameraEdgeSpeed);
-            }
-            if (Input.mousePosition.y >= Screen.height - cameraEdgeOffset || Input.GetKey("up"))
-            {
-                Camera.main.transform.position = Camera.main.transform.position + new Vector3(cameraEdgeSpeed, 0.0f, cameraEdgeSpeed);
-            }
-            if (Input.mousePosition.y <= 0 + cameraEdgeOffset || Input.GetKey("down"))
-            {
-                Camera.main.transform.position = Camera.main.transform.position + new Vector3(-cameraEdgeSpeed, 0.0f, -cameraEdgeSpeed);
-            }
 
-
-            if (Input.GetAxis("Mouse ScrollWheel") != 0f)
+        if (Input.GetAxis("Mouse ScrollWheel") != 0f)
+        {
+            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + (Input.GetAxis("Mouse ScrollWheel") * 10), Camera.main.transform.position.z);
+            movingToActive = false;
+            if (Camera.main.transform.position.y > maxCameraHeight)
             {
-                Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + (Input.GetAxis("Mouse ScrollWheel") * 10), Camera.main.transform.position.z);
-                if (Camera.main.transform.position.y > maxCameraHeight)
-                {
-                    Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, maxCameraHeight, Camera.main.transform.position.z);
-                }
-                else if (Camera.main.transform.position.y < minCameraHeight)
-                {
-                    Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, minCameraHeight, Camera.main.transform.position.z);
-                }
+                Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, maxCameraHeight, Camera.main.transform.position.z);
+            }
+            else if (Camera.main.transform.position.y < minCameraHeight)
+            {
+                Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, minCameraHeight, Camera.main.transform.position.z);
             }
         }
     }
@@ -82,7 +85,7 @@ public class CameraController : MonoBehaviour {
 
     public void setCameraToActiveUnit(Vector3 unitPosition)
     {
-        target = new Vector3(unitPosition.x - 4.5f, Camera.main.transform.position.y, unitPosition.z - 4.5f);
+        target = new Vector3(unitPosition.x - 7.5f, Camera.main.transform.position.y, unitPosition.z - 7.5f);
         movingToActive = true;
     }
 

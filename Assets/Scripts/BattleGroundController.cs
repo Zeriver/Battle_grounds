@@ -10,17 +10,23 @@ public class BattleGroundController : MonoBehaviour {
     TileMapBuilder _tileMapBuilder;
     MouseHighlight _mouseHighlight;
     CameraController _cameraController;
-    public GameObject _playerUnit;
 
+    public GameObject _playerUnit;
+    public GameObject _playerUI;
+
+    private PlayerUI playerUI;
     private List<PlayerUnitController> playerUnits = new List<PlayerUnitController>();
     private PlayerUnitController lastActiveUnit;
 
-    private bool playerTurn;
+    private bool playerTurn, enemyTurn, allyTurn, endTurn;
+    private int turnNumber;
 
     void Start () {
         _tileMapBuilder = GetComponent<TileMapBuilder>();
         _mouseHighlight = GetComponent<MouseHighlight>();
         _cameraController = GetComponent<CameraController>();
+        playerUI = _playerUI.GetComponent("PlayerUI") as PlayerUI;
+        turnNumber = 1;
         createBattleGround(30, 30);
 	}
 	
@@ -44,6 +50,19 @@ public class BattleGroundController : MonoBehaviour {
                 Tile clickedTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
                 //Checking click on future events TODO
             }
+        }
+        if (enemyTurn)
+        {
+            StartCoroutine(WaitAndPrint(2.0f));
+        }
+        if (allyTurn)
+        {
+            allyTurn = false;
+            endTurn = true;
+        }
+        if (endTurn)
+        {
+            nextTurn();
         }
     }
 
@@ -95,11 +114,13 @@ public class BattleGroundController : MonoBehaviour {
                 if (i+1 != playerUnits.Count)
                 {
                     playerUnits[i+1].setPlayerUnitActive();
+                    lastActiveUnit = playerUnits[i + 1];
                     _cameraController.setCameraToActiveUnit(playerUnits[i + 1].transform.position);
                     break;
                 } else
                 {
                     playerUnits[0].setPlayerUnitActive();
+                    lastActiveUnit = playerUnits[0];
                     _cameraController.setCameraToActiveUnit(playerUnits[0].transform.position);
                     break;
                 }
@@ -126,9 +147,44 @@ public class BattleGroundController : MonoBehaviour {
             if ((int)playerUnits[i].transform.position.x == x && (int)playerUnits[i].transform.position.z == z+1) //+1 hack beacuse float is rounded to bigger value. Must improve TODO
             {
                 unit = playerUnits[i];
+                lastActiveUnit = unit;
             }
         }
         return unit;
+    }
+
+    public void nextTurn()
+    {
+        endTurn = false;
+        for (int i = 0; i < playerUnits.Count; i++)
+        {
+            playerUnits[i].resetAfterTurn();
+        }
+        lastActiveUnit.setPlayerUnitActive();
+        playerTurn = true;
+        turnNumber++;
+        playerUI.updateTurn(turnNumber);
+        playerUI.IsOpen = true;
+
+    }
+
+    public void endPlayerTurn()
+    {
+        playerTurn = false;
+        enemyTurn = true;
+        playerUI.IsOpen = false;
+    }
+
+
+
+
+    //////// Temporary help functions
+
+    IEnumerator WaitAndPrint(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        enemyTurn = false;
+        allyTurn = true;
     }
 
 }
