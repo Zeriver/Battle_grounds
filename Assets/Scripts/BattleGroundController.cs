@@ -4,10 +4,12 @@ using System.Collections.Generic;
 
 [RequireComponent(typeof(TileMapBuilder))]
 [RequireComponent(typeof(MouseHighlight))]
+[RequireComponent(typeof(CameraController))]
 public class BattleGroundController : MonoBehaviour {
 
     TileMapBuilder _tileMapBuilder;
     MouseHighlight _mouseHighlight;
+    CameraController _cameraController;
     public GameObject _playerUnit;
 
     private List<PlayerUnitController> playerUnits = new List<PlayerUnitController>();
@@ -18,6 +20,7 @@ public class BattleGroundController : MonoBehaviour {
     void Start () {
         _tileMapBuilder = GetComponent<TileMapBuilder>();
         _mouseHighlight = GetComponent<MouseHighlight>();
+        _cameraController = GetComponent<CameraController>();
         createBattleGround(30, 30);
 	}
 	
@@ -36,6 +39,7 @@ public class BattleGroundController : MonoBehaviour {
                 {
                     deactivatePlayerUnits();
                     clickedUnit.setPlayerUnitActive();
+                    _cameraController.setCameraToActiveUnit(clickedUnit.transform.position);
                 }
                 Tile clickedTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
                 //Checking click on future events TODO
@@ -74,11 +78,9 @@ public class BattleGroundController : MonoBehaviour {
         //Create interface
 
 
-        //Set Camera
-
-
         //Start turns
         lastActiveUnit.setPlayerUnitActive();
+        _cameraController.setCameraToActiveUnit(lastActiveUnit.transform.position);
         playerTurn = true;
     }
 
@@ -93,10 +95,12 @@ public class BattleGroundController : MonoBehaviour {
                 if (i+1 != playerUnits.Count)
                 {
                     playerUnits[i+1].setPlayerUnitActive();
+                    _cameraController.setCameraToActiveUnit(playerUnits[i + 1].transform.position);
                     break;
                 } else
                 {
                     playerUnits[0].setPlayerUnitActive();
+                    _cameraController.setCameraToActiveUnit(playerUnits[0].transform.position);
                     break;
                 }
             }
