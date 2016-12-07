@@ -11,6 +11,11 @@ public class CameraController : MonoBehaviour {
     private float maxCameraHeight;
     private float cameraEdgeSpeed, cameraEdgeOffset;
 
+    private float targetAngle = 0;
+    private const float rotationAmount = 1.5f;
+    private float rDistance = 1.0f;
+    private float rSpeed = 1.0f;
+
     void Start () {
         movingToActive = false;
         cameraSpeed = 3.0f;
@@ -80,6 +85,41 @@ public class CameraController : MonoBehaviour {
                 Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, minCameraHeight, Camera.main.transform.position.z);
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            //targetAngle -= 45.0f;
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            //targetAngle += 45.0f;
+        }
+
+        if (targetAngle != 0)
+        {
+            Rotate();
+        }
+    }
+
+    protected void Rotate()
+    {
+
+        float step = rSpeed * Time.deltaTime;
+        float orbitCircumfrance = 2F * rDistance * Mathf.PI;
+        float distanceDegrees = (rSpeed / orbitCircumfrance) * 360;
+        float distanceRadians = (rSpeed / orbitCircumfrance) * 2 * Mathf.PI;
+
+        if (targetAngle > 0)
+        {
+            Camera.main.transform.RotateAround(target, Vector3.up, -rotationAmount);
+            targetAngle -= rotationAmount;
+        }
+        else if (targetAngle < 0)
+        {
+            Camera.main.transform.RotateAround(target, Vector3.up, rotationAmount);
+            targetAngle += rotationAmount;
+        }
+
     }
 
 
