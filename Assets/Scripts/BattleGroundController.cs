@@ -54,6 +54,8 @@ public class BattleGroundController : MonoBehaviour {
         if (enemyTurn)
         {
             StartCoroutine(WaitAndPrint(2.0f));
+            //enemyTurn = false;
+            //allyTurn = true;
         }
         if (allyTurn)
         {
@@ -137,6 +139,11 @@ public class BattleGroundController : MonoBehaviour {
                 playerUnits[i].deactivatePlayerUnit();
             }
         }
+    }
+
+    public void switchPlayerUnitMode()
+    {
+        lastActiveUnit.switchActionMode();
     }
 
     private PlayerUnitController getClickedUnit(int x, int z)
