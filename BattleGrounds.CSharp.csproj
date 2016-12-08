@@ -74,6 +74,8 @@
     <Compile Include="Assets\Scripts\TileMapBuilder.cs" />
     <Compile Include="Assets\Scripts\TilePath.cs" />
     <Compile Include="Assets\Scripts\TilePathFinder.cs" />
+    <Compile Include="Assets\Scripts\Weapons\Pistol.cs" />
+    <Compile Include="Assets\Scripts\Weapons\Weapon.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

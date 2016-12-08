@@ -10,6 +10,7 @@ public class PlayerUnitController : MonoBehaviour {
     private bool isActionMode;
     private int maxMovement, movesLeft;
     private Vector3 coordinates;
+    private Weapon currentWeapon;
 
     private List<Tile> validMoves;
     private List<GameObject> highlights;
@@ -42,6 +43,7 @@ public class PlayerUnitController : MonoBehaviour {
         weaponHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
         TileMap.setTileNotWalkable(x, y);
+        currentWeapon = new Pistol(5);
     }
 	
 	void Update () {
@@ -53,21 +55,29 @@ public class PlayerUnitController : MonoBehaviour {
             }
             if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0)
             {
-                Transform mousePositin = _mouseHiglight.getHighlightSelection();
-                Tile destinationTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
-                if (validMoves.Contains(destinationTile))
+                if (!isActionMode)
                 {
-                    TileMap.setTileWalkable((int)coordinates.x, (int)coordinates.z);
-                    for (int i = 0; i < highlights.Count; i++)
+                    Transform mousePositin = _mouseHiglight.getHighlightSelection();
+                    Tile destinationTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
+                    if (validMoves.Contains(destinationTile))
                     {
-                        Destroy(highlights[i]);
+                        TileMap.setTileWalkable((int)coordinates.x, (int)coordinates.z);
+                        for (int i = 0; i < highlights.Count; i++)
+                        {
+                            Destroy(highlights[i]);
+                        }
+                        List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), destinationTile);
+                        for (int i = 0; i < path.Count; i++)
+                        {
+                            positionQueue.Add(new Vector3(path[i].PosX, 0.0f, path[i].PosY));
+                        }
+                        movesLeft -= positionQueue.Count;
                     }
-                    List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), destinationTile);
-                    for (int i = 0; i < path.Count; i++)
-                    { 
-                        positionQueue.Add(new Vector3(path[i].PosX, 0.0f, path[i].PosY));
-                    }
-                    movesLeft -= positionQueue.Count;
+                }
+                else if (isActionMode)
+                {
+                    currentWeapon.useWeapon();
+                    //TODO
                 }
             }
             if (positionQueue.Count > 0)
@@ -122,10 +132,9 @@ public class PlayerUnitController : MonoBehaviour {
 
     private void highlightWeaponRange()
     {
-        List<Tile> tileList = TileMap.GetListOfAdjacentTiles((int)coordinates.x, (int)coordinates.z);
+        List<Tile> tileList = currentWeapon.getWeaponHighlights((int)coordinates.x, (int)coordinates.z);
         for (int i = 0; i < tileList.Count; i++)
         {
-            Debug.Log(tileList.Count + "   " + tileList[i].PosX + ":" + tileList[i].PosY);
             int x = Mathf.FloorToInt(tileList[i].PosX / _tileMapBuilder.tileSize);
             int z = Mathf.FloorToInt(tileList[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
             GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
