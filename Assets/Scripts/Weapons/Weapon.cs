@@ -9,7 +9,7 @@ public class Weapon
     public int ammunition;
     protected List<Vector3> pattern;
     protected int range;
-    protected bool isDiagnal;
+    protected bool isDiagonal;
     protected bool isMelee = false;
     // TODO add texture/sprite
     // type (energetic, melee etc)
@@ -51,7 +51,6 @@ public class Weapon
                 highligts.Add(tile);
             }
         }
-
         return highligts;
     }
 

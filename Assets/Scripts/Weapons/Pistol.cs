@@ -11,7 +11,7 @@ public class Pistol : Weapon {
         cooldown = 0;
         this.ammunition = ammunition;
         range = 4;
-        isDiagnal = false;
+        isDiagonal = false;
         pattern = generatePattern();
     }
 

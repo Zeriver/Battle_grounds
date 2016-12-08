@@ -8,11 +8,12 @@ public class PlayerUnitController : MonoBehaviour {
     private GameObject BattleGroundObject;
     public bool isSelected, showMoves;
     private bool isActionMode;
+    private bool isActionUsed;
     private int maxMovement, movesLeft;
     private Vector3 coordinates;
     private Weapon currentWeapon;
 
-    private List<Tile> validMoves;
+    private List<Tile> validTiles;
     private List<GameObject> highlights;
     private List<GameObject> weaponHighlights;
     private List<Vector3> positionQueue;
@@ -34,11 +35,12 @@ public class PlayerUnitController : MonoBehaviour {
         isSelected = false;
         showMoves = false;
         isActionMode = false;
+        isActionUsed = false;
         maxMovement = moves;
         movesLeft = maxMovement;
         coordinates = new Vector3(x, 0.0f, y); //in battle map vertices
         transform.position = new Vector3(coordinates.x + 0.5f, coordinates.y, coordinates.z + 0.5f);
-        validMoves = new List<Tile>();
+        validTiles = new List<Tile>();
         highlights = new List<GameObject>();
         weaponHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
@@ -55,18 +57,18 @@ public class PlayerUnitController : MonoBehaviour {
             }
             if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0)
             {
+                Transform mousePositin = _mouseHiglight.getHighlightSelection();
+                Tile clickedTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
                 if (!isActionMode)
                 {
-                    Transform mousePositin = _mouseHiglight.getHighlightSelection();
-                    Tile destinationTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
-                    if (validMoves.Contains(destinationTile))
+                    if (validTiles.Contains(clickedTile))
                     {
                         TileMap.setTileWalkable((int)coordinates.x, (int)coordinates.z);
                         for (int i = 0; i < highlights.Count; i++)
                         {
                             Destroy(highlights[i]);
                         }
-                        List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), destinationTile);
+                        List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), clickedTile);
                         for (int i = 0; i < path.Count; i++)
                         {
                             positionQueue.Add(new Vector3(path[i].PosX, 0.0f, path[i].PosY));
@@ -76,8 +78,13 @@ public class PlayerUnitController : MonoBehaviour {
                 }
                 else if (isActionMode)
                 {
-                    currentWeapon.useWeapon();
-                    //TODO
+                    if (validTiles.Contains(clickedTile))
+                    {
+                        currentWeapon.useWeapon();
+                        isActionUsed = true;
+                        switchActionMode();
+                        //TODO
+                    }
                 }
             }
             if (positionQueue.Count > 0)
@@ -95,7 +102,7 @@ public class PlayerUnitController : MonoBehaviour {
                 }
                 showMoves = true;
             }
-            if (Input.GetMouseButtonDown(1) && positionQueue.Count == 0)
+            if (Input.GetMouseButtonDown(1) && positionQueue.Count == 0 && !isActionUsed)
             {
                 switchActionMode();
             }
@@ -108,18 +115,17 @@ public class PlayerUnitController : MonoBehaviour {
         {
             Destroy(highlights[i]);
         }
-        validMoves.Clear();
-        validMoves = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), movesLeft);
+        validTiles = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), movesLeft);
         highlightAvailableMoves();
         showMoves = false;
     }
 
     private void highlightAvailableMoves()
     {
-        for (int i = 0; i < validMoves.Count; i++)
+        for (int i = 0; i < validTiles.Count; i++)
         {
-            int x = Mathf.FloorToInt(validMoves[i].PosX / _tileMapBuilder.tileSize);
-            int z = Mathf.FloorToInt(validMoves[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
+            int x = Mathf.FloorToInt(validTiles[i].PosX / _tileMapBuilder.tileSize);
+            int z = Mathf.FloorToInt(validTiles[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
             GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
             plane.transform.localScale = new Vector3(0.1f, 1.0f, 0.1f);
             plane.transform.position = new Vector3(x, 0.05f, z) * _tileMapBuilder.tileSize;
@@ -132,11 +138,11 @@ public class PlayerUnitController : MonoBehaviour {
 
     private void highlightWeaponRange()
     {
-        List<Tile> tileList = currentWeapon.getWeaponHighlights((int)coordinates.x, (int)coordinates.z);
-        for (int i = 0; i < tileList.Count; i++)
+        validTiles = currentWeapon.getWeaponHighlights((int)coordinates.x, (int)coordinates.z);
+        for (int i = 0; i < validTiles.Count; i++)
         {
-            int x = Mathf.FloorToInt(tileList[i].PosX / _tileMapBuilder.tileSize);
-            int z = Mathf.FloorToInt(tileList[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
+            int x = Mathf.FloorToInt(validTiles[i].PosX / _tileMapBuilder.tileSize);
+            int z = Mathf.FloorToInt(validTiles[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
             GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
             plane.transform.localScale = new Vector3(0.1f, 1.0f, 0.1f);
             plane.transform.position = new Vector3(x, 0.05f, z) * _tileMapBuilder.tileSize;
@@ -156,7 +162,7 @@ public class PlayerUnitController : MonoBehaviour {
     public void switchActionMode()
     {
         isActionMode = !isActionMode;
-        if (isActionMode)
+        if (isActionMode && !isActionUsed)
         {
             for (int i = 0; i < highlights.Count; i++)
             {
@@ -200,6 +206,7 @@ public class PlayerUnitController : MonoBehaviour {
             Destroy(highlights[i]);
         }
         movesLeft = maxMovement;
+        isActionUsed = false;
         setActionMode(false);
     }
 
