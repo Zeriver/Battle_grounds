@@ -22,13 +22,6 @@ public class Weapon
         this.ammunition = ammunition;
     }
 
-    protected List<Vector3> createGenericPattern()  // generating simple Patterns for basic weapons here instead in specific weapons TODO
-    {
-        List<Vector3> pattern = new List<Vector3>();
-
-
-        return pattern;
-    }
 
     protected void addAmmunition(int value)
     {
@@ -40,7 +33,20 @@ public class Weapon
         ammunition -= value;
     }
 
+
     public List<Tile> getWeaponHighlights(int x, int y)
+    {
+        if (pattern != null)
+        {
+            return getWeaponHighlightsFromPattern(x, y);
+        } else
+        {
+            return TileHighlight.FindHighlight(TileMap.getTile((int)x, (int)y), range, true);
+        }
+        
+    }
+
+    private List<Tile> getWeaponHighlightsFromPattern(int x, int y) //TODO needs improvements
     {
         List<Tile> highligts = new List<Tile>();
         for (int i = 0; i < pattern.Count; i++)

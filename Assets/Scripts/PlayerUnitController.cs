@@ -45,7 +45,8 @@ public class PlayerUnitController : MonoBehaviour {
         weaponHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
         TileMap.setTileNotWalkable(x, y);
-        currentWeapon = new Pistol(5);
+        //currentWeapon = new Pistol(5);
+        currentWeapon = new FlameThrower(5);
     }
 	
 	void Update () {
@@ -115,7 +116,7 @@ public class PlayerUnitController : MonoBehaviour {
         {
             Destroy(highlights[i]);
         }
-        validTiles = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), movesLeft);
+        validTiles = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), movesLeft, false);
         highlightAvailableMoves();
         showMoves = false;
     }

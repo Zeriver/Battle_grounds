@@ -9,7 +9,7 @@ public class TileHighlight
 
     }
 
-    public static List<Tile> FindHighlight(Tile originTile, int movementPoints)
+    public static List<Tile> FindHighlight(Tile originTile, int movementPoints, bool isWeapon)
     {
         List<Tile> closed = new List<Tile>();
         List<TilePath> open = new List<TilePath>();
@@ -40,9 +40,22 @@ public class TileHighlight
             {
                 if (adjacentTiles[i].IsWalkable)
                 {
-                    TilePath newTilePath = new TilePath(current);
-                    newTilePath.addTile(adjacentTiles[i]);
-                    open.Add(newTilePath);
+                    if (isWeapon)
+                    {
+                        if (originTile.PosX == adjacentTiles[i].PosX || originTile.PosY == adjacentTiles[i].PosY)
+                        {
+                            TilePath newTilePath = new TilePath(current);
+                            newTilePath.addTile(adjacentTiles[i]);
+                            open.Add(newTilePath);
+                        }
+                    }
+                    else
+                    {
+                        TilePath newTilePath = new TilePath(current);
+                        newTilePath.addTile(adjacentTiles[i]);
+                        open.Add(newTilePath);
+                    }
+                    
                 }
             }
         }
