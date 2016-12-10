@@ -6,9 +6,10 @@ public class PlayerUnitController : MonoBehaviour {
     // mouse events must be moved to BattleGroundController TODO
 
     private GameObject BattleGroundObject;
-    public bool isSelected, showMoves;
+    public bool isSelected;
     private bool isActionMode;
     private bool isActionUsed;
+    private bool showMoves;
     private int maxMovement, movesLeft;
     private Vector3 coordinates;
     private Weapon currentWeapon;
@@ -16,7 +17,9 @@ public class PlayerUnitController : MonoBehaviour {
     private List<Tile> validTiles;
     private List<GameObject> highlights;
     private List<GameObject> weaponHighlights;
+    private List<GameObject> weaponAreaEffectHighlights;
     private List<Vector3> positionQueue;
+    private Vector3 actionMouseHighlight;
 
     private TileMapBuilder _tileMapBuilder;
     private MouseHighlight _mouseHiglight;
@@ -43,6 +46,7 @@ public class PlayerUnitController : MonoBehaviour {
         validTiles = new List<Tile>();
         highlights = new List<GameObject>();
         weaponHighlights = new List<GameObject>();
+        weaponAreaEffectHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
         TileMap.setTileNotWalkable(x, y);
         //currentWeapon = new Pistol(5);
@@ -58,8 +62,7 @@ public class PlayerUnitController : MonoBehaviour {
             }
             if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0)
             {
-                Transform mousePositin = _mouseHiglight.getHighlightSelection();
-                Tile clickedTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
+                Tile clickedTile = TileMap.getTile((int)_mouseHiglight.getHighlightSelection().position.x, (int)_mouseHiglight.getHighlightSelection().position.z);
                 if (!isActionMode)
                 {
                     if (validTiles.Contains(clickedTile))
@@ -107,6 +110,26 @@ public class PlayerUnitController : MonoBehaviour {
             {
                 switchActionMode();
             }
+            if (isActionMode)
+            {
+                Tile hoverTile = TileMap.getTile((int)_mouseHiglight.getHighlightSelection().position.x, (int)_mouseHiglight.getHighlightSelection().position.z);
+                if (validTiles.Contains(hoverTile)) {
+                    actionMouseHighlight = new Vector3((int)_mouseHiglight.getHighlightSelection().position.x + 0.5f, 0.0f, (int)_mouseHiglight.getHighlightSelection().position.z + 0.5f);
+                    for (int i = 0; i < weaponAreaEffectHighlights.Count; i++)
+                        {
+                            Destroy(weaponAreaEffectHighlights[i]);
+                        }
+                    
+                    List<Tile> weaponAreaEffect = currentWeapon.getAreaEffect((int) coordinates.x, (int) coordinates.z, (int) actionMouseHighlight.x, (int) actionMouseHighlight.z - 1);
+                    highlightWeaponAreaEffect(weaponAreaEffect);
+                } 
+                else if (!(validTiles.Contains(hoverTile) && actionMouseHighlight != null)){
+                    for (int i = 0; i < weaponAreaEffectHighlights.Count; i++)
+                    {
+                        Destroy(weaponAreaEffectHighlights[i]);
+                    }
+                }
+            }
         }
 	}
 
@@ -121,19 +144,13 @@ public class PlayerUnitController : MonoBehaviour {
         showMoves = false;
     }
 
-    private void highlightAvailableMoves()
+    private void highlightAvailableMoves() //Three very similar methods, needs refactoring + find better way than creating multiple lists of objects TODO
     {
         for (int i = 0; i < validTiles.Count; i++)
         {
             int x = Mathf.FloorToInt(validTiles[i].PosX / _tileMapBuilder.tileSize);
             int z = Mathf.FloorToInt(validTiles[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
-            GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            plane.transform.localScale = new Vector3(0.1f, 1.0f, 0.1f);
-            plane.transform.position = new Vector3(x, 0.05f, z) * _tileMapBuilder.tileSize;
-            plane.transform.position = new Vector3(plane.transform.position.x + 0.5f, plane.transform.position.y, plane.transform.position.z + 0.5f);
-            plane.GetComponent<Renderer>().material.color = new Color(0.5f, 0.85f, 0.0f, 0.5f);
-            plane.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
-            highlights.Add(plane);
+            highlights.Add(createPlane(x, z, new Color(0.5f, 0.85f, 0.0f, 0.5f)));
         }
     }
 
@@ -144,14 +161,29 @@ public class PlayerUnitController : MonoBehaviour {
         {
             int x = Mathf.FloorToInt(validTiles[i].PosX / _tileMapBuilder.tileSize);
             int z = Mathf.FloorToInt(validTiles[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
-            GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            plane.transform.localScale = new Vector3(0.1f, 1.0f, 0.1f);
-            plane.transform.position = new Vector3(x, 0.05f, z) * _tileMapBuilder.tileSize;
-            plane.transform.position = new Vector3(plane.transform.position.x + 0.5f, plane.transform.position.y, plane.transform.position.z + 0.5f);
-            plane.GetComponent<Renderer>().material.color = new Color(1.0f, 0.0f, 0.05f, 0.5f);
-            plane.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
-            weaponHighlights.Add(plane);
+            weaponHighlights.Add(createPlane(x, z, new Color(1.0f, 0.0f, 0.05f, 0.5f)));
         }
+    }
+
+    private void highlightWeaponAreaEffect(List<Tile> weaponAreaEffect)
+    {
+        for (int i = 0; i < weaponAreaEffect.Count; i++)
+        {
+            int x = Mathf.FloorToInt(weaponAreaEffect[i].PosX / _tileMapBuilder.tileSize);
+            int z = Mathf.FloorToInt(weaponAreaEffect[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
+            weaponAreaEffectHighlights.Add(createPlane(x, z, new Color(8.0f, 8.0f, 0.0f, 0.5f)));
+        }
+    }
+
+    private GameObject createPlane(int x, int z, Color color)   // needs to create mesh from sratch for better performance TODO
+    {
+        GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        plane.transform.localScale = new Vector3(0.1f, 1.0f, 0.1f);
+        plane.transform.position = new Vector3(x, 0.05f, z) * _tileMapBuilder.tileSize;
+        plane.transform.position = new Vector3(plane.transform.position.x + 0.5f, plane.transform.position.y, plane.transform.position.z + 0.5f);
+        plane.GetComponent<Renderer>().material.color = color;
+        plane.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
+        return plane;
     }
 
     private void setActionMode(bool value)
@@ -176,6 +208,10 @@ public class PlayerUnitController : MonoBehaviour {
             for (int i = 0; i < weaponHighlights.Count; i++)
             {
                 Destroy(weaponHighlights[i]);
+            }
+            for (int i = 0; i < weaponAreaEffectHighlights.Count; i++)
+            {
+                Destroy(weaponAreaEffectHighlights[i]);
             }
             showMoves = true;
         }

@@ -8,6 +8,7 @@ public class Weapon
     protected int cooldown;
     public int ammunition;
     protected List<Vector3> pattern;
+    protected List<Vector3> areOfEffect;
     protected int range;
     protected bool isDiagonal;
     protected bool isMelee = false;
@@ -68,6 +69,21 @@ public class Weapon
         }
 
         //TODO
+    }
+
+    public List<Tile> getAreaEffect(int x, int z, int x2 , int z2) //refactoring TODO
+    {
+        List<Tile> area = new List<Tile>();
+        if (name.Equals("Flame Thrower"))
+        {
+            area = FlameThrower.getAreaOfEffect(x, z, x2 , z2);
+        }
+        else if (name.Equals("Pistol"))
+        {
+            area.Add(TileMap.getTile(x2, z2));
+        }
+
+        return area;
     }
 
 }

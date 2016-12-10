@@ -11,16 +11,73 @@ public class FlameThrower : Weapon
         name = "Flame Thrower";
         cooldown = 3;
         this.ammunition = ammunition;
-        range = 2;
+        range = 1;
         isDiagonal = false;
         pattern = generatePattern();
+        areOfEffect = generateAreaOfEffect();
     }
 
     private List<Vector3> generatePattern()
     {
-
         List<Vector3> pattern = new List<Vector3>();
         for (int i = -range; i < range + 1; i++)
+        {
+            if (i != 0)
+            {
+                pattern.Add(new Vector3(i, 0.0f, 0.0f));
+            }
+        }
+        for (int i = -range; i < range + 1; i++)
+        {
+            if (i != 0)
+            {
+                pattern.Add(new Vector3(0.0f, 0.0f, i));
+            }
+        }
+        return pattern;
+    }
+
+    private List<Vector3> generateAreaOfEffect()
+    {
+        List<Vector3> areOfEffect = new List<Vector3>();
+        areOfEffect.Add(new Vector3(-1.0f, 0.0f, 0.0f));
+        areOfEffect.Add(new Vector3(0.0f, 0.0f, 0.0f));
+        areOfEffect.Add(new Vector3(1.0f, 0.0f, 0.0f));
+        return areOfEffect;
+    }
+
+    public static List<Tile> getAreaOfEffect(int x, int z, int x2, int z2) // refactoring + glitches when near end of map TODO
+    {
+        List<Tile> area = new List<Tile>();
+        if (x2 > x)
+        {
+            area.Add(TileMap.getTile(x2 + 1, z));
+            area.Add(TileMap.getTile(x2 + 1, z - 1));
+            area.Add(TileMap.getTile(x2 + 1, z + 1));
+        } else if (x2 < x)
+        {
+            area.Add(TileMap.getTile(x2 - 1, z));
+            area.Add(TileMap.getTile(x2 - 1, z - 1));
+            area.Add(TileMap.getTile(x2 - 1, z + 1));
+        }
+        else if (z2 > z)
+        {
+            area.Add(TileMap.getTile(x, z + 2));
+            area.Add(TileMap.getTile(x + 1, z + 2));
+            area.Add(TileMap.getTile(x - 1, z + 2));
+        }
+        else
+        {
+            area.Add(TileMap.getTile(x, z - 2));
+            area.Add(TileMap.getTile(x + 1, z - 2));
+            area.Add(TileMap.getTile(x - 1, z - 2));
+        }
+        return area;
+    }
+
+
+    /*
+      for (int i = -range; i<range + 1; i++)
         {
             if (i != 0)
             {
@@ -32,7 +89,7 @@ public class FlameThrower : Weapon
                 pattern.Add(new Vector3(i, 0.0f, -1.0f));
             }
         }
-        for (int i = -range; i < range + 1; i++)
+        for (int i = -range; i<range + 1; i++)
         {
             if (i != 0)
             {
@@ -44,10 +101,6 @@ public class FlameThrower : Weapon
                 pattern.Add(new Vector3(-1.0f, 0.0f, i));
             }
         }
-        return pattern;
-    }
-
-
-
+    */
 }
 
