@@ -48,6 +48,7 @@ public class FlameThrower : Weapon
 
     public static List<Tile> getAreaOfEffect(int x, int z, int x2, int z2) // refactoring + glitches when near end of map TODO
     {
+        Debug.Log(x + "  " + x + "  " + x2 + "  " + z2);
         List<Tile> area = new List<Tile>();
         if (x2 > x)
         {
@@ -60,17 +61,17 @@ public class FlameThrower : Weapon
             area.Add(TileMap.getTile(x2 - 1, z - 1));
             area.Add(TileMap.getTile(x2 - 1, z + 1));
         }
-        else if (z2 > z)
+        else if (z2 >= z)
         {
-            area.Add(TileMap.getTile(x, z + 2));
-            area.Add(TileMap.getTile(x + 1, z + 2));
-            area.Add(TileMap.getTile(x - 1, z + 2));
+            area.Add(TileMap.getTile(x, z2 + 1));
+            area.Add(TileMap.getTile(x + 1, z2 + 1));
+            area.Add(TileMap.getTile(x - 1, z2 + 1));
         }
         else
         {
-            area.Add(TileMap.getTile(x, z - 2));
-            area.Add(TileMap.getTile(x + 1, z - 2));
-            area.Add(TileMap.getTile(x - 1, z - 2));
+            area.Add(TileMap.getTile(x, z2 - 1));
+            area.Add(TileMap.getTile(x + 1, z2 - 1));
+            area.Add(TileMap.getTile(x - 1, z2 - 1));
         }
         return area;
     }

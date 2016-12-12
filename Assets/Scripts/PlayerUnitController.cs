@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class PlayerUnitController : MonoBehaviour {
 
@@ -119,8 +120,9 @@ public class PlayerUnitController : MonoBehaviour {
                         {
                             Destroy(weaponAreaEffectHighlights[i]);
                         }
-                    
-                    List<Tile> weaponAreaEffect = currentWeapon.getAreaEffect((int) coordinates.x, (int) coordinates.z, (int) actionMouseHighlight.x, (int) actionMouseHighlight.z - 1);
+                    int mouseX = Math.Abs((int)actionMouseHighlight.x);
+                    int mouseY = Math.Abs((int)actionMouseHighlight.z - 1);
+                    List<Tile> weaponAreaEffect = currentWeapon.getAreaEffect(Math.Abs((int) coordinates.x), Math.Abs((int) coordinates.z), mouseX, mouseY);
                     highlightWeaponAreaEffect(weaponAreaEffect);
                 } 
                 else if (!(validTiles.Contains(hoverTile) && actionMouseHighlight != null)){

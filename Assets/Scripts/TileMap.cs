@@ -32,7 +32,13 @@ public class TileMap
                 {
                     map_data[x, y] = 3;
                     tile_data.Add(new Tile(3, x, y));
-                } else
+                }
+                else if (x == 0 || y == 0 || x == size_x-1 || y == size_y-1)  //not walkable tile at the edge of the map
+                {
+                    map_data[x, y] = 1;
+                    tile_data.Add(new Tile(3, x, y));
+                }
+                else
                 {
                     map_data[x, y] = 0;
                     tile_data.Add(new Tile(0, x, y));
