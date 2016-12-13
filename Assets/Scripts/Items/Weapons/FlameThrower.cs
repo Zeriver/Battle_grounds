@@ -46,9 +46,8 @@ public class FlameThrower : Weapon
         return areOfEffect;
     }
 
-    public static List<Tile> getAreaOfEffect(int x, int z, int x2, int z2) // refactoring + glitches when near end of map TODO
+    public static List<Tile> getAreaOfEffect(int x, int z, int x2, int z2)
     {
-        Debug.Log(x + "  " + x + "  " + x2 + "  " + z2);
         List<Tile> area = new List<Tile>();
         if (x2 > x)
         {

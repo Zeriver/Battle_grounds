@@ -13,7 +13,8 @@ public class PlayerUnitController : MonoBehaviour {
     private bool showMoves;
     private int maxMovement, movesLeft;
     private Vector3 coordinates;
-    private Weapon currentWeapon;
+    private List<Weapon> weapons;
+    private Item currentItem;
 
     private List<Tile> validTiles;
     private List<GameObject> highlights;
@@ -46,12 +47,14 @@ public class PlayerUnitController : MonoBehaviour {
         transform.position = new Vector3(coordinates.x + 0.5f, coordinates.y, coordinates.z + 0.5f);
         validTiles = new List<Tile>();
         highlights = new List<GameObject>();
+        weapons = new List<Weapon>();
         weaponHighlights = new List<GameObject>();
         weaponAreaEffectHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
         TileMap.setTileNotWalkable(x, y);
-        //currentWeapon = new Pistol(5);
-        currentWeapon = new FlameThrower(5);
+        weapons.Add(new Pistol(5));
+        weapons.Add(new FlameThrower(5));
+        currentItem = weapons[1];
     }
 	
 	void Update () {
@@ -61,7 +64,22 @@ public class PlayerUnitController : MonoBehaviour {
             {
                 showAllowedMovements();
             }
-            if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0)
+            if (positionQueue.Count > 0)
+            {
+                coordinates += (positionQueue[0] - coordinates).normalized * 15.0f * Time.deltaTime;
+                if (Vector3.Distance(positionQueue[0], coordinates) <= 0.1f)
+                {
+                    coordinates = positionQueue[0];
+                    transform.position = new Vector3(positionQueue[0].x + 0.5f, positionQueue[0].y, -positionQueue[0].z + 0.5f);
+                    positionQueue.RemoveAt(0);
+                }
+                if (positionQueue.Count == 0)
+                {
+                    TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
+                }
+                showMoves = true;
+            }
+            if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0) //LEFT CLICK
             {
                 Tile clickedTile = TileMap.getTile((int)_mouseHiglight.getHighlightSelection().position.x, (int)_mouseHiglight.getHighlightSelection().position.z);
                 if (!isActionMode)
@@ -85,36 +103,29 @@ public class PlayerUnitController : MonoBehaviour {
                 {
                     if (validTiles.Contains(clickedTile))
                     {
-                        currentWeapon.useWeapon();
-                        isActionUsed = true;
-                        switchActionMode();
-                        //TODO
+                        if (currentItem is Weapon)
+                        {
+                            ((Weapon)currentItem).useWeapon();
+                            isActionUsed = true;
+                            switchActionMode();
+                            //TODO
+                        }
+                        else if (currentItem is HealingItem)
+                        {
+                            //TODO
+                        }
+
                     }
                 }
             }
-            if (positionQueue.Count > 0)
-            {
-                coordinates += (positionQueue[0] - coordinates).normalized * 15.0f * Time.deltaTime;
-                if (Vector3.Distance(positionQueue[0], coordinates) <= 0.1f)
-                {
-                    coordinates = positionQueue[0];
-                    transform.position = new Vector3(positionQueue[0].x + 0.5f, positionQueue[0].y, -positionQueue[0].z + 0.5f);
-                    positionQueue.RemoveAt(0);
-                }
-                if (positionQueue.Count == 0)
-                {
-                    TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
-                }
-                showMoves = true;
-            }
-            if (Input.GetMouseButtonDown(1) && positionQueue.Count == 0 && !isActionUsed)
+            if (Input.GetMouseButtonDown(1) && positionQueue.Count == 0 && !isActionUsed) //RIGHT CLICK
             {
                 switchActionMode();
             }
             if (isActionMode)
             {
                 Tile hoverTile = TileMap.getTile((int)_mouseHiglight.getHighlightSelection().position.x, (int)_mouseHiglight.getHighlightSelection().position.z);
-                if (validTiles.Contains(hoverTile)) {
+                if (validTiles.Contains(hoverTile) && currentItem is Weapon) {
                     actionMouseHighlight = new Vector3((int)_mouseHiglight.getHighlightSelection().position.x + 0.5f, 0.0f, (int)_mouseHiglight.getHighlightSelection().position.z + 0.5f);
                     for (int i = 0; i < weaponAreaEffectHighlights.Count; i++)
                         {
@@ -122,7 +133,7 @@ public class PlayerUnitController : MonoBehaviour {
                         }
                     int mouseX = Math.Abs((int)actionMouseHighlight.x);
                     int mouseY = Math.Abs((int)actionMouseHighlight.z - 1);
-                    List<Tile> weaponAreaEffect = currentWeapon.getAreaEffect(Math.Abs((int) coordinates.x), Math.Abs((int) coordinates.z), mouseX, mouseY);
+                    List<Tile> weaponAreaEffect = ((Weapon)currentItem).getAreaEffect(Math.Abs((int) coordinates.x), Math.Abs((int) coordinates.z), mouseX, mouseY);
                     highlightWeaponAreaEffect(weaponAreaEffect);
                 } 
                 else if (!(validTiles.Contains(hoverTile) && actionMouseHighlight != null)){
@@ -158,7 +169,14 @@ public class PlayerUnitController : MonoBehaviour {
 
     private void highlightWeaponRange()
     {
-        validTiles = currentWeapon.getWeaponHighlights((int)coordinates.x, (int)coordinates.z);
+        if (currentItem is Weapon)
+        {
+            validTiles = ((Weapon)currentItem).getWeaponHighlights((int)coordinates.x, (int)coordinates.z);
+        }
+        else if (currentItem is HealingItem)
+        {
+            validTiles = ((HealingItem)currentItem).getHealingHighlights((int)coordinates.x, (int)coordinates.z);
+        }
         for (int i = 0; i < validTiles.Count; i++)
         {
             int x = Mathf.FloorToInt(validTiles[i].PosX / _tileMapBuilder.tileSize);

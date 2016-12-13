@@ -2,9 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Weapon
+public class Weapon : Item
 {
-    protected string name;
     protected int cooldown;
     public int ammunition;
     protected List<Vector3> pattern;
@@ -12,7 +11,6 @@ public class Weapon
     protected int range;
     protected bool isDiagonal;
     protected bool isMelee = false;
-    // TODO add texture/sprite
     // type (energetic, melee etc)
     // damage
     // modifiers agains types of armor (piercing, good against light armor etc)
@@ -44,7 +42,6 @@ public class Weapon
         {
             return TileHighlight.FindHighlight(TileMap.getTile((int)x, (int)y), range, true);
         }
-        
     }
 
     private List<Tile> getWeaponHighlightsFromPattern(int x, int y) //TODO needs improvements
