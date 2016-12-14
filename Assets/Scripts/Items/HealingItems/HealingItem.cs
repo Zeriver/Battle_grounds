@@ -18,6 +18,16 @@ public class HealingItem : Item
 
     public void use()
     {
+        subtractAmount(1);
+    }
 
+    protected void addAmount(int value)
+    {
+        amount += value;
+    }
+
+    protected void subtractAmount(int value)
+    {
+        amount -= value;
     }
 }

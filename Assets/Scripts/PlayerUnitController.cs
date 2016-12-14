@@ -13,7 +13,8 @@ public class PlayerUnitController : MonoBehaviour {
     private bool showMoves;
     private int maxMovement, movesLeft;
     private Vector3 coordinates;
-    private List<Weapon> weapons;
+    public List<Weapon> weapons;
+    public List<HealingItem> healingItems;
     private Item currentItem;
 
     private List<Tile> validTiles;
@@ -48,18 +49,24 @@ public class PlayerUnitController : MonoBehaviour {
         validTiles = new List<Tile>();
         highlights = new List<GameObject>();
         weapons = new List<Weapon>();
+        healingItems = new List<HealingItem>();
         weaponHighlights = new List<GameObject>();
         weaponAreaEffectHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
         TileMap.setTileNotWalkable(x, y);
         weapons.Add(new Pistol(5));
         weapons.Add(new FlameThrower(5));
-        currentItem = weapons[1];
+        healingItems.Add(new MediumHealingKit(2));
+        currentItem = healingItems[0];
     }
 	
 	void Update () {
 	    if (isSelected)
         {
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                //ItemCreator.createItems(weapons);
+            }
             if (showMoves && positionQueue.Count == 0)
             {
                 showAllowedMovements();
@@ -106,15 +113,15 @@ public class PlayerUnitController : MonoBehaviour {
                         if (currentItem is Weapon)
                         {
                             ((Weapon)currentItem).useWeapon();
-                            isActionUsed = true;
-                            switchActionMode();
                             //TODO
                         }
                         else if (currentItem is HealingItem)
                         {
+                            ((HealingItem)currentItem).use();
                             //TODO
                         }
-
+                        isActionUsed = true;
+                        switchActionMode();
                     }
                 }
             }
@@ -153,18 +160,13 @@ public class PlayerUnitController : MonoBehaviour {
             Destroy(highlights[i]);
         }
         validTiles = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), movesLeft, false);
-        highlightAvailableMoves();
-        showMoves = false;
-    }
-
-    private void highlightAvailableMoves() //Three very similar methods, needs refactoring + find better way than creating multiple lists of objects TODO
-    {
         for (int i = 0; i < validTiles.Count; i++)
         {
             int x = Mathf.FloorToInt(validTiles[i].PosX / _tileMapBuilder.tileSize);
             int z = Mathf.FloorToInt(validTiles[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
             highlights.Add(createPlane(x, z, new Color(0.5f, 0.85f, 0.0f, 0.5f)));
         }
+        showMoves = false;
     }
 
     private void highlightWeaponRange()

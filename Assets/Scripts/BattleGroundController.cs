@@ -13,8 +13,12 @@ public class BattleGroundController : MonoBehaviour {
 
     public GameObject _playerUnit;
     public GameObject _playerUI;
+    public GameObject _itemCreator;
+    public GameObject _inventory;
 
     private PlayerUI playerUI;
+    private ItemCreator itemCreator;
+    private Inventory inventory;
     private List<PlayerUnitController> playerUnits = new List<PlayerUnitController>();
     private PlayerUnitController lastActiveUnit;
 
@@ -26,6 +30,8 @@ public class BattleGroundController : MonoBehaviour {
         _mouseHighlight = GetComponent<MouseHighlight>();
         _cameraController = GetComponent<CameraController>();
         playerUI = _playerUI.GetComponent("PlayerUI") as PlayerUI;
+        itemCreator = _itemCreator.GetComponent("ItemCreator") as ItemCreator;
+        inventory = _inventory.GetComponent("Inventory") as Inventory;
         turnNumber = 1;
         createBattleGround(30, 30);
 	}
@@ -36,6 +42,10 @@ public class BattleGroundController : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.Tab))
             {
                 setNextUnitActive();
+            }
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                inventoryWindowService();
             }
             if (Input.GetMouseButtonDown(0))
             {
@@ -183,6 +193,19 @@ public class BattleGroundController : MonoBehaviour {
         playerUI.IsOpen = false;
     }
 
+
+    private void inventoryWindowService()
+    {
+        if (!inventory.equipment.enabled)
+        {
+            itemCreator.createItems(lastActiveUnit.weapons);
+        }
+        else
+        {
+            itemCreator.destroyItems();
+        }
+        inventory.changeCanvasEnabled();
+    }
 
 
 

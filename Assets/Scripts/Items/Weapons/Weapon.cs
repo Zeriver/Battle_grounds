@@ -32,6 +32,11 @@ public class Weapon : Item
         ammunition -= value;
     }
 
+    public string getName()
+    {
+        return name;
+    }
+
 
     public List<Tile> getWeaponHighlights(int x, int y)
     {
