@@ -7,6 +7,7 @@ public class PlayerUnitController : MonoBehaviour {
     // mouse events must be moved to BattleGroundController TODO
 
     private GameObject BattleGroundObject;
+    private Canvas InventoryCanvas;
     public bool isSelected;
     private bool isActionMode;
     private bool isActionUsed;
@@ -37,6 +38,7 @@ public class PlayerUnitController : MonoBehaviour {
         BattleGroundObject = GameObject.Find("BattleGrounds");
         _mouseHiglight = BattleGroundObject.GetComponent("MouseHighlight") as MouseHighlight;
         _tileMapBuilder = BattleGroundObject.GetComponent("TileMapBuilder") as TileMapBuilder;
+        InventoryCanvas = GameObject.Find("EquipmentCanvas").GetComponent<Canvas>();
 
         isSelected = false;
         showMoves = false;
@@ -61,12 +63,8 @@ public class PlayerUnitController : MonoBehaviour {
     }
 	
 	void Update () {
-	    if (isSelected)
+	    if (isSelected && !InventoryCanvas.enabled)
         {
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                //ItemCreator.createItems(weapons);
-            }
             if (showMoves && positionQueue.Count == 0)
             {
                 showAllowedMovements();

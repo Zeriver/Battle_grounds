@@ -4,7 +4,7 @@ using System.Collections;
 using System;
 
 [RequireComponent(typeof(TileMapBuilder))]
-public class MouseHighlight : MonoBehaviour, IPointerClickHandler
+public class MouseHighlight : MonoBehaviour
 {
 
     TileMapBuilder _tileMapBuilder;
@@ -15,11 +15,6 @@ public class MouseHighlight : MonoBehaviour, IPointerClickHandler
     void Start()
     {
         _tileMapBuilder = GetComponent<TileMapBuilder>();
-    }
-
-    public void OnPointerClick(PointerEventData eventData)  //Blocking clicking on world objects when open UI TODO
-    {
-        
     }
 
     void Update()

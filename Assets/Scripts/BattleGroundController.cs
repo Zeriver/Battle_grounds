@@ -39,26 +39,29 @@ public class BattleGroundController : MonoBehaviour {
 	void Update () {
         if (playerTurn)
         {
-            if (Input.GetKeyDown(KeyCode.Tab))
-            {
-                setNextUnitActive();
-            }
             if (Input.GetKeyDown(KeyCode.Q))
             {
                 inventoryWindowService();
             }
-            if (Input.GetMouseButtonDown(0))
+            if (!inventory.equipment.enabled)
             {
-                Transform mousePositin = _mouseHighlight.getHighlightSelection();
-                PlayerUnitController clickedUnit = getClickedUnit((int)mousePositin.position.x, (int)mousePositin.position.z);
-                if (clickedUnit != null)
+                if (Input.GetKeyDown(KeyCode.Tab))
                 {
-                    deactivatePlayerUnits();
-                    clickedUnit.setPlayerUnitActive();
-                    _cameraController.setCameraToActiveUnit(clickedUnit.transform.position);
+                    setNextUnitActive();
                 }
-                Tile clickedTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
-                //Checking click on future events TODO
+                if (Input.GetMouseButtonDown(0))
+                {
+                    Transform mousePositin = _mouseHighlight.getHighlightSelection();
+                    PlayerUnitController clickedUnit = getClickedUnit((int)mousePositin.position.x, (int)mousePositin.position.z);
+                    if (clickedUnit != null)
+                    {
+                        deactivatePlayerUnits();
+                        clickedUnit.setPlayerUnitActive();
+                        _cameraController.setCameraToActiveUnit(clickedUnit.transform.position);
+                    }
+                    Tile clickedTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
+                    //Checking click on future events TODO
+                }
             }
         }
         if (enemyTurn)
