@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
+using System;
 
 [RequireComponent(typeof(TileMapBuilder))]
-public class MouseHighlight : MonoBehaviour
+public class MouseHighlight : MonoBehaviour, IPointerClickHandler
 {
 
     TileMapBuilder _tileMapBuilder;
@@ -15,6 +17,10 @@ public class MouseHighlight : MonoBehaviour
         _tileMapBuilder = GetComponent<TileMapBuilder>();
     }
 
+    public void OnPointerClick(PointerEventData eventData)  //Blocking clicking on world objects when open UI TODO
+    {
+        
+    }
 
     void Update()
     {
@@ -25,7 +31,6 @@ public class MouseHighlight : MonoBehaviour
         {
             int x = Mathf.FloorToInt(hitInfo.point.x / _tileMapBuilder.tileSize);
             int z = Mathf.FloorToInt(hitInfo.point.z / _tileMapBuilder.tileSize);
-            //Debug.Log(gameObject.transform.InverseTransformPoint(hitInfo.point));
 
             currentTile.z = z;
             currentTile.x = x;
@@ -38,4 +43,5 @@ public class MouseHighlight : MonoBehaviour
     {
         return HighlightSelection;
     }
+
 }

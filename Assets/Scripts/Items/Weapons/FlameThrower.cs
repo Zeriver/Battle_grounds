@@ -9,6 +9,7 @@ public class FlameThrower : Weapon
     public FlameThrower(int ammunition) : base(ammunition)
     {
         name = "Flame Thrower";
+        description = "Light them up!";
         cooldown = 3;
         this.ammunition = ammunition;
         range = 1;

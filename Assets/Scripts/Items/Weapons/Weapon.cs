@@ -37,6 +37,11 @@ public class Weapon : Item
         return name;
     }
 
+    public string getDescription()
+    {
+        return description;
+    }
+
 
     public List<Tile> getWeaponHighlights(int x, int y)
     {

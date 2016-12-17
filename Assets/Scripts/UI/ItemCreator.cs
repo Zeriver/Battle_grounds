@@ -29,6 +29,9 @@ public class ItemCreator : MonoBehaviour
             items.Add(panel);
             ItemPrefab itemPrefab = itemPanel.GetComponent<ItemPrefab>();
             itemPrefab.itemName.text = weapons[i].getName();
+            Button button = itemPrefab.itemButton;
+            ItemButton itemButton = button.GetComponent<ItemButton>();
+            itemButton.description = weapons[i].getDescription();
             panel.transform.SetParent(parentPanel.transform);
         }
     }
@@ -40,4 +43,5 @@ public class ItemCreator : MonoBehaviour
             Destroy(items[i]);
         }
     }
+
 }

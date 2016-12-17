@@ -8,6 +8,7 @@ public class Pistol : Weapon {
     public Pistol(int ammunition) : base(ammunition)
     {
         name = "Pistol";
+        description = "Shoot stuff";
         cooldown = 0;
         this.ammunition = ammunition;
         range = 4;

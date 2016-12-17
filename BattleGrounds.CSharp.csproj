@@ -81,6 +81,7 @@
     <Compile Include="Assets\Scripts\TilePath.cs" />
     <Compile Include="Assets\Scripts\TilePathFinder.cs" />
     <Compile Include="Assets\Scripts\UI\Inventory.cs" />
+    <Compile Include="Assets\Scripts\UI\ItemButton.cs" />
     <Compile Include="Assets\Scripts\UI\ItemCreator.cs" />
     <Compile Include="Assets\Scripts\UI\ItemPrefab.cs" />
   </ItemGroup>
