@@ -20,7 +20,7 @@ public class BattleGroundController : MonoBehaviour {
     private ItemCreator itemCreator;
     private Inventory inventory;
     private List<PlayerUnitController> playerUnits = new List<PlayerUnitController>();
-    private PlayerUnitController lastActiveUnit;
+    public PlayerUnitController lastActiveUnit;
 
     private bool playerTurn, enemyTurn, allyTurn, endTurn;
     private int turnNumber;
@@ -197,10 +197,11 @@ public class BattleGroundController : MonoBehaviour {
     }
 
 
-    private void inventoryWindowService()
+    public void inventoryWindowService()
     {
         if (!inventory.equipment.enabled)
         {
+            lastActiveUnit.DestroyWeaponHiglights();
             itemCreator.createItems(lastActiveUnit.weapons);
         }
         else

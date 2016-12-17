@@ -16,7 +16,7 @@ public class PlayerUnitController : MonoBehaviour {
     private Vector3 coordinates;
     public List<Weapon> weapons;
     public List<HealingItem> healingItems;
-    private Item currentItem;
+    public Item currentItem;
 
     private List<Tile> validTiles;
     private List<GameObject> highlights;
@@ -225,15 +225,20 @@ public class PlayerUnitController : MonoBehaviour {
         }
         else
         {
-            for (int i = 0; i < weaponHighlights.Count; i++)
-            {
-                Destroy(weaponHighlights[i]);
-            }
+            DestroyWeaponHiglights();
             for (int i = 0; i < weaponAreaEffectHighlights.Count; i++)
             {
                 Destroy(weaponAreaEffectHighlights[i]);
             }
             showMoves = true;
+        }
+    }
+
+    public void DestroyWeaponHiglights()
+    {
+        for (int i = 0; i < weaponHighlights.Count; i++)
+        {
+            Destroy(weaponHighlights[i]);
         }
     }
 
