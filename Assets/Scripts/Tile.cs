@@ -28,7 +28,7 @@ public class Tile {
                 moveCost = 1;
                 break;
             case 2:
-                moveCost = 1;
+                moveCost = 3;
                 break;
             case 3:
                 moveCost = 999;  // not walkable

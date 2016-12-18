@@ -12,6 +12,7 @@ public class PlayerUnitController : MonoBehaviour {
     private bool isActionMode;
     private bool isActionUsed;
     private bool showMoves;
+    private bool moving;
     private float moveSpeed;
     private int maxMovement, movesLeft;
     private Vector3 coordinates;
@@ -26,6 +27,7 @@ public class PlayerUnitController : MonoBehaviour {
     private List<Vector3> positionQueue;
     private Vector3 actionMouseHighlight;
     private Quaternion targetRotation;
+    private Vector3 targetPosition;
 
     private TileMapBuilder _tileMapBuilder;
     private MouseHighlight _mouseHiglight;
@@ -46,11 +48,12 @@ public class PlayerUnitController : MonoBehaviour {
         showMoves = false;
         isActionMode = false;
         isActionUsed = false;
+        moving = false;
         maxMovement = moves;
         movesLeft = maxMovement;
         coordinates = new Vector3(x, 2.5f, y); //in battle map vertices   // TEMPORARY 2.5f on y because model pivot is incorrect TODO
-        moveSpeed = 8.0f;
-        transform.position = new Vector3(coordinates.x + 0.5f, coordinates.y, coordinates.z + 0.5f);
+        moveSpeed = 6.0f;
+        transform.position = new Vector3(coordinates.x + 0.5f, coordinates.y, -coordinates.z + 0.5f);
         targetRotation = transform.rotation;
         validTiles = new List<Tile>();
         highlights = new List<GameObject>();
@@ -73,37 +76,13 @@ public class PlayerUnitController : MonoBehaviour {
             {
                 showAllowedMovements();
             }
-            if (positionQueue.Count > 0)
+            if (positionQueue.Count > 0 && !moving)
             {
-                if (positionQueue[0].x > coordinates.x)
-                {
-                    targetRotation = Quaternion.Euler(-90.0f, 90.0f, 0.0f);
-                }
-                else if (positionQueue[0].x < coordinates.x)
-                {
-                    targetRotation = Quaternion.Euler(-90.0f, -90.0f, 0.0f);
-                }
-                else if(positionQueue[0].z < coordinates.z)
-                {
-                    targetRotation = Quaternion.Euler(-90.0f, 0.0f, 0.0f);
-                }
-                else if(positionQueue[0].z > coordinates.z)
-                {
-                    targetRotation = Quaternion.Euler(-90.0f, 180.0f, 0.0f);
-                }
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, moveSpeed * 1.5f * Time.deltaTime);
-                coordinates += (positionQueue[0] - coordinates).normalized * moveSpeed * Time.deltaTime;
-                if (Vector3.Distance(positionQueue[0], coordinates) <= 0.1f)
-                {
-                    coordinates = positionQueue[0];
-                    transform.position = new Vector3(positionQueue[0].x + 0.5f, positionQueue[0].y, -positionQueue[0].z + 0.5f);
-                    positionQueue.RemoveAt(0);
-                }
-                if (positionQueue.Count == 0)
-                {
-                    TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
-                }
-                showMoves = true;
+                setNextStep();
+            }
+            if (moving)
+            {
+                moveToNextStep();
             }
             if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0) //LEFT CLICK
             {
@@ -225,6 +204,52 @@ public class PlayerUnitController : MonoBehaviour {
         plane.GetComponent<Renderer>().material.color = color;
         plane.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
         return plane;
+    }
+
+    private void setNextStep()
+    {
+        if (positionQueue[0].x > coordinates.x)
+        {
+            targetRotation = Quaternion.Euler(-90.0f, 90.0f, 0.0f);
+            targetPosition = new Vector3(transform.position.x + 1f, transform.position.y, transform.position.z);
+        }
+        else if (positionQueue[0].x < coordinates.x)
+        {
+            targetRotation = Quaternion.Euler(-90.0f, -90.0f, 0.0f);
+            targetPosition = new Vector3(transform.position.x - 1f, transform.position.y, transform.position.z);
+
+        }
+        else if (positionQueue[0].z < coordinates.z)
+        {
+            targetRotation = Quaternion.Euler(-90.0f, 0.0f, 0.0f);
+            targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f);
+
+        }
+        else if (positionQueue[0].z > coordinates.z)
+        {
+            targetRotation = Quaternion.Euler(-90.0f, 180.0f, 0.0f);
+            targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f);
+
+        }
+        moving = true;
+    }
+
+    private void moveToNextStep()
+    {
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, moveSpeed * 1.5f * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+        if (Vector3.Distance(targetPosition, transform.position) <= 0.1f)
+        {
+            coordinates = positionQueue[0];
+            transform.position = new Vector3(positionQueue[0].x + 0.5f, positionQueue[0].y, -positionQueue[0].z + 0.5f);
+            positionQueue.RemoveAt(0);
+            moving = false;
+        }
+        if (positionQueue.Count == 0)
+        {
+            TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
+        }
+        showMoves = true;
     }
 
     private void setActionMode(bool value)
