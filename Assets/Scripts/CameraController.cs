@@ -19,10 +19,10 @@ public class CameraController : MonoBehaviour {
     void Start () {
         movingToActive = false;
         cameraSpeed = 3.0f;
-        Camera.main.transform.rotation = Quaternion.Euler(55.0f, 47.0f, 0.0f);
-        Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, 12.0f, Camera.main.transform.position.z);
+        Camera.main.transform.rotation = Quaternion.Euler(38.5f, 47.0f, 0.0f);
+        Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, 7.0f, Camera.main.transform.position.z);
 
-        minCameraHeight = 9.0f;
+        minCameraHeight = 6.0f;
         maxCameraHeight = 18.0f;
         cameraEdgeOffset = 5.0f;
         cameraEdgeSpeed = 0.08f;
@@ -70,8 +70,7 @@ public class CameraController : MonoBehaviour {
             Camera.main.transform.position = Camera.main.transform.position + new Vector3(-cameraEdgeSpeed, 0.0f, -cameraEdgeSpeed);
             movingToActive = false;
         }
-
-
+        
         if (Input.GetAxis("Mouse ScrollWheel") != 0f)
         {
             Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + (Input.GetAxis("Mouse ScrollWheel") * 10), Camera.main.transform.position.z);

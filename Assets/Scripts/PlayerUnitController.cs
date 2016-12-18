@@ -12,6 +12,7 @@ public class PlayerUnitController : MonoBehaviour {
     private bool isActionMode;
     private bool isActionUsed;
     private bool showMoves;
+    private float moveSpeed;
     private int maxMovement, movesLeft;
     private Vector3 coordinates;
     public List<Weapon> weapons;
@@ -24,6 +25,7 @@ public class PlayerUnitController : MonoBehaviour {
     private List<GameObject> weaponAreaEffectHighlights;
     private List<Vector3> positionQueue;
     private Vector3 actionMouseHighlight;
+    private Quaternion targetRotation;
 
     private TileMapBuilder _tileMapBuilder;
     private MouseHighlight _mouseHiglight;
@@ -46,8 +48,10 @@ public class PlayerUnitController : MonoBehaviour {
         isActionUsed = false;
         maxMovement = moves;
         movesLeft = maxMovement;
-        coordinates = new Vector3(x, 0.0f, y); //in battle map vertices
+        coordinates = new Vector3(x, 2.5f, y); //in battle map vertices   // TEMPORARY 2.5f on y because model pivot is incorrect TODO
+        moveSpeed = 8.0f;
         transform.position = new Vector3(coordinates.x + 0.5f, coordinates.y, coordinates.z + 0.5f);
+        targetRotation = transform.rotation;
         validTiles = new List<Tile>();
         highlights = new List<GameObject>();
         weapons = new List<Weapon>();
@@ -71,7 +75,24 @@ public class PlayerUnitController : MonoBehaviour {
             }
             if (positionQueue.Count > 0)
             {
-                coordinates += (positionQueue[0] - coordinates).normalized * 15.0f * Time.deltaTime;
+                if (positionQueue[0].x > coordinates.x)
+                {
+                    targetRotation = Quaternion.Euler(-90.0f, 90.0f, 0.0f);
+                }
+                else if (positionQueue[0].x < coordinates.x)
+                {
+                    targetRotation = Quaternion.Euler(-90.0f, -90.0f, 0.0f);
+                }
+                else if(positionQueue[0].z < coordinates.z)
+                {
+                    targetRotation = Quaternion.Euler(-90.0f, 0.0f, 0.0f);
+                }
+                else if(positionQueue[0].z > coordinates.z)
+                {
+                    targetRotation = Quaternion.Euler(-90.0f, 180.0f, 0.0f);
+                }
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, moveSpeed * 1.5f * Time.deltaTime);
+                coordinates += (positionQueue[0] - coordinates).normalized * moveSpeed * Time.deltaTime;
                 if (Vector3.Distance(positionQueue[0], coordinates) <= 0.1f)
                 {
                     coordinates = positionQueue[0];
@@ -99,7 +120,7 @@ public class PlayerUnitController : MonoBehaviour {
                         List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), clickedTile);
                         for (int i = 0; i < path.Count; i++)
                         {
-                            positionQueue.Add(new Vector3(path[i].PosX, 0.0f, path[i].PosY));
+                            positionQueue.Add(new Vector3(path[i].PosX, coordinates.y, path[i].PosY));
                         }
                         movesLeft -= positionQueue.Count;
                     }
