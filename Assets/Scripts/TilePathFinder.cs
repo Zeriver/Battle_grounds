@@ -12,7 +12,7 @@ public class TilePathFinder : MonoBehaviour
         List<TilePath> open = new List<TilePath>();
 
         TilePath originPath = new TilePath();
-        originPath.addTile(originTile);
+        originPath.addTile(originTile, false);
 
         open.Add(originPath);
 
@@ -39,7 +39,7 @@ public class TilePathFinder : MonoBehaviour
             {
                 if (!adjacentTiles[i].IsWalkable) continue;
                 TilePath newTilePath = new TilePath(current);
-                newTilePath.addTile(adjacentTiles[i]);
+                newTilePath.addTile(adjacentTiles[i], false);
                 open.Add(newTilePath);
             }
         }

@@ -37,7 +37,7 @@ public class BattleGroundController : MonoBehaviour {
 	}
 	
 	void Update () {
-        if (playerTurn)
+        if (playerTurn && !lastActiveUnit.moving)
         {
             if (Input.GetKeyDown(KeyCode.Q))
             {

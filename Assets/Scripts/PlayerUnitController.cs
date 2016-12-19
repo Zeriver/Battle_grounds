@@ -12,10 +12,10 @@ public class PlayerUnitController : MonoBehaviour {
     private bool isActionMode;
     private bool isActionUsed;
     private bool showMoves;
-    private bool moving;
     private float moveSpeed;
     private int maxMovement, movesLeft;
     private Vector3 coordinates;
+    public bool moving;
     public List<Weapon> weapons;
     public List<HealingItem> healingItems;
     public Item currentItem;
@@ -236,7 +236,7 @@ public class PlayerUnitController : MonoBehaviour {
 
     private void moveToNextStep()
     {
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, moveSpeed * 1.5f * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, moveSpeed * 2.2f * Time.deltaTime);
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
         if (Vector3.Distance(targetPosition, transform.position) <= 0.1f)
         {
@@ -286,6 +286,7 @@ public class PlayerUnitController : MonoBehaviour {
         {
             Destroy(weaponHighlights[i]);
         }
+        validTiles.Clear();
     }
 
 

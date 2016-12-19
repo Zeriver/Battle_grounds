@@ -20,9 +20,16 @@ public class TilePath
         lastTile = tp.lastTile;
     }
 
-    public void addTile(Tile t)
+    public void addTile(Tile t, bool isWeapon)
     {
-        costOfPath += t.MoveCost;
+        if (isWeapon)
+        {
+            costOfPath += 1;
+        }
+        else
+        {
+            costOfPath += t.MoveCost;
+        }
         listOfTiles.Add(t);
         lastTile = t;
     }

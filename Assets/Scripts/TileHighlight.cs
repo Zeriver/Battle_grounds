@@ -15,7 +15,7 @@ public class TileHighlight
         List<TilePath> open = new List<TilePath>();
 
         TilePath originPath = new TilePath();
-        originPath.addTile(originTile);
+        originPath.addTile(originTile, isWeapon);
 
         open.Add(originPath);
 
@@ -45,14 +45,14 @@ public class TileHighlight
                         if (originTile.PosX == adjacentTiles[i].PosX || originTile.PosY == adjacentTiles[i].PosY)
                         {
                             TilePath newTilePath = new TilePath(current);
-                            newTilePath.addTile(adjacentTiles[i]);
+                            newTilePath.addTile(adjacentTiles[i], isWeapon);
                             open.Add(newTilePath);
                         }
                     }
                     else
                     {
                         TilePath newTilePath = new TilePath(current);
-                        newTilePath.addTile(adjacentTiles[i]);
+                        newTilePath.addTile(adjacentTiles[i], isWeapon);
                         open.Add(newTilePath);
                     }
                     
