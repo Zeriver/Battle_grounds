@@ -65,6 +65,8 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\BattleGroundController.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
+    <Compile Include="Assets\Scripts\Enemy\Enemy.cs" />
+    <Compile Include="Assets\Scripts\Enemy\Impaler.cs" />
     <Compile Include="Assets\Scripts\Items\HealingItems\HealingItem.cs" />
     <Compile Include="Assets\Scripts\Items\HealingItems\MediumHealingKit.cs" />
     <Compile Include="Assets\Scripts\Items\Item.cs" />

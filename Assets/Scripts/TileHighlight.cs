@@ -38,24 +38,20 @@ public class TileHighlight
             List<Tile> adjacentTiles = TileMap.GetListOfAdjacentTiles(current.lastTile.PosX, current.lastTile.PosY);
             for (int i = 0; i < adjacentTiles.Count; i ++)
             {
-                if (adjacentTiles[i].IsWalkable)
+                if (isWeapon)   // now weapons can shoot units but they can shoot something behind TODO
                 {
-                    if (isWeapon)
-                    {
-                        if (originTile.PosX == adjacentTiles[i].PosX || originTile.PosY == adjacentTiles[i].PosY)
-                        {
-                            TilePath newTilePath = new TilePath(current);
-                            newTilePath.addTile(adjacentTiles[i], isWeapon);
-                            open.Add(newTilePath);
-                        }
-                    }
-                    else
+                    if (originTile.PosX == adjacentTiles[i].PosX || originTile.PosY == adjacentTiles[i].PosY)
                     {
                         TilePath newTilePath = new TilePath(current);
                         newTilePath.addTile(adjacentTiles[i], isWeapon);
                         open.Add(newTilePath);
                     }
-                    
+                }
+                else if (adjacentTiles[i].IsWalkable)
+                {
+                    TilePath newTilePath = new TilePath(current);
+                    newTilePath.addTile(adjacentTiles[i], isWeapon);
+                    open.Add(newTilePath);
                 }
             }
         }

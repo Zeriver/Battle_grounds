@@ -63,6 +63,8 @@ public class PlayerUnitController : MonoBehaviour {
         weaponAreaEffectHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
         TileMap.setTileNotWalkable(x, y);
+
+        //EQ
         weapons.Add(new Pistol(5));
         weapons.Add(new FlameThrower(5));
         healingItems.Add(new MediumHealingKit(2));
@@ -317,6 +319,11 @@ public class PlayerUnitController : MonoBehaviour {
         movesLeft = maxMovement;
         isActionUsed = false;
         setActionMode(false);
+    }
+
+    public Tile getPlayerUnitTile()
+    {
+        return TileMap.getTile((int)coordinates.x, (int)coordinates.z);
     }
 
 

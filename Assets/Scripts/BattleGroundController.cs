@@ -12,6 +12,7 @@ public class BattleGroundController : MonoBehaviour {
     CameraController _cameraController;
 
     public GameObject _playerUnit;
+    public GameObject _enemyUnit;
     public GameObject _playerUI;
     public GameObject _itemCreator;
     public GameObject _inventory;
@@ -19,7 +20,8 @@ public class BattleGroundController : MonoBehaviour {
     private PlayerUI playerUI;
     private ItemCreator itemCreator;
     private Inventory inventory;
-    private List<PlayerUnitController> playerUnits = new List<PlayerUnitController>();
+    public List<PlayerUnitController> playerUnits = new List<PlayerUnitController>();
+    public List<Enemy> enemyUnits = new List<Enemy>();
     public PlayerUnitController lastActiveUnit;
 
     private bool playerTurn, enemyTurn, allyTurn, endTurn;
@@ -66,9 +68,23 @@ public class BattleGroundController : MonoBehaviour {
         }
         if (enemyTurn)
         {
-            StartCoroutine(WaitAndPrint(2.0f));
-            //enemyTurn = false;
-            //allyTurn = true;
+            performEnemyTurn();
+            bool allEnemiesDone = true;
+            Debug.Log("Enemy turn in progress...");
+            for (int i = 0; i < enemyUnits.Count; i++)
+            {
+                if (!enemyUnits[i].turnDone)
+                {
+                    allEnemiesDone = false;
+                }
+            }
+            if (allEnemiesDone)
+            {
+                enemyTurn = false;
+                allyTurn = true;
+            }
+
+            
         }
         if (allyTurn)
         {
@@ -106,6 +122,27 @@ public class BattleGroundController : MonoBehaviour {
                 playerUnits[i].createPlayerUnit(8, 15, 5);
             }
 
+        }
+
+
+        GameObject enemyUnit = _enemyUnit as GameObject;
+        Enemy enemyUnitController = enemyUnit.GetComponent<Enemy>();
+
+        for (int i = 0; i < 1; i++)
+        {
+            enemyUnits.Add(Instantiate(_enemyUnit).GetComponent<Enemy>());
+            if (i == 0)
+            {
+                enemyUnits[i].createEnemy(12, 12, 1);
+            }
+            else if (i == 1)
+            {
+                enemyUnits[i].createEnemy(12, 5, 1);
+            }
+            else if (i == 2)
+            {
+                enemyUnits[i].createEnemy(8, 8, 1);
+            }
         }
 
 
@@ -181,6 +218,10 @@ public class BattleGroundController : MonoBehaviour {
             playerUnits[i].resetAfterTurn();
         }
         lastActiveUnit.setPlayerUnitActive();
+        for (int i = 0; i < enemyUnits.Count; i++)
+        {
+            enemyUnits[i].resetAfterTurn();
+        }
         playerTurn = true;
         turnNumber++;
         playerUI.updateTurn(turnNumber);
@@ -190,10 +231,13 @@ public class BattleGroundController : MonoBehaviour {
 
     public void endPlayerTurn()
     {
-        deactivatePlayerUnits();
-        playerTurn = false;
-        enemyTurn = true;
-        playerUI.IsOpen = false;
+        if (!lastActiveUnit.moving)
+        {
+            deactivatePlayerUnits();
+            playerTurn = false;
+            enemyTurn = true;
+            playerUI.IsOpen = false;
+        }
     }
 
 
@@ -211,6 +255,21 @@ public class BattleGroundController : MonoBehaviour {
         inventory.changeCanvasEnabled();
     }
 
+
+    private void performEnemyTurn()
+    {
+        for (int i = 0; i < enemyUnits.Count; i++)
+        {
+            if (!enemyUnits[i].turnInProgress)
+            {
+                if (enemyUnits[i].type == 1)
+                {
+                    enemyUnits[i].performTurn();
+                }
+            }
+            
+        }
+    }
 
 
     //////// Temporary help functions
