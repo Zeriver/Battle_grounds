@@ -9,7 +9,7 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
     private BattleGroundController _battleGroundController;
     private TileMapBuilder _tileMapBuilder;
 
-    private volatile List<GameObject> movementHighlights;
+    private volatile List<GameObject> movementHighlights = new List<GameObject>();
     private volatile List<GameObject> weaponHighlights = new List<GameObject>();
 
     public int type;
@@ -17,13 +17,14 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
     protected Vector3 coordinates;
     private float moveSpeed;
     private List<Vector3> positionQueue;
-    private Vector3 targetPosition;
     private bool moving;
-    protected int moves;
+    protected int movesLeft, maxMovement;
     private int attackRange = 2;
 
     public bool turnDone;
     public bool turnInProgress;
+    private Vector3 targetPosition;
+    private Quaternion targetRotation;
     private PlayerUnitController unitToAttack = null;
     private List<Tile> attackTilesInRange = new List<Tile>();
     private List<Tile> movementToAttackTilesInRange = new List<Tile>();
@@ -40,11 +41,14 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
     {
         this.type = type;
         name = "Impaler";
-        moves = 4;
-        moveSpeed = 8f;
+        maxMovement = 4;
+        movesLeft = maxMovement;
+        moveSpeed = 3f;
         coordinates = new Vector3(x, transform.position.y, z);
         transform.position = new Vector3(coordinates.x + 0.5f, coordinates.y, -coordinates.z + 0.5f);
         TileMap.setTileNotWalkable(x, z);
+
+        positionQueue = new List<Vector3>();
     }
 
     void Update()
@@ -59,24 +63,57 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
             }
         }
 
+        if (positionQueue.Count > 0 && !moving && movementHighlights.Count == 0)
+        {
+            if (positionQueue[0].x > coordinates.x)
+            {
+                targetRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
+                targetPosition = new Vector3(transform.position.x + 1f, transform.position.y, transform.position.z);
+            }
+            else if (positionQueue[0].x < coordinates.x)
+            {
+                targetRotation = Quaternion.Euler(0.0f, -90.0f, 0.0f);
+                targetPosition = new Vector3(transform.position.x - 1f, transform.position.y, transform.position.z);
 
-       
-        //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, moveSpeed * 2.2f * Time.deltaTime);
-        /*
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-        if (Vector3.Distance(targetPosition, transform.position) <= 0.1f)
-        {
-            coordinates = positionQueue[0];
-            transform.position = new Vector3(positionQueue[0].x + 0.5f, positionQueue[0].y, -positionQueue[0].z + 0.5f);
-            positionQueue.RemoveAt(0);
-            moving = false;
+            }
+            else if (positionQueue[0].z < coordinates.z)
+            {
+                targetRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f);
+
+            }
+            else if (positionQueue[0].z > coordinates.z)
+            {
+                targetRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f);
+
+            }
+            moving = true;
         }
-        if (positionQueue.Count == 0)
+        if (moving)
         {
-            TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, moveSpeed * 2.2f * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+            if (Vector3.Distance(targetPosition, transform.position) <= 0.1f)
+            {
+                coordinates = positionQueue[0];
+                transform.position = new Vector3(positionQueue[0].x + 0.5f, positionQueue[0].y, -positionQueue[0].z + 0.5f);
+                positionQueue.RemoveAt(0);
+                moving = false;
+            }
+            if (positionQueue.Count == 0)
+            {
+                TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
+                if (attackUnitIfInRange())
+                {
+                    turnDone = false;
+                }
+                else
+                {
+                    turnDone = true;
+                }
+            }
         }
-       */
-        //showMoves = true;
     }
 
     public void performTurn()
@@ -84,42 +121,39 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
         turnInProgress = true;
         Tile currentTile = TileMap.getTile((int)coordinates.x, (int)coordinates.z);
         attackTilesInRange = TileHighlight.FindHighlight(currentTile, attackRange, true);
-        movementToAttackTilesInRange = TileHighlight.FindHighlight(currentTile, moves + attackRange, false);
-        movementTilesInRange = TileHighlight.FindHighlight(currentTile, moves + 1000, false);
+        movementTilesInRange = TileHighlight.FindHighlight(currentTile, movesLeft, false);
+        //movementToAttackTilesInRange = TileHighlight.FindHighlight(currentTile, moves + attackRange, false);
 
-        //attack if in range and with lowest HP
-
-        for (int j = 0; j < _battleGroundController.playerUnits.Count; j++)
+        //Attack if in range
+        if (attackUnitIfInRange())
         {
-            if (attackTilesInRange.Contains(_battleGroundController.playerUnits[j].getPlayerUnitTile()))
+            return;
+        }
+
+        //Move and attack unit if in range
+        for (int i = 0; i < movementTilesInRange.Count; i++)
+        {
+            attackTilesInRange = TileHighlight.FindHighlight(movementTilesInRange[i], attackRange, true);
+            for (int j = 0; j < _battleGroundController.playerUnits.Count; j++)
             {
-                //Attack
-                unitToAttack = _battleGroundController.playerUnits[j];
-                highlightAttackTiles(attackTilesInRange);
-                return;
+                if (attackTilesInRange.Contains(_battleGroundController.playerUnits[j].getPlayerUnitTile()))
+                {
+                    TileMap.setTileWalkable((int)coordinates.x, (int)coordinates.z);
+                    List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), movementTilesInRange[i]);
+                    for (int x = 0; x < path.Count; x++)
+                    {
+                        positionQueue.Add(new Vector3(path[x].PosX, coordinates.y, path[x].PosY));
+                    }
+                    movesLeft -= positionQueue.Count;
+                    highlightTiles(movementHighlights, movementTilesInRange, true);
+                    return;
+                }
             }
         }
 
 
         turnDone = true;
 
-
-        //move toward nearest attack range of opponent
-        /*
-        else if (!moving && movementToAttackTilesInRange.Where(x => GameManager.instance.players.Where(y => y.GetType() != typeof(AIPlayer) && y.HP > 0 && y != this && y.gridPosition == x.gridPosition).Count() > 0).Count() > 0)
-        {
-            var opponentsInRange = movementToAttackTilesInRange.Select(x => GameManager.instance.players.Where(y => y.GetType() != typeof(AIPlayer) && y.HP > 0 && y != this && y.gridPosition == x.gridPosition).Count() > 0 ? GameManager.instance.players.Where(y => y.gridPosition == x.gridPosition).First() : null).ToList();
-            Player opponent = opponentsInRange.OrderBy(x => x != null ? -x.HP : 1000).ThenBy(x => x != null ? TilePathFinder.FindPath(GameManager.instance.map[(int)gridPosition.x][(int)gridPosition.y], GameManager.instance.map[(int)x.gridPosition.x][(int)x.gridPosition.y]).Count() : 1000).First();
-
-            GameManager.instance.removeTileHighlights();
-            moving = true;
-            attacking = false;
-            GameManager.instance.highlightTilesAt(gridPosition, Color.blue, movementPerActionPoint, false);
-
-            List<Tile> path = TilePathFinder.FindPath(GameManager.instance.map[(int)gridPosition.x][(int)gridPosition.y], GameManager.instance.map[(int)opponent.gridPosition.x][(int)opponent.gridPosition.y], GameManager.instance.players.Where(x => x.gridPosition != gridPosition && x.gridPosition != opponent.gridPosition).Select(x => x.gridPosition).ToArray());
-            GameManager.instance.moveCurrentPlayer(path[(int)Mathf.Max(0, path.Count - 1 - attackRange)]);
-        }
-        */
         //move toward nearest opponent
         /*
         else if (!moving && movementTilesInRange.Where(x => GameManager.instance.players.Where(y => y.GetType() != typeof(AIPlayer) && y.HP > 0 && y != this && y.gridPosition == x.gridPosition).Count() > 0).Count() > 0)
@@ -143,18 +177,41 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
         unitToAttack = null;
         turnDone = false;
         turnInProgress = false;
+        movesLeft = maxMovement;
     }
 
-
-    private void highlightAttackTiles(List<Tile> attacktilesInRange)
+    private bool attackUnitIfInRange()
     {
-        for (int i = 0; i < attacktilesInRange.Count; i++)
+        for (int j = 0; j < _battleGroundController.playerUnits.Count; j++)
         {
-            int x = Mathf.FloorToInt(attacktilesInRange[i].PosX / _tileMapBuilder.tileSize);
-            int z = Mathf.FloorToInt(attacktilesInRange[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
-            weaponHighlights.Add(createPlane(x, z, new Color(1.0f, 0.0f, 0.05f, 0.5f)));
+            if (attackTilesInRange.Contains(_battleGroundController.playerUnits[j].getPlayerUnitTile()))
+            {
+                unitToAttack = _battleGroundController.playerUnits[j];
+                highlightTiles(weaponHighlights, attackTilesInRange, false);
+                return true;
+            }
         }
-        StartCoroutine(DestroyObjectsDelayed(1.4f, weaponHighlights));
+        return false;
+    }
+
+    private void highlightTiles(List<GameObject> highlights, List<Tile> tiles, bool isMovement)
+    {
+        Color tileColor;
+        if (isMovement)
+        {
+            tileColor = new Color(0.5f, 0.85f, 0.0f, 0.5f);
+        }
+        else
+        {
+            tileColor = new Color(1.0f, 0.0f, 0.05f, 0.5f);
+        }
+        for (int i = 0; i < tiles.Count; i++)
+        {
+            int x = Mathf.FloorToInt(tiles[i].PosX / _tileMapBuilder.tileSize);
+            int z = Mathf.FloorToInt(tiles[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
+            highlights.Add(createPlane(x, z, tileColor));
+        }
+        StartCoroutine(DestroyObjectsDelayed(1.4f, highlights));
     }
 
     private GameObject createPlane(int x, int z, Color color)   // needs to create mesh from sratch for better performance TODO

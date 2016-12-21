@@ -8,7 +8,7 @@ public class Impaler : Enemy {
     {
         name = "Impaler";
         type = 1;
-        moves = 4;
+        movesLeft = 4;
 
 
         coordinates = new Vector3(x, transform.position.y, y);
@@ -23,7 +23,7 @@ public class Impaler : Enemy {
 
     public void performTurn()
     {
-        Debug.Log(name + " " + moves);
+        Debug.Log(name + " " + movesLeft);
     }
 
 }
