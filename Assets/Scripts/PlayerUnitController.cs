@@ -12,6 +12,8 @@ public class PlayerUnitController : MonoBehaviour {
     private bool isActionMode;
     private bool isActionUsed;
     private bool showMoves;
+    private bool turningToAttack;
+    private bool attack;
     private float moveSpeed;
     private int maxMovement, movesLeft;
     public Vector3 coordinates;
@@ -86,6 +88,26 @@ public class PlayerUnitController : MonoBehaviour {
             {
                 moveToNextStep();
             }
+            if (turningToAttack)
+            {
+                turnToEnemy();
+            }
+            if (attack)
+            {
+                if (currentItem is Weapon)
+                {
+                    ((Weapon)currentItem).useWeapon();
+                    //TODO
+                }
+                else if (currentItem is HealingItem)
+                {
+                    ((HealingItem)currentItem).use();
+                    //TODO
+                }
+                attack = false;
+                isActionUsed = true;
+                switchActionMode();
+            }
             if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0) //LEFT CLICK
             {
                 Tile clickedTile = TileMap.getTile((int)_mouseHiglight.getHighlightSelection().position.x, (int)_mouseHiglight.getHighlightSelection().position.z);
@@ -110,18 +132,15 @@ public class PlayerUnitController : MonoBehaviour {
                 {
                     if (validTiles.Contains(clickedTile))
                     {
-                        if (currentItem is Weapon)
-                        {
-                            ((Weapon)currentItem).useWeapon();
-                            //TODO
-                        }
-                        else if (currentItem is HealingItem)
-                        {
-                            ((HealingItem)currentItem).use();
-                            //TODO
-                        }
-                        isActionUsed = true;
-                        switchActionMode();
+                        if (clickedTile.PosX > coordinates.x)
+                            targetRotation = Quaternion.Euler(-90.0f, 90.0f, 0.0f);
+                        else if (clickedTile.PosX < coordinates.x)
+                            targetRotation = Quaternion.Euler(-90.0f, -90.0f, 0.0f);
+                        else if (clickedTile.PosY < coordinates.z)
+                            targetRotation = Quaternion.Euler(-90.0f, 0.0f, 0.0f);
+                        else if (clickedTile.PosY > coordinates.z)
+                            targetRotation = Quaternion.Euler(-90.0f, 180.0f, 0.0f);
+                        turningToAttack = true;
                     }
                 }
             }
@@ -252,6 +271,17 @@ public class PlayerUnitController : MonoBehaviour {
             TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
         }
         showMoves = true;
+    }
+
+    private void turnToEnemy()
+    {
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, moveSpeed * 80f * Time.deltaTime);
+        if (Quaternion.Angle(transform.rotation, targetRotation) < 5.0f)
+        {
+            transform.rotation = targetRotation;
+            turningToAttack = false;
+            attack = true;
+        }
     }
 
     private void setActionMode(bool value)

@@ -82,9 +82,7 @@ public class BattleGroundController : MonoBehaviour {
             {
                 enemyTurn = false;
                 allyTurn = true;
-            }
-
-            
+            }            
         }
         if (allyTurn)
         {
@@ -128,7 +126,7 @@ public class BattleGroundController : MonoBehaviour {
         GameObject enemyUnit = _enemyUnit as GameObject;
         Enemy enemyUnitController = enemyUnit.GetComponent<Enemy>();
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 3; i++)
         {
             enemyUnits.Add(Instantiate(_enemyUnit).GetComponent<Enemy>());
             if (i == 0)
@@ -262,10 +260,18 @@ public class BattleGroundController : MonoBehaviour {
         {
             if (!enemyUnits[i].turnInProgress)
             {
-                if (enemyUnits[i].type == 1)
+                if ( i > 0 && enemyUnits[i-1].turnDone)
+                {
+                    if (enemyUnits[i].type == 1)
+                    {
+                        enemyUnits[i].performTurn();
+                    }
+                }
+                else if (i == 0)
                 {
                     enemyUnits[i].performTurn();
                 }
+                
             }
             
         }

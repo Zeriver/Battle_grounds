@@ -57,7 +57,8 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
         {
             if (unitToAttack != null && weaponHighlights.Count == 0)
             {
-                //ATTACK TODO
+                //ATTACK TODO  
+                //turning to attacked unit
                 unitToAttack = null;
                 turnDone = true;
             }

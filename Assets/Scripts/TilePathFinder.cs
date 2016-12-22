@@ -18,7 +18,7 @@ public class TilePathFinder : MonoBehaviour
 
         while (open.Count > 0)
         {
-            //open = open.OrderBy(x => x.costOfPath).ToList(); //Might remove / check performance
+            open = open.OrderBy(x => x.costOfPath).ToList();
             TilePath current = open[0];
             open.Remove(open[0]);
 
