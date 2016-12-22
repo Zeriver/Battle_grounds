@@ -43,6 +43,7 @@ public class TilePathFinder : MonoBehaviour
                 open.Add(newTilePath);
             }
         }
+        Debug.Log("Warning: path finder returned null");
         return null;
     }
 }

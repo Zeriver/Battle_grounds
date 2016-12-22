@@ -14,7 +14,7 @@ public class PlayerUnitController : MonoBehaviour {
     private bool showMoves;
     private float moveSpeed;
     private int maxMovement, movesLeft;
-    private Vector3 coordinates;
+    public Vector3 coordinates;
     public bool moving;
     public List<Weapon> weapons;
     public List<HealingItem> healingItems;
