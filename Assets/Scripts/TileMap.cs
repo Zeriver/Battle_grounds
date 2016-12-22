@@ -101,10 +101,12 @@ public class TileMap
     public static void setTileNotWalkable(int x, int y)
     {
         getTile(x, y).IsWalkable = false;
+        getTile(x, y).IsUnitOnIt = true;
     }
 
     public static void setTileWalkable(int x, int y)
     {
         getTile(x, y).IsWalkable = true;
+        getTile(x, y).IsUnitOnIt = false;
     }
 }

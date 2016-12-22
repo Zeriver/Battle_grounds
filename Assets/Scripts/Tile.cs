@@ -15,6 +15,7 @@ public class Tile {
     private int id;
     private int posX, posY;
     private bool isWalkable;
+    private bool isUnitOnIt;
 
     public Tile(int id, int x, int y)
     {
@@ -22,6 +23,7 @@ public class Tile {
         posY = y;
         this.id = id;
         isWalkable = true;
+        isUnitOnIt = false;
         switch (id)
         {
             case 1:
@@ -68,5 +70,11 @@ public class Tile {
     {
         get { return isWalkable; }
         set { isWalkable = value; }
+    }
+
+    public bool IsUnitOnIt
+    {
+        get { return isUnitOnIt; }
+        set { isUnitOnIt = value; }
     }
 }

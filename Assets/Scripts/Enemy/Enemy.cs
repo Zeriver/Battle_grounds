@@ -117,6 +117,8 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
         }
     }
 
+
+
     public void performTurn()
     {
         turnInProgress = true;
@@ -202,6 +204,30 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
         turnDone = false;
         turnInProgress = false;
         movesLeft = maxMovement;
+    }
+
+    public void showPossibleMovement()
+    {
+        if (movementHighlights.Count == 0)
+        {
+            movementTilesInRange = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), maxMovement, false);
+            Color tileColor = new Color(0.5f, 0.85f, 0.0f, 0.5f);
+            for (int i = 0; i < movementTilesInRange.Count; i++)
+            {
+                int x = Mathf.FloorToInt(movementTilesInRange[i].PosX / _tileMapBuilder.tileSize);
+                int z = Mathf.FloorToInt(movementTilesInRange[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
+                movementHighlights.Add(createPlane(x, z, tileColor));
+            }
+        }
+    }
+
+    public void destroyMovementHighlights()
+    {
+        for (int i = 0; i < movementHighlights.Count; i++)
+        {
+            Destroy(movementHighlights[i]);
+        }
+        movementHighlights.Clear();
     }
 
     private bool attackUnitIfInRange()

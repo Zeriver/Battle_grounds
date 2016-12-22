@@ -9,7 +9,7 @@ public class PlayerUnitController : MonoBehaviour {
     private GameObject BattleGroundObject;
     private Canvas InventoryCanvas;
     public bool isSelected;
-    private bool isActionMode;
+    public bool isActionMode;
     private bool isActionUsed;
     private bool showMoves;
     private bool turningToAttack;

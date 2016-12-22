@@ -51,9 +51,9 @@ public class BattleGroundController : MonoBehaviour {
                 {
                     setNextUnitActive();
                 }
+                Transform mousePositin = _mouseHighlight.getHighlightSelection();
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Transform mousePositin = _mouseHighlight.getHighlightSelection();
                     PlayerUnitController clickedUnit = getClickedUnit((int)mousePositin.position.x, (int)mousePositin.position.z);
                     if (clickedUnit != null)
                     {
@@ -63,6 +63,21 @@ public class BattleGroundController : MonoBehaviour {
                     }
                     Tile clickedTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
                     //Checking click on future events TODO
+                }
+                if (!lastActiveUnit.isActionMode)
+                {
+                    Enemy enemy = getHoveredEnemy((int)mousePositin.position.x, (int)mousePositin.position.z);
+                    if (enemy != null)
+                    {
+                        enemy.showPossibleMovement();
+                    }
+                    else
+                    {
+                        for (int i = 0; i < enemyUnits.Count; i++)
+                        {
+                            enemyUnits[i].destroyMovementHighlights();
+                        }
+                    }
                 }
             }
         }
@@ -203,6 +218,19 @@ public class BattleGroundController : MonoBehaviour {
             {
                 unit = playerUnits[i];
                 lastActiveUnit = unit;
+            }
+        }
+        return unit;
+    }
+
+    private Enemy getHoveredEnemy(int x, int z)
+    {
+        Enemy unit = null;
+        for (int i = 0; i < enemyUnits.Count; i++)
+        {
+            if ((int)enemyUnits[i].transform.position.x == x && (int)enemyUnits[i].transform.position.z == z + 1) //+1 hack beacuse float is rounded to bigger value. Must improve TODO
+            {
+                unit = enemyUnits[i];
             }
         }
         return unit;
