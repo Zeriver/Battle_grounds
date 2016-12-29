@@ -16,6 +16,9 @@ public class CameraController : MonoBehaviour {
     private float rDistance = 1.0f;
     private float rSpeed = 1.0f;
 
+    public GameObject _inventory;
+    private Inventory inventory;
+
     void Start () {
         movingToActive = false;
         cameraSpeed = 3.0f;
@@ -25,7 +28,9 @@ public class CameraController : MonoBehaviour {
         minCameraHeight = 6.0f;
         maxCameraHeight = 18.0f;
         cameraEdgeOffset = 5.0f;
-        cameraEdgeSpeed = 0.08f;
+        cameraEdgeSpeed = 0.2f;
+
+        inventory = _inventory.GetComponent("Inventory") as Inventory;
     }
 	
 
@@ -71,7 +76,7 @@ public class CameraController : MonoBehaviour {
             movingToActive = false;
         }
         
-        if (Input.GetAxis("Mouse ScrollWheel") != 0f)
+        if (Input.GetAxis("Mouse ScrollWheel") != 0f && !inventory.equipment.enabled)
         {
             Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + (Input.GetAxis("Mouse ScrollWheel") * 10), Camera.main.transform.position.z);
             movingToActive = false;

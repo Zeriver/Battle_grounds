@@ -69,6 +69,10 @@ public class PlayerUnitController : MonoBehaviour {
         //EQ
         weapons.Add(new Pistol(5));
         weapons.Add(new FlameThrower(5));
+        weapons.Add(new FlameThrower(5));
+        weapons.Add(new FlameThrower(5));
+        weapons.Add(new FlameThrower(5));
+        weapons.Add(new FlameThrower(5));
         healingItems.Add(new MediumHealingKit(2));
         currentItem = healingItems[0];
     }

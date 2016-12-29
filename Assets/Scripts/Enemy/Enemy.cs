@@ -211,7 +211,7 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
         if (movementHighlights.Count == 0)
         {
             movementTilesInRange = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), maxMovement, false);
-            Color tileColor = new Color(0.5f, 0.85f, 0.0f, 0.5f);
+            Color tileColor = new Color(0.85f, 0.85f, 0.0f, 0.5f);
             for (int i = 0; i < movementTilesInRange.Count; i++)
             {
                 int x = Mathf.FloorToInt(movementTilesInRange[i].PosX / _tileMapBuilder.tileSize);
@@ -283,6 +283,11 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
             Destroy(objects[i]);
         }
         objects.Clear();
+    }
+
+    public string getEnemyName()
+    {
+        return name;
     }
 
 }

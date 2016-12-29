@@ -16,10 +16,12 @@ public class BattleGroundController : MonoBehaviour {
     public GameObject _playerUI;
     public GameObject _itemCreator;
     public GameObject _inventory;
+    public GameObject _unitInfo;
 
     private PlayerUI playerUI;
     private ItemCreator itemCreator;
     private Inventory inventory;
+    private UnitInfoPanel unitInfo;
     public List<PlayerUnitController> playerUnits = new List<PlayerUnitController>();
     public List<Enemy> enemyUnits = new List<Enemy>();
     public PlayerUnitController lastActiveUnit;
@@ -34,6 +36,7 @@ public class BattleGroundController : MonoBehaviour {
         playerUI = _playerUI.GetComponent("PlayerUI") as PlayerUI;
         itemCreator = _itemCreator.GetComponent("ItemCreator") as ItemCreator;
         inventory = _inventory.GetComponent("Inventory") as Inventory;
+        unitInfo = _unitInfo.GetComponent("UnitInfoPanel") as UnitInfoPanel;
         turnNumber = 1;
         createBattleGround(30, 30);
 	}
@@ -70,12 +73,22 @@ public class BattleGroundController : MonoBehaviour {
                     if (enemy != null)
                     {
                         enemy.showPossibleMovement();
+                        if (!unitInfo.canvas.enabled)
+                        {
+                            unitInfo.setNewPosition(enemy.transform.position);
+                            unitInfo.setInfo(enemy);
+                            unitInfo.changeCanvasEnabled(true);
+                        }
                     }
                     else
                     {
                         for (int i = 0; i < enemyUnits.Count; i++)
                         {
                             enemyUnits[i].destroyMovementHighlights();
+                        }
+                        if (unitInfo.canvas.enabled)
+                        {
+                            unitInfo.changeCanvasEnabled(false);
                         }
                     }
                 }
