@@ -3,42 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class Enemy : MonoBehaviour {  //Need to create more abstract unit class so playerUnit and enemies may inherit  from it TODO
-
-    private GameObject BattleGroundObject;
-    private BattleGroundController _battleGroundController;
-    private TileMapBuilder _tileMapBuilder;
-
-    private volatile List<GameObject> movementHighlights = new List<GameObject>();
-    private volatile List<GameObject> weaponHighlights = new List<GameObject>();
+public class Enemy :  Unit {
 
     public int type;
     protected new string name;
-    protected Vector3 coordinates;
-    private float moveSpeed;
-    private List<Vector3> positionQueue;
-    private bool moving;
-    protected int movesLeft, maxMovement;
     private int attackRange = 2;
 
     public bool turnDone;
     public bool turnInProgress;
-    private Vector3 targetPosition;
-    private Quaternion targetRotation;
     private PlayerUnitController unitToAttack = null;
     private List<Tile> attackTilesInRange = new List<Tile>();
     private List<Tile> movementToAttackTilesInRange = new List<Tile>();
     private List<Tile> movementTilesInRange = new List<Tile>();
+    private BattleGroundController _battleGroundController;
 
     void Start()
     {
-        BattleGroundObject = GameObject.Find("BattleGrounds");
-        _battleGroundController = BattleGroundObject.GetComponent("BattleGroundController") as BattleGroundController;
-        _tileMapBuilder = BattleGroundObject.GetComponent("TileMapBuilder") as TileMapBuilder;
+        
     }
 
     public void createEnemy(int x, int z, int type)
     {
+        BattleGroundObject = GameObject.Find("BattleGrounds");
+        _battleGroundController = BattleGroundObject.GetComponent("BattleGroundController") as BattleGroundController;
+        _tileMapBuilder = BattleGroundObject.GetComponent("TileMapBuilder") as TileMapBuilder;
+
         this.type = type;
         name = "Impaler";
         maxMovement = 4;
@@ -49,6 +38,8 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
         TileMap.setTileNotWalkable(x, z);
 
         positionQueue = new List<Vector3>();
+        movementHighlights = new List<GameObject>();
+        weaponHighlights = new List<GameObject>();
     }
 
     void Update()
@@ -66,42 +57,16 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
 
         if (positionQueue.Count > 0 && !moving && movementHighlights.Count == 0)
         {
-            if (positionQueue[0].x > coordinates.x)
-            {
-                targetRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
-                targetPosition = new Vector3(transform.position.x + 1f, transform.position.y, transform.position.z);
-            }
-            else if (positionQueue[0].x < coordinates.x)
-            {
-                targetRotation = Quaternion.Euler(0.0f, -90.0f, 0.0f);
-                targetPosition = new Vector3(transform.position.x - 1f, transform.position.y, transform.position.z);
-
-            }
-            else if (positionQueue[0].z < coordinates.z)
-            {
-                targetRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-                targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f);
-
-            }
-            else if (positionQueue[0].z > coordinates.z)
-            {
-                targetRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-                targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f);
-
-            }
-            moving = true;
+            setNextStep(new Vector3[]  {            //Temporary fix until proper units models will be in game TODO
+                     new Vector3(0.0f, 90.0f, 0.0f),
+                     new Vector3(0.0f, -90.0f, 0.0f),
+                     new Vector3(0.0f, 0.0f, 0.0f),
+                     new Vector3(0.0f, 180.0f, 0.0f)
+                 });
         }
         if (moving)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, moveSpeed * 2.2f * Time.deltaTime);
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-            if (Vector3.Distance(targetPosition, transform.position) <= 0.1f)
-            {
-                coordinates = positionQueue[0];
-                transform.position = new Vector3(positionQueue[0].x + 0.5f, positionQueue[0].y, -positionQueue[0].z + 0.5f);
-                positionQueue.RemoveAt(0);
-                moving = false;
-            }
+            moveToNextStep();
             if (positionQueue.Count == 0)
             {
                 TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
@@ -262,17 +227,6 @@ public class Enemy : MonoBehaviour {  //Need to create more abstract unit class 
             highlights.Add(createPlane(x, z, tileColor));
         }
         StartCoroutine(DestroyObjectsDelayed(1.4f, highlights));
-    }
-
-    private GameObject createPlane(int x, int z, Color color)   // needs to create mesh from sratch for better performance TODO
-    {
-        GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        plane.transform.localScale = new Vector3(0.1f, 1.0f, 0.1f);
-        plane.transform.position = new Vector3(x, 0.05f, z) * _tileMapBuilder.tileSize;
-        plane.transform.position = new Vector3(plane.transform.position.x + 0.5f, plane.transform.position.y, plane.transform.position.z + 0.5f);
-        plane.GetComponent<Renderer>().material.color = color;
-        plane.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
-        return plane;
     }
 
     IEnumerator DestroyObjectsDelayed(float waitTime, List<GameObject> objects)

@@ -2,38 +2,15 @@
 using System.Collections.Generic;
 using System;
 
-public class PlayerUnitController : MonoBehaviour {
+public class PlayerUnitController : Unit {
 
-    // mouse events must be moved to BattleGroundController TODO
+    // mouse events MAYBE should be moved to BattleGroundController TODO
 
-    private GameObject BattleGroundObject;
-    private Canvas InventoryCanvas;
     public bool isSelected;
     public bool isActionMode;
-    private bool isActionUsed;
-    private bool showMoves;
-    private bool turningToAttack;
-    private bool attack;
-    private float moveSpeed;
-    private int maxMovement, movesLeft;
-    public Vector3 coordinates;
-    public bool moving;
-    public List<Weapon> weapons;
-    public List<HealingItem> healingItems;
-    public Item currentItem;
-
     private List<Tile> validTiles;
-    private List<GameObject> highlights;
-    private List<GameObject> weaponHighlights;
-    private List<GameObject> weaponAreaEffectHighlights;
-    private List<Vector3> positionQueue;
     private Vector3 actionMouseHighlight;
-    private Quaternion targetRotation;
-    private Vector3 targetPosition;
-
-    private TileMapBuilder _tileMapBuilder;
     private MouseHighlight _mouseHiglight;
-
 
     void Start() {
 
@@ -58,7 +35,7 @@ public class PlayerUnitController : MonoBehaviour {
         transform.position = new Vector3(coordinates.x + 0.5f, coordinates.y, -coordinates.z + 0.5f);
         targetRotation = transform.rotation;
         validTiles = new List<Tile>();
-        highlights = new List<GameObject>();
+        movementHighlights = new List<GameObject>();
         weapons = new List<Weapon>();
         healingItems = new List<HealingItem>();
         weaponHighlights = new List<GameObject>();
@@ -86,7 +63,13 @@ public class PlayerUnitController : MonoBehaviour {
             }
             if (positionQueue.Count > 0 && !moving)
             {
-                setNextStep();
+                setNextStep(new Vector3[]  {            //Temporary fix until proper units models will be in game TODO
+                     new Vector3(-90.0f, 90.0f, 0.0f),
+                     new Vector3(-90.0f, -90.0f, 0.0f),
+                     new Vector3(-90.0f, 0.0f, 0.0f),
+                     new Vector3(-90.0f, 180.0f, 0.0f)
+                 });
+                showMoves = true;
             }
             if (moving)
             {
@@ -120,9 +103,9 @@ public class PlayerUnitController : MonoBehaviour {
                     if (validTiles.Contains(clickedTile))
                     {
                         TileMap.setTileWalkable((int)coordinates.x, (int)coordinates.z);
-                        for (int i = 0; i < highlights.Count; i++)
+                        for (int i = 0; i < movementHighlights.Count; i++)
                         {
-                            Destroy(highlights[i]);
+                            Destroy(movementHighlights[i]);
                         }
                         List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), clickedTile);
                         for (int i = 0; i < path.Count; i++)
@@ -178,16 +161,16 @@ public class PlayerUnitController : MonoBehaviour {
 
     private void showAllowedMovements()
     {
-        for (int i = 0; i < highlights.Count; i++)
+        for (int i = 0; i < movementHighlights.Count; i++)
         {
-            Destroy(highlights[i]);
+            Destroy(movementHighlights[i]);
         }
         validTiles = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), movesLeft, false);
         for (int i = 0; i < validTiles.Count; i++)
         {
             int x = Mathf.FloorToInt(validTiles[i].PosX / _tileMapBuilder.tileSize);
             int z = Mathf.FloorToInt(validTiles[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
-            highlights.Add(createPlane(x, z, new Color(0.5f, 0.85f, 0.0f, 0.5f)));
+            movementHighlights.Add(createPlane(x, z, new Color(0.5f, 0.85f, 0.0f, 0.5f)));
         }
         showMoves = false;
     }
@@ -218,64 +201,7 @@ public class PlayerUnitController : MonoBehaviour {
             int z = Mathf.FloorToInt(weaponAreaEffect[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
             weaponAreaEffectHighlights.Add(createPlane(x, z, new Color(8.0f, 8.0f, 0.0f, 0.5f)));
         }
-    }
-
-    private GameObject createPlane(int x, int z, Color color)   // needs to create mesh from sratch for better performance TODO
-    {
-        GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        plane.transform.localScale = new Vector3(0.1f, 1.0f, 0.1f);
-        plane.transform.position = new Vector3(x, 0.05f, z) * _tileMapBuilder.tileSize;
-        plane.transform.position = new Vector3(plane.transform.position.x + 0.5f, plane.transform.position.y, plane.transform.position.z + 0.5f);
-        plane.GetComponent<Renderer>().material.color = color;
-        plane.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
-        return plane;
-    }
-
-    private void setNextStep()
-    {
-        if (positionQueue[0].x > coordinates.x)
-        {
-            targetRotation = Quaternion.Euler(-90.0f, 90.0f, 0.0f);
-            targetPosition = new Vector3(transform.position.x + 1f, transform.position.y, transform.position.z);
-        }
-        else if (positionQueue[0].x < coordinates.x)
-        {
-            targetRotation = Quaternion.Euler(-90.0f, -90.0f, 0.0f);
-            targetPosition = new Vector3(transform.position.x - 1f, transform.position.y, transform.position.z);
-
-        }
-        else if (positionQueue[0].z < coordinates.z)
-        {
-            targetRotation = Quaternion.Euler(-90.0f, 0.0f, 0.0f);
-            targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f);
-
-        }
-        else if (positionQueue[0].z > coordinates.z)
-        {
-            targetRotation = Quaternion.Euler(-90.0f, 180.0f, 0.0f);
-            targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f);
-
-        }
-        moving = true;
-    }
-
-    private void moveToNextStep()
-    {
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, moveSpeed * 2.2f * Time.deltaTime);
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-        if (Vector3.Distance(targetPosition, transform.position) <= 0.1f)
-        {
-            coordinates = positionQueue[0];
-            transform.position = new Vector3(positionQueue[0].x + 0.5f, positionQueue[0].y, -positionQueue[0].z + 0.5f);
-            positionQueue.RemoveAt(0);
-            moving = false;
-        }
-        if (positionQueue.Count == 0)
-        {
-            TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
-        }
-        showMoves = true;
-    }
+    }   
 
     private void turnToEnemy()
     {
@@ -299,9 +225,9 @@ public class PlayerUnitController : MonoBehaviour {
         isActionMode = !isActionMode;
         if (isActionMode && !isActionUsed)
         {
-            for (int i = 0; i < highlights.Count; i++)
+            for (int i = 0; i < movementHighlights.Count; i++)
             {
-                Destroy(highlights[i]);
+                Destroy(movementHighlights[i]);
             }
             highlightWeaponRange();
         }
@@ -338,17 +264,17 @@ public class PlayerUnitController : MonoBehaviour {
         isSelected = false;
         showMoves = false;
         setActionMode(false);
-        for (int i = 0; i < highlights.Count; i++)
+        for (int i = 0; i < movementHighlights.Count; i++)
         {
-            Destroy(highlights[i]);
+            Destroy(movementHighlights[i]);
         }
     }
 
     public void resetAfterTurn()
     {
-        for (int i = 0; i < highlights.Count; i++)
+        for (int i = 0; i < movementHighlights.Count; i++)
         {
-            Destroy(highlights[i]);
+            Destroy(movementHighlights[i]);
         }
         movesLeft = maxMovement;
         isActionUsed = false;

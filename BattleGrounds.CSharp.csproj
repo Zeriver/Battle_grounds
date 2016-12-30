@@ -65,8 +65,6 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\BattleGroundController.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
-    <Compile Include="Assets\Scripts\Enemy\Enemy.cs" />
-    <Compile Include="Assets\Scripts\Enemy\Impaler.cs" />
     <Compile Include="Assets\Scripts\Items\HealingItems\HealingItem.cs" />
     <Compile Include="Assets\Scripts\Items\HealingItems\MediumHealingKit.cs" />
     <Compile Include="Assets\Scripts\Items\Item.cs" />
@@ -75,7 +73,6 @@
     <Compile Include="Assets\Scripts\Items\Weapons\Weapon.cs" />
     <Compile Include="Assets\Scripts\MouseHighlight.cs" />
     <Compile Include="Assets\Scripts\PlayerUI.cs" />
-    <Compile Include="Assets\Scripts\PlayerUnitController.cs" />
     <Compile Include="Assets\Scripts\Tile.cs" />
     <Compile Include="Assets\Scripts\TileHighlight.cs" />
     <Compile Include="Assets\Scripts\TileMap.cs" />
@@ -87,6 +84,10 @@
     <Compile Include="Assets\Scripts\UI\ItemCreator.cs" />
     <Compile Include="Assets\Scripts\UI\ItemPrefab.cs" />
     <Compile Include="Assets\Scripts\UI\UnitInfoPanel.cs" />
+    <Compile Include="Assets\Scripts\Unit\Enemy.cs" />
+    <Compile Include="Assets\Scripts\Unit\Impaler.cs" />
+    <Compile Include="Assets\Scripts\Unit\PlayerUnitController.cs" />
+    <Compile Include="Assets\Scripts\Unit\Unit.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
