@@ -15,7 +15,6 @@ public class Enemy :  Unit {
     private List<Tile> attackTilesInRange = new List<Tile>();
     private List<Tile> movementToAttackTilesInRange = new List<Tile>();
     private List<Tile> movementTilesInRange = new List<Tile>();
-    private BattleGroundController _battleGroundController;
 
     void Start()
     {
@@ -88,8 +87,8 @@ public class Enemy :  Unit {
     {
         turnInProgress = true;
         Tile currentTile = TileMap.getTile((int)coordinates.x, (int)coordinates.z);
-        attackTilesInRange = TileHighlight.FindHighlight(currentTile, attackRange, true);
-        movementTilesInRange = TileHighlight.FindHighlight(currentTile, movesLeft, false);
+        attackTilesInRange = TileHighlight.FindHighlight(currentTile, attackRange, true, false);
+        movementTilesInRange = TileHighlight.FindHighlight(currentTile, movesLeft, false, false);
         //movementToAttackTilesInRange = TileHighlight.FindHighlight(currentTile, moves + attackRange, false);
 
         //Attack if in range
@@ -101,7 +100,7 @@ public class Enemy :  Unit {
         //Move and attack unit if in range
         for (int i = 0; i < movementTilesInRange.Count; i++)
         {
-            attackTilesInRange = TileHighlight.FindHighlight(movementTilesInRange[i], attackRange, true);
+            attackTilesInRange = TileHighlight.FindHighlight(movementTilesInRange[i], attackRange, true, false);
             for (int j = 0; j < _battleGroundController.playerUnits.Count; j++)
             {
                 if (attackTilesInRange.Contains(_battleGroundController.playerUnits[j].getPlayerUnitTile()))
@@ -175,7 +174,7 @@ public class Enemy :  Unit {
     {
         if (movementHighlights.Count == 0)
         {
-            movementTilesInRange = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), maxMovement, false);
+            movementTilesInRange = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), maxMovement, false, false);
             Color tileColor = new Color(0.85f, 0.85f, 0.0f, 0.5f);
             for (int i = 0; i < movementTilesInRange.Count; i++)
             {

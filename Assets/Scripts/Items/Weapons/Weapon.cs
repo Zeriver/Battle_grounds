@@ -50,7 +50,7 @@ public class Weapon : Item
             return getWeaponHighlightsFromPattern(x, y);
         } else
         {
-            return TileHighlight.FindHighlight(TileMap.getTile(x, y), range, true);
+            return TileHighlight.FindHighlight(TileMap.getTile(x, y), range, true, false);
         }
     }
 

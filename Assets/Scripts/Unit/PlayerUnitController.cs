@@ -2,25 +2,29 @@
 using System.Collections.Generic;
 using System;
 
-public class PlayerUnitController : Unit {
+public class PlayerUnitController : Unit
+{
 
     // mouse events MAYBE should be moved to BattleGroundController TODO
 
     public bool isSelected;
     public bool isActionMode;
+    public List<GameObject> giveHighlights;
     private List<Tile> validTiles;
     private Vector3 actionMouseHighlight;
     private MouseHighlight _mouseHiglight;
 
-    void Start() {
+    void Start()
+    {
 
-    }   
+    }
 
     public void createPlayerUnit(int x, int y, int moves)
     {
         BattleGroundObject = GameObject.Find("BattleGrounds");
         _mouseHiglight = BattleGroundObject.GetComponent("MouseHighlight") as MouseHighlight;
         _tileMapBuilder = BattleGroundObject.GetComponent("TileMapBuilder") as TileMapBuilder;
+        _battleGroundController = BattleGroundObject.GetComponent("BattleGroundController") as BattleGroundController;
         InventoryCanvas = GameObject.Find("EquipmentCanvas").GetComponent<Canvas>();
 
         isSelected = false;
@@ -39,6 +43,7 @@ public class PlayerUnitController : Unit {
         weapons = new List<Weapon>();
         healingItems = new List<HealingItem>();
         weaponHighlights = new List<GameObject>();
+        giveHighlights = new List<GameObject>();
         weaponAreaEffectHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
         TileMap.setTileNotWalkable(x, y);
@@ -46,16 +51,13 @@ public class PlayerUnitController : Unit {
         //EQ
         weapons.Add(new Pistol(5));
         weapons.Add(new FlameThrower(5));
-        weapons.Add(new FlameThrower(5));
-        weapons.Add(new FlameThrower(5));
-        weapons.Add(new FlameThrower(5));
-        weapons.Add(new FlameThrower(5));
         healingItems.Add(new MediumHealingKit(2));
         currentItem = healingItems[0];
     }
-	
-	void Update () {
-	    if (isSelected && !InventoryCanvas.enabled)
+
+    void Update()
+    {
+        if (isSelected && !InventoryCanvas.enabled)
         {
             if (showMoves && positionQueue.Count == 0)
             {
@@ -98,7 +100,7 @@ public class PlayerUnitController : Unit {
             if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0) //LEFT CLICK
             {
                 Tile clickedTile = TileMap.getTile((int)_mouseHiglight.getHighlightSelection().position.x, (int)_mouseHiglight.getHighlightSelection().position.z);
-                if (!isActionMode)
+                if (!isActionMode && giveHighlights.Count == 0)
                 {
                     if (validTiles.Contains(clickedTile))
                     {
@@ -115,7 +117,7 @@ public class PlayerUnitController : Unit {
                         movesLeft -= positionQueue.Count;
                     }
                 }
-                else if (isActionMode)
+                else if (isActionMode && validTiles != null)
                 {
                     if (validTiles.Contains(clickedTile))
                     {
@@ -130,26 +132,50 @@ public class PlayerUnitController : Unit {
                         turningToAttack = true;
                     }
                 }
+                else if (giveHighlights.Count != 0)
+                {
+                    for (int i = 0; i < _battleGroundController.playerUnits.Count; i++)
+                    {
+                        if (_battleGroundController.playerUnits[i].getPlayerUnitTile().Equals(clickedTile))
+                        {
+                            if (currentItem is Weapon)
+                            {
+                                _battleGroundController.playerUnits[i].weapons.Add((Weapon)currentItem);
+                                weapons.Remove((Weapon)currentItem);
+                                currentItem = null;
+                            }
+                            else if (currentItem is HealingItem)
+                            {
+                                _battleGroundController.playerUnits[i].healingItems.Add((HealingItem)currentItem);
+                                healingItems.Remove((HealingItem)currentItem);
+                                currentItem = null;
+                            }
+                            giveMode();
+                        }
+                    }
+                }
             }
             if (Input.GetMouseButtonDown(1) && positionQueue.Count == 0 && !isActionUsed) //RIGHT CLICK
             {
                 switchActionMode();
             }
-            if (isActionMode)
+            if (isActionMode && validTiles != null)
             {
                 Tile hoverTile = TileMap.getTile((int)_mouseHiglight.getHighlightSelection().position.x, (int)_mouseHiglight.getHighlightSelection().position.z);
-                if (validTiles.Contains(hoverTile) && currentItem is Weapon) {
+                if (validTiles.Contains(hoverTile) && currentItem is Weapon)
+                {
                     actionMouseHighlight = new Vector3((int)_mouseHiglight.getHighlightSelection().position.x + 0.5f, 0.0f, (int)_mouseHiglight.getHighlightSelection().position.z + 0.5f);
                     for (int i = 0; i < weaponAreaEffectHighlights.Count; i++)
-                        {
-                            Destroy(weaponAreaEffectHighlights[i]);
-                        }
+                    {
+                        Destroy(weaponAreaEffectHighlights[i]);
+                    }
                     int mouseX = Math.Abs((int)actionMouseHighlight.x);
                     int mouseY = Math.Abs((int)actionMouseHighlight.z - 1);
-                    List<Tile> weaponAreaEffect = ((Weapon)currentItem).getAreaEffect(Math.Abs((int) coordinates.x), Math.Abs((int) coordinates.z), mouseX, mouseY);
+                    List<Tile> weaponAreaEffect = ((Weapon)currentItem).getAreaEffect(Math.Abs((int)coordinates.x), Math.Abs((int)coordinates.z), mouseX, mouseY);
                     highlightWeaponAreaEffect(weaponAreaEffect);
-                } 
-                else if (!(validTiles.Contains(hoverTile) && actionMouseHighlight != null)){
+                }
+                else if (!(validTiles.Contains(hoverTile) && actionMouseHighlight != null))
+                {
                     for (int i = 0; i < weaponAreaEffectHighlights.Count; i++)
                     {
                         Destroy(weaponAreaEffectHighlights[i]);
@@ -157,7 +183,7 @@ public class PlayerUnitController : Unit {
                 }
             }
         }
-	}
+    }
 
     private void showAllowedMovements()
     {
@@ -165,7 +191,7 @@ public class PlayerUnitController : Unit {
         {
             Destroy(movementHighlights[i]);
         }
-        validTiles = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), movesLeft, false);
+        validTiles = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), movesLeft, false, false);
         for (int i = 0; i < validTiles.Count; i++)
         {
             int x = Mathf.FloorToInt(validTiles[i].PosX / _tileMapBuilder.tileSize);
@@ -185,11 +211,19 @@ public class PlayerUnitController : Unit {
         {
             validTiles = ((HealingItem)currentItem).getHealingHighlights((int)coordinates.x, (int)coordinates.z);
         }
-        for (int i = 0; i < validTiles.Count; i++)
+        else
         {
-            int x = Mathf.FloorToInt(validTiles[i].PosX / _tileMapBuilder.tileSize);
-            int z = Mathf.FloorToInt(validTiles[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
-            weaponHighlights.Add(createPlane(x, z, new Color(1.0f, 0.0f, 0.05f, 0.5f)));
+            Debug.Log("Warning: valid tiles for weapon are null!");
+            validTiles = null;
+        }
+        if (validTiles != null)
+        {
+            for (int i = 0; i < validTiles.Count; i++)
+            {
+                int x = Mathf.FloorToInt(validTiles[i].PosX / _tileMapBuilder.tileSize);
+                int z = Mathf.FloorToInt(validTiles[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
+                weaponHighlights.Add(createPlane(x, z, new Color(1.0f, 0.0f, 0.05f, 0.5f)));
+            }
         }
     }
 
@@ -201,7 +235,7 @@ public class PlayerUnitController : Unit {
             int z = Mathf.FloorToInt(weaponAreaEffect[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
             weaponAreaEffectHighlights.Add(createPlane(x, z, new Color(8.0f, 8.0f, 0.0f, 0.5f)));
         }
-    }   
+    }
 
     private void turnToEnemy()
     {
@@ -222,6 +256,16 @@ public class PlayerUnitController : Unit {
 
     public void switchActionMode()
     {
+        if (giveHighlights.Count > 0)
+        {
+            for (int i = 0; i < giveHighlights.Count; i++)
+            {
+                Destroy(giveHighlights[i]);
+            }
+            giveHighlights.Clear();
+            validTiles.Clear();
+        }
+
         isActionMode = !isActionMode;
         if (isActionMode && !isActionUsed)
         {
@@ -248,9 +292,41 @@ public class PlayerUnitController : Unit {
         {
             Destroy(weaponHighlights[i]);
         }
-        validTiles.Clear();
+        if (validTiles != null)
+        {
+            validTiles.Clear();
+        }
     }
 
+    public void giveMode()
+    {
+        if (giveHighlights.Count > 0)
+        {
+            for (int i = 0; i < giveHighlights.Count; i++)
+            {
+                Destroy(giveHighlights[i]);
+            }
+            giveHighlights.Clear();
+            validTiles.Clear();
+            setActionMode(true);
+        }
+        else
+        {
+            for (int i = 0; i < movementHighlights.Count; i++)
+            {
+                Destroy(movementHighlights[i]);
+            }
+            DestroyWeaponHiglights();
+
+            validTiles = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), 1, true, false);
+            for (int i = 0; i < validTiles.Count; i++)
+            {
+                int x = Mathf.FloorToInt(validTiles[i].PosX / _tileMapBuilder.tileSize);
+                int z = Mathf.FloorToInt(validTiles[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
+                giveHighlights.Add(createPlane(x, z, new Color(0.85f, 0.85f, 0.0f, 0.5f)));
+            }
+        }
+    }
 
     public void setPlayerUnitActive()
     {

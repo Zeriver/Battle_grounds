@@ -55,17 +55,19 @@ public class BattleGroundController : MonoBehaviour {
                     setNextUnitActive();
                 }
                 Transform mousePositin = _mouseHighlight.getHighlightSelection();
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0))     /// LEFT CLICK
                 {
-                    PlayerUnitController clickedUnit = getClickedUnit((int)mousePositin.position.x, (int)mousePositin.position.z);
-                    if (clickedUnit != null)
+                    if (lastActiveUnit.giveHighlights.Count == 0)
                     {
-                        deactivatePlayerUnits();
-                        clickedUnit.setPlayerUnitActive();
-                        _cameraController.setCameraToActiveUnit(clickedUnit.transform.position);
+                        PlayerUnitController clickedUnit = getClickedUnit((int)mousePositin.position.x, (int)mousePositin.position.z);
+                        if (clickedUnit != null)
+                        {
+                            deactivatePlayerUnits();
+                            clickedUnit.setPlayerUnitActive();
+                            _cameraController.setCameraToActiveUnit(clickedUnit.transform.position);
+                        }
+                        Tile clickedTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
                     }
-                    Tile clickedTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
-                    //Checking click on future events TODO
                 }
                 if (!lastActiveUnit.isActionMode)
                 {
@@ -204,6 +206,11 @@ public class BattleGroundController : MonoBehaviour {
                 }
             }
         }
+    }
+
+    public void changeGiveMode()
+    {
+        lastActiveUnit.giveMode();
     }
 
     private void deactivatePlayerUnits()

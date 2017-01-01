@@ -27,11 +27,11 @@ public class ItemCreator : MonoBehaviour
         {
             GameObject panel = Instantiate(itemPanel, itemPanel.transform.position, itemPanel.transform.rotation) as GameObject;
             items.Add(panel);
-            ItemPrefab itemPrefab = itemPanel.GetComponent<ItemPrefab>();
+            ItemPrefab itemPrefab = panel.GetComponent<ItemPrefab>();
             itemPrefab.itemName.text = weapons[i].getName();
             Button button = itemPrefab.itemButton;
             ItemButton itemButton = button.GetComponent<ItemButton>();
-            itemButton.description = weapons[i].getDescription();
+            itemButton.setItem(weapons[i]);
             panel.transform.SetParent(parentPanel.transform);
         }
     }

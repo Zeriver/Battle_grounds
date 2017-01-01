@@ -26,7 +26,9 @@ public class Unit : MonoBehaviour {
     protected Quaternion targetRotation;
     protected Vector3 targetPosition;
     protected TileMapBuilder _tileMapBuilder;
+    protected BattleGroundController _battleGroundController;
 
+    protected int health;
     
     void Start () {
 	

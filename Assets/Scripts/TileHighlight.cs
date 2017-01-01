@@ -9,7 +9,7 @@ public class TileHighlight
 
     }
 
-    public static List<Tile> FindHighlight(Tile originTile, int movementPoints, bool isWeapon)
+    public static List<Tile> FindHighlight(Tile originTile, int movementPoints, bool isWeapon, bool isSelfUse)
     {
         List<Tile> closed = new List<Tile>();
         List<TilePath> open = new List<TilePath>();
@@ -86,7 +86,10 @@ public class TileHighlight
                 }
             }
         }
-        closed.Remove(originTile);
+        if (!isSelfUse)
+        {
+            closed.Remove(originTile);
+        }
         return closed;
     }
 }

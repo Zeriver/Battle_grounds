@@ -13,7 +13,7 @@ public class HealingItem : Item
 
     public List<Tile> getHealingHighlights(int x, int y)
     {
-        return TileHighlight.FindHighlight(TileMap.getTile((int)x, (int)y), 1, true);
+        return TileHighlight.FindHighlight(TileMap.getTile(x, y), 1, true, true);
     }
 
     public void use()
