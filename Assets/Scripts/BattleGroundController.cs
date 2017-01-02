@@ -292,13 +292,31 @@ public class BattleGroundController : MonoBehaviour {
         if (!inventory.equipment.enabled)
         {
             lastActiveUnit.DestroyWeaponHiglights();
-            itemCreator.createItems(lastActiveUnit.weapons);
+            itemCreator.createItems(lastActiveUnit.weapons.ConvertAll(x => (Item)x));
         }
         else
         {
             itemCreator.destroyItems();
         }
         inventory.changeCanvasEnabled();
+    }
+
+    public void showWeapons()
+    {
+        if (!itemCreator.isWeapon)
+        {
+            itemCreator.destroyItems();
+            itemCreator.createItems(lastActiveUnit.weapons.ConvertAll(x => (Item)x));
+        }
+    }
+
+    public void showHealingItems()
+    {
+        if (!itemCreator.isHealingItem)
+        {
+            itemCreator.destroyItems();
+            itemCreator.createItems(lastActiveUnit.healingItems.ConvertAll(x => (Item)x));
+        }
     }
 
 

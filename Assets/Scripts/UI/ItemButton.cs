@@ -22,10 +22,9 @@ public class ItemButton : MonoBehaviour {
         description = item.description;
     }
 
-    public void changeWeapon()
+    public void changeItem()
     {
         textDescription.text = description;
-        Debug.Log(item.name);
         battleGroundController.lastActiveUnit.currentItem = item;
     }
 

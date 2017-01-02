@@ -8,6 +8,7 @@ public class ItemCreator : MonoBehaviour
 
     public GameObject itemPanel;
     public GameObject parentPanel;
+    public bool isWeapon, isHealingItem;
 
     private List<GameObject> items;
 
@@ -21,17 +22,17 @@ public class ItemCreator : MonoBehaviour
 
     }
 
-    public void createItems(List<Weapon> weapons)
+    public void createItems(List<Item> item)
     {
-        for (int i = 0; i < weapons.Count; i++)
+        for (int i = 0; i < item.Count; i++)
         {
             GameObject panel = Instantiate(itemPanel, itemPanel.transform.position, itemPanel.transform.rotation) as GameObject;
             items.Add(panel);
             ItemPrefab itemPrefab = panel.GetComponent<ItemPrefab>();
-            itemPrefab.itemName.text = weapons[i].getName();
+            itemPrefab.itemName.text = item[i].name;
             Button button = itemPrefab.itemButton;
             ItemButton itemButton = button.GetComponent<ItemButton>();
-            itemButton.setItem(weapons[i]);
+            itemButton.setItem(item[i]);
             panel.transform.SetParent(parentPanel.transform);
         }
     }

@@ -213,7 +213,6 @@ public class PlayerUnitController : Unit
         }
         else
         {
-            Debug.Log("Warning: valid tiles for weapon are null!");
             validTiles = null;
         }
         if (validTiles != null)
