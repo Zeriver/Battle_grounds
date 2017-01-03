@@ -10,6 +10,7 @@ public class TileMapBuilder : MonoBehaviour {
 
     public float tileSize = 1.0f;
     public Texture2D terrainTiles;
+    public int size_x, size_z;
 
     private int tileResolution = 128;
 
@@ -20,6 +21,8 @@ public class TileMapBuilder : MonoBehaviour {
 
     public void BuildMesh(int size_x, int size_z)
     {
+        this.size_x = size_x;
+        this.size_z = size_z;
         int numTiles = size_x * size_z;
         int numTris = numTiles * 2;
 

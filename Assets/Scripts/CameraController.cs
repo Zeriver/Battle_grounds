@@ -6,6 +6,7 @@ public class CameraController : MonoBehaviour {
     private float cameraSpeed;
     private bool movingToActive;
     private Vector3 target;
+    private TileMapBuilder _tileMapBuilder;
 
     private float minCameraHeight;
     private float maxCameraHeight;
@@ -15,6 +16,8 @@ public class CameraController : MonoBehaviour {
     private const float rotationAmount = 1.5f;
     private float rDistance = 1.0f;
     private float rSpeed = 1.0f;
+    private float maxDistanceCameraFromMap;
+    private Vector3 mapCenter;
 
     public GameObject _inventory;
     private Inventory inventory;
@@ -31,6 +34,10 @@ public class CameraController : MonoBehaviour {
         cameraEdgeSpeed = 0.2f;
 
         inventory = _inventory.GetComponent("Inventory") as Inventory;
+        _tileMapBuilder = GetComponent<TileMapBuilder>();
+
+        mapCenter = new Vector3(_tileMapBuilder.size_x / 2, Camera.main.transform.position.y, -_tileMapBuilder.size_z / 2);
+        maxDistanceCameraFromMap = _tileMapBuilder.size_x /1.1f;
     }
 	
 
@@ -52,10 +59,10 @@ public class CameraController : MonoBehaviour {
                 movingToActive = false;
             }
         }
-        //Something fucky is going on here, event thougth it should not entering this code while camera is moving to unit, it somehow passes the condition and it allows moving camera via scroll or edge mouse TODO
 
         //Mouse on edge
-        if (Input.mousePosition.x >= Screen.width - cameraEdgeOffset || Input.GetKey("right"))  //Need to detect Edge of the map and not allowing pass it TODO
+        Vector3 oldPos = Camera.main.transform.position;
+        if (Input.mousePosition.x >= Screen.width - cameraEdgeOffset || Input.GetKey("right"))
         {
             Camera.main.transform.position = Camera.main.transform.position + new Vector3(cameraEdgeSpeed, 0.0f, -cameraEdgeSpeed);
             movingToActive = false;
@@ -75,7 +82,11 @@ public class CameraController : MonoBehaviour {
             Camera.main.transform.position = Camera.main.transform.position + new Vector3(-cameraEdgeSpeed, 0.0f, -cameraEdgeSpeed);
             movingToActive = false;
         }
-        
+        if (maxDistanceCameraFromMap < Vector3.Distance(Camera.main.transform.position, mapCenter) || Camera.main.transform.position.x > _tileMapBuilder.size_x/1.4f || Camera.main.transform.position.z > 0)
+        {
+            Camera.main.transform.position = oldPos;
+        }
+
         if (Input.GetAxis("Mouse ScrollWheel") != 0f && !inventory.equipment.enabled)
         {
             Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + (Input.GetAxis("Mouse ScrollWheel") * 10), Camera.main.transform.position.z);
@@ -88,6 +99,7 @@ public class CameraController : MonoBehaviour {
             {
                 Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, minCameraHeight, Camera.main.transform.position.z);
             }
+            mapCenter = new Vector3(mapCenter.x, Camera.main.transform.position.y, mapCenter.z);
         }
 
         if (Input.GetKeyDown(KeyCode.Q))
