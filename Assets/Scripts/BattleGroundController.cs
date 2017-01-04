@@ -173,11 +173,6 @@ public class BattleGroundController : MonoBehaviour {
             }
         }
 
-
-        //Create interface
-
-
-        //Start turns
         lastActiveUnit.setPlayerUnitActive();
         _cameraController.setCameraToActiveUnit(lastActiveUnit.transform.position);
         playerTurn = true;
@@ -210,7 +205,10 @@ public class BattleGroundController : MonoBehaviour {
 
     public void changeGiveMode()
     {
-        lastActiveUnit.giveMode();
+        if (!lastActiveUnit.moving)
+        {
+            lastActiveUnit.giveMode();
+        }
     }
 
     private void deactivatePlayerUnits()
@@ -226,7 +224,10 @@ public class BattleGroundController : MonoBehaviour {
 
     public void switchPlayerUnitMode()
     {
-        lastActiveUnit.switchActionMode();
+        if (!lastActiveUnit.moving)
+        {
+            lastActiveUnit.switchActionMode();
+        }
     }
 
     private PlayerUnitController getClickedUnit(int x, int z)
@@ -297,6 +298,7 @@ public class BattleGroundController : MonoBehaviour {
         else
         {
             itemCreator.destroyItems();
+            lastActiveUnit.showAllowedMovements();
         }
         inventory.changeCanvasEnabled();
     }
@@ -342,15 +344,4 @@ public class BattleGroundController : MonoBehaviour {
             
         }
     }
-
-
-    //////// Temporary help functions
-
-    IEnumerator WaitAndPrint(float waitTime)
-    {
-        yield return new WaitForSeconds(waitTime);
-        enemyTurn = false;
-        allyTurn = true;
-    }
-
 }

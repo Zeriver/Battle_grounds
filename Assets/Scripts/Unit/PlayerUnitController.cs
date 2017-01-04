@@ -13,6 +13,7 @@ public class PlayerUnitController : Unit
     private List<Tile> validTiles;
     private Vector3 actionMouseHighlight;
     private MouseHighlight _mouseHiglight;
+    private Inventory inventory;
 
     void Start()
     {
@@ -26,6 +27,7 @@ public class PlayerUnitController : Unit
         _tileMapBuilder = BattleGroundObject.GetComponent("TileMapBuilder") as TileMapBuilder;
         _battleGroundController = BattleGroundObject.GetComponent("BattleGroundController") as BattleGroundController;
         InventoryCanvas = GameObject.Find("EquipmentCanvas").GetComponent<Canvas>();
+        inventory = InventoryCanvas.GetComponent("Inventory") as Inventory;
 
         isSelected = false;
         showMoves = false;
@@ -57,7 +59,7 @@ public class PlayerUnitController : Unit
 
     void Update()
     {
-        if (isSelected && !InventoryCanvas.enabled)
+        if (isSelected && !inventory.equipment.enabled)
         {
             if (showMoves && positionQueue.Count == 0)
             {
@@ -99,6 +101,11 @@ public class PlayerUnitController : Unit
             }
             if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0) //LEFT CLICK
             {
+                Vector3 mousePosition = Input.mousePosition;
+                if (mousePosition.y < Screen.height * 0.1681271) //divided by player ui anchor
+                {
+                    return;
+                }
                 Tile clickedTile = TileMap.getTile((int)_mouseHiglight.getHighlightSelection().position.x, (int)_mouseHiglight.getHighlightSelection().position.z);
                 if (!isActionMode && giveHighlights.Count == 0)
                 {
@@ -185,7 +192,7 @@ public class PlayerUnitController : Unit
         }
     }
 
-    private void showAllowedMovements()
+    public void showAllowedMovements()
     {
         for (int i = 0; i < movementHighlights.Count; i++)
         {
