@@ -20,7 +20,7 @@ public class PlayerUnitController : Unit
 
     }
 
-    public void createPlayerUnit(int x, int y, int moves)
+    public void createPlayerUnit(int x, int y, int moves, string facingDirection)
     {
         BattleGroundObject = GameObject.Find("BattleGrounds");
         _mouseHiglight = BattleGroundObject.GetComponent("MouseHighlight") as MouseHighlight;
@@ -49,6 +49,22 @@ public class PlayerUnitController : Unit
         weaponAreaEffectHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
         TileMap.setTileNotWalkable(x, y);
+
+        switch (facingDirection)
+        {
+            case "up":
+                transform.rotation = Quaternion.Euler(new Vector3(-90.0f, 90.0f, 0.0f));
+                break;
+            case "right":
+                transform.rotation = Quaternion.Euler(new Vector3(-90.0f, 180.0f, 0.0f));
+                break;
+            case "down":
+                transform.rotation = Quaternion.Euler(new Vector3(-90.0f, -90.0f, 0.0f));
+                break;
+            case "left":
+                transform.rotation = Quaternion.Euler(new Vector3(-90.0f, 0.0f, 0.0f));
+                break;
+        }
 
         //EQ
         weapons.Add(new Pistol(5));
@@ -240,17 +256,6 @@ public class PlayerUnitController : Unit
             int x = Mathf.FloorToInt(weaponAreaEffect[i].PosX / _tileMapBuilder.tileSize);
             int z = Mathf.FloorToInt(weaponAreaEffect[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
             weaponAreaEffectHighlights.Add(createPlane(x, z, new Color(8.0f, 8.0f, 0.0f, 0.5f)));
-        }
-    }
-
-    private void turnToEnemy()
-    {
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, moveSpeed * 80f * Time.deltaTime);
-        if (Quaternion.Angle(transform.rotation, targetRotation) < 5.0f)
-        {
-            transform.rotation = targetRotation;
-            turningToAttack = false;
-            attack = true;
         }
     }
 

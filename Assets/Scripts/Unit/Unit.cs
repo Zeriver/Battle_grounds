@@ -18,6 +18,7 @@ public class Unit : MonoBehaviour {
     public List<Weapon> weapons;
     public List<HealingItem> healingItems;
     public Item currentItem;
+    public string facingDirection;
 
     protected List<GameObject> movementHighlights;
     protected List<GameObject> weaponHighlights;
@@ -72,28 +73,56 @@ public class Unit : MonoBehaviour {
     {
         if (positionQueue[0].x > coordinates.x)
         {
-            targetRotation = Quaternion.Euler(rotations[0]);
+            turnCorrectWay(facingDirection = "up", rotations);
             targetPosition = new Vector3(transform.position.x + 1f, transform.position.y, transform.position.z);
         }
         else if (positionQueue[0].x < coordinates.x)
         {
-            targetRotation = Quaternion.Euler(rotations[1]);
+            turnCorrectWay(facingDirection = "down", rotations);
             targetPosition = new Vector3(transform.position.x - 1f, transform.position.y, transform.position.z);
-
         }
         else if (positionQueue[0].z < coordinates.z)
         {
-            targetRotation = Quaternion.Euler(rotations[2]);
+            turnCorrectWay(facingDirection = "right", rotations);
             targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f);
-
         }
         else if (positionQueue[0].z > coordinates.z)
         {
-            targetRotation = Quaternion.Euler(rotations[3]);
+            turnCorrectWay(facingDirection = "left", rotations);
             targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f);
-
         }
         moving = true;
+    }
+
+    protected void turnCorrectWay(string direction, Vector3[] rotations)
+    {
+        switch (direction)
+        {
+            case "up":
+                targetRotation = Quaternion.Euler(rotations[0]);
+                break;
+            case "right":
+                targetRotation = Quaternion.Euler(rotations[2]);
+                break;
+            case "down":
+                targetRotation = Quaternion.Euler(rotations[1]);
+                break;
+            case "left":
+                targetRotation = Quaternion.Euler(rotations[3]);
+                break;
+        }
+    }
+
+    protected void turnToEnemy()
+    {
+        Debug.Log("ass" + targetRotation);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, moveSpeed * 80f * Time.deltaTime);
+        if (Quaternion.Angle(transform.rotation, targetRotation) < 5.0f)
+        {
+            transform.rotation = targetRotation;
+            turningToAttack = false;
+            attack = true;
+        }
     }
 
 }

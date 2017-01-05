@@ -139,15 +139,15 @@ public class BattleGroundController : MonoBehaviour {
             playerUnits.Add(Instantiate(_playerUnit).GetComponent<PlayerUnitController>());
             if (i == 0)                             // make better loading position for scenarios TODO
             {
-                playerUnits[i].createPlayerUnit(5, 5, 5);
+                playerUnits[i].createPlayerUnit(5, 5, 5, "up");
                 lastActiveUnit = playerUnits[i];
             } else if (i == 1)
             {
-                playerUnits[i].createPlayerUnit(16, 9, 5);
+                playerUnits[i].createPlayerUnit(16, 9, 5, "down");
             }
             else if (i == 2)
             {
-                playerUnits[i].createPlayerUnit(8, 15, 5);
+                playerUnits[i].createPlayerUnit(8, 15, 5, "right");
             }
 
         }
@@ -161,15 +161,15 @@ public class BattleGroundController : MonoBehaviour {
             enemyUnits.Add(Instantiate(_enemyUnit).GetComponent<Enemy>());
             if (i == 0)
             {
-                enemyUnits[i].createEnemy(12, 12, 1);
+                enemyUnits[i].createEnemy(12, 12, 1, "down");
             }
             else if (i == 1)
             {
-                enemyUnits[i].createEnemy(12, 5, 1);
+                enemyUnits[i].createEnemy(12, 5, 1, "down");
             }
             else if (i == 2)
             {
-                enemyUnits[i].createEnemy(8, 8, 1);
+                enemyUnits[i].createEnemy(8, 8, 1, "down");
             }
         }
 

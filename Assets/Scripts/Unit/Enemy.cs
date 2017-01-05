@@ -21,7 +21,7 @@ public class Enemy :  Unit {
         
     }
 
-    public void createEnemy(int x, int z, int type)
+    public void createEnemy(int x, int z, int type, string facingDirection)
     {
         BattleGroundObject = GameObject.Find("BattleGrounds");
         _battleGroundController = BattleGroundObject.GetComponent("BattleGroundController") as BattleGroundController;
@@ -39,46 +39,70 @@ public class Enemy :  Unit {
         positionQueue = new List<Vector3>();
         movementHighlights = new List<GameObject>();
         weaponHighlights = new List<GameObject>();
+
+        switch (facingDirection)
+        {
+            case "up":
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f));
+                break;
+            case "right":
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 180.0f, 0.0f));
+                break;
+            case "down":
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, -90.0f, 0.0f));
+                break;
+            case "left":
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
+                break;
+        }
     }
 
     void Update()
     {
         if (turnInProgress)
         {
-            if (unitToAttack != null && weaponHighlights.Count == 0)
+            if (positionQueue.Count > 0 && !moving && movementHighlights.Count == 0)
             {
-                //ATTACK TODO  
-                //turning to attacked unit
-                unitToAttack = null;
-                turnDone = true;
-            }
-        }
-
-        if (positionQueue.Count > 0 && !moving && movementHighlights.Count == 0)
-        {
-            setNextStep(new Vector3[]  {            //Temporary fix until proper units models will be in game TODO
+                setNextStep(new Vector3[]  {            //Temporary fix until proper units models will be in game TODO
                      new Vector3(0.0f, 90.0f, 0.0f),
                      new Vector3(0.0f, -90.0f, 0.0f),
                      new Vector3(0.0f, 0.0f, 0.0f),
                      new Vector3(0.0f, 180.0f, 0.0f)
                  });
-        }
-        if (moving)
-        {
-            moveToNextStep();
-            if (positionQueue.Count == 0)
+            }
+            if (moving)
             {
-                TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
-                if (attackUnitIfInRange())
+                moveToNextStep();
+                if (positionQueue.Count == 0)
                 {
-                    turnDone = false;
-                }
-                else
-                {
-                    turnDone = true;
+                    TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
+                    if (attackUnitIfInRange())
+                    {
+                        turnDone = false;
+                    }
+                    else
+                    {
+                        turnDone = true;
+                    }
                 }
             }
-        }
+            if (turningToAttack)
+            {
+                turnToEnemy();
+                if (weaponHighlights.Count == 0)
+                {
+                    highlightTiles(weaponHighlights, attackTilesInRange, false);
+                }
+            }
+            if (attack && weaponHighlights.Count == 0)
+            {
+                //ATTACK TODO  
+                //turning to attacked unit
+                unitToAttack = null;
+                attack = false;
+                turnDone = true;
+            }
+        }       
     }
 
 
@@ -201,7 +225,15 @@ public class Enemy :  Unit {
             if (attackTilesInRange.Contains(_battleGroundController.playerUnits[j].getPlayerUnitTile()))
             {
                 unitToAttack = _battleGroundController.playerUnits[j];
-                highlightTiles(weaponHighlights, attackTilesInRange, false);
+                if (unitToAttack.coordinates.x > coordinates.x)
+                    targetRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
+                else if (unitToAttack.coordinates.x < coordinates.x)
+                    targetRotation = Quaternion.Euler(0.0f, -90.0f, 0.0f);
+                else if (unitToAttack.coordinates.z < coordinates.z)
+                    targetRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                else if (unitToAttack.coordinates.z > coordinates.z)
+                    targetRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                turningToAttack = true;
                 return true;
             }
         }
