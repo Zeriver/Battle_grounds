@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Impaler : Enemy {
+public class Devoured : Enemy {
 
 
     void Start()
@@ -10,15 +10,15 @@ public class Impaler : Enemy {
 
     }
 
-    override public void createImpaler(int x, int z, string facingDirection)
+    override public void createDevoured(int x, int z, string facingDirection)
     {
         standardInitialization(x, z, facingDirection);
-        type = 1;
-        name = "Impaler";
-        maxMovement = 4;
+        type = 2;
+        name = "Devoured";
+        maxMovement = 3;
         movesLeft = maxMovement;
         moveSpeed = 3f;
-        attackRange = 2;
+        attackRange = 1;
     }
 
     void Update()

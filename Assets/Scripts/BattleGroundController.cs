@@ -12,11 +12,14 @@ public class BattleGroundController : MonoBehaviour {
     CameraController _cameraController;
 
     public GameObject _playerUnit;
-    public GameObject _enemyUnit;
     public GameObject _playerUI;
     public GameObject _itemCreator;
     public GameObject _inventory;
     public GameObject _unitInfo;
+
+    //enemies
+    public GameObject _impaler;
+    public GameObject _devoured;
 
     private PlayerUI playerUI;
     private ItemCreator itemCreator;
@@ -152,24 +155,33 @@ public class BattleGroundController : MonoBehaviour {
 
         }
 
+        GameObject impaler = _impaler as GameObject;
+        Impaler impalerController = impaler.GetComponent<Impaler>();
 
-        GameObject enemyUnit = _enemyUnit as GameObject;
-        Enemy enemyUnitController = enemyUnit.GetComponent<Enemy>();
+        GameObject devoured = _devoured as GameObject;
+        Devoured devouredController = devoured.GetComponent<Devoured>();
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 4; i++)
         {
-            enemyUnits.Add(Instantiate(_enemyUnit).GetComponent<Enemy>());
             if (i == 0)
             {
-                enemyUnits[i].createEnemy(12, 12, 1, "down");
+                enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
+                enemyUnits[i].createImpaler(12, 12, "down");
             }
             else if (i == 1)
             {
-                enemyUnits[i].createEnemy(12, 5, 1, "down");
+                enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
+                enemyUnits[i].createImpaler(12, 5, "down");
             }
             else if (i == 2)
             {
-                enemyUnits[i].createEnemy(8, 8, 1, "down");
+                enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
+                enemyUnits[i].createImpaler(8, 8, "down");
+            }
+            else if (i == 3)
+            {
+                enemyUnits.Add(Instantiate(_devoured).GetComponent<Devoured>());
+                enemyUnits[i].createDevoured(18, 18, "down");
             }
         }
 
@@ -330,10 +342,7 @@ public class BattleGroundController : MonoBehaviour {
             {
                 if ( i > 0 && enemyUnits[i-1].turnDone)
                 {
-                    if (enemyUnits[i].type == 1)
-                    {
-                        enemyUnits[i].performTurn();
-                    }
+                    enemyUnits[i].performTurn();
                 }
                 else if (i == 0)
                 {
