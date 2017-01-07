@@ -93,7 +93,7 @@ public class PlayerUnitController : Unit
             }
             if (moving)
             {
-                moveToNextStep();
+                moveToNextStep(0);
             }
             if (turningToAttack)
             {

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Devoured : Enemy {
+public class Salamand : Enemy {
 
 
     void Start()
@@ -10,16 +10,18 @@ public class Devoured : Enemy {
 
     }
 
-    override public void createDevoured(int x, int z, string facingDirection)
+    override public void createSalamand(int x, int z, string facingDirection)
     {
         standardInitialization(x, z, facingDirection);
-        positions.Add(transform.position);
-        type = 2;
-        name = "Devoured";
+        transform.position = new Vector3(coordinates.x + 1.0f, coordinates.y, -coordinates.z + 0.5f);
+        additionalPositions.Add(new Vector3(transform.position.x - 1, transform.position.y, transform.position.z));
+        setPositions();
+        type = 3;
+        name = "Salamandar";
         maxMovement = 3;
         movesLeft = maxMovement;
         moveSpeed = 3f;
-        attackRange = 1;
+        attackRange = 10;
     }
 
     void Update()
@@ -37,7 +39,7 @@ public class Devoured : Enemy {
             }
             if (moving)
             {
-                moveToNextStep(0);
+                moveToNextStep(0.5f);
                 if (positionQueue.Count == 0)
                 {
                     TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
@@ -53,7 +55,9 @@ public class Devoured : Enemy {
             }
             if (turningToAttack)
             {
-                turnToEnemy();
+                //turnToEnemy();
+                turningToAttack = false;
+                attack = true;
                 if (weaponHighlights.Count == 0)
                 {
                     highlightTiles(weaponHighlights, attackTilesInRange, false);
@@ -72,11 +76,22 @@ public class Devoured : Enemy {
 
     override public void performTurn()
     {
+        attackTilesInRange.Clear();
+        movementTilesInRange.Clear();
         turnInProgress = true;
         Tile currentTile = TileMap.getTile((int)coordinates.x, (int)coordinates.z);
         attackTilesInRange = TileHighlight.FindHighlight(currentTile, attackRange, true, false);
-        movementTilesInRange = TileHighlight.FindHighlight(currentTile, movesLeft, false, false);
-        //movementToAttackTilesInRange = TileHighlight.FindHighlight(currentTile, moves + attackRange, false);
+        for (int i = 0; i < positions.Count; i++)
+        {
+            List<Tile> temp = TileHighlight.FindHighlight(TileMap.getTile((int)positions[i].x, (int)positions[i].z - 1), movesLeft, false, false);
+            for (int j = 0; j < temp.Count; j++)
+            {
+                if (!movementTilesInRange.Contains(temp[j]))  //maybe hashsets would be more efficient
+                {
+                    movementTilesInRange.Add(temp[j]);
+                }
+            }
+        }
 
         if (attackUnitIfInRange())
         {

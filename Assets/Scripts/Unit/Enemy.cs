@@ -5,7 +5,6 @@ using System.Linq;
 
 public abstract class Enemy :  Unit {
 
-    public int type;
     protected new string name;
     protected int attackRange;
 
@@ -50,6 +49,7 @@ public abstract class Enemy :  Unit {
                 transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
                 break;
         }
+        setPositions();
     }
 
     public void createEnemy(int x, int z, int type, string facingDirection)
@@ -67,13 +67,17 @@ public abstract class Enemy :  Unit {
 
     }
 
+    virtual public void createSalamand(int x, int z, string facingDirection)
+    {
+
+    }
+
     void Update()
     {
 
     }
 
     abstract public void performTurn();
-
 
     public void resetAfterTurn()
     {
@@ -87,12 +91,23 @@ public abstract class Enemy :  Unit {
     {
         if (movementHighlights.Count == 0)
         {
-            movementTilesInRange = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), maxMovement, false, false);
+            movementTilesInRange.Clear();
             Color tileColor = new Color(0.85f, 0.85f, 0.0f, 0.5f);
-            for (int i = 0; i < movementTilesInRange.Count; i++)
+            for (int i = 0; i < positions.Count; i++)
             {
-                int x = Mathf.FloorToInt(movementTilesInRange[i].PosX / _tileMapBuilder.tileSize);
-                int z = Mathf.FloorToInt(movementTilesInRange[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
+                List<Tile> tempList = TileHighlight.FindHighlight(TileMap.getTile((int)positions[i].x, (int)positions[i].z - 1), maxMovement, false, false);
+                for (int j = 0; j < tempList.Count; j++)
+                {
+                    if (!movementTilesInRange.Contains(tempList[j]))  //maybe hashsets would be more efficient
+                    {
+                        movementTilesInRange.Add(tempList[j]);
+                    }
+                }
+            }
+            for (int j = 0; j < movementTilesInRange.Count; j++)
+            {
+                int x = Mathf.FloorToInt(movementTilesInRange[j].PosX / _tileMapBuilder.tileSize);
+                int z = Mathf.FloorToInt(movementTilesInRange[j].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
                 movementHighlights.Add(createPlane(x, z, tileColor));
             }
         }
@@ -129,6 +144,77 @@ public abstract class Enemy :  Unit {
         return false;
     }
 
+    protected bool moveAndAttackIfInRange()
+    {
+        for (int i = 0; i < movementTilesInRange.Count; i++)
+        {
+            attackTilesInRange = TileHighlight.FindHighlight(movementTilesInRange[i], attackRange, true, false);
+            for (int j = 0; j < _battleGroundController.playerUnits.Count; j++)
+            {
+                if (attackTilesInRange.Contains(_battleGroundController.playerUnits[j].getPlayerUnitTile()))
+                {
+                    for (int x = 0; x < positions.Count; x++)
+                    {
+                        TileMap.setTileWalkable((int)positions[x].x, (int)positions[x].z - 1);
+                    }
+                    List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), movementTilesInRange[i]);
+                    for (int x = 0; x < path.Count; x++)
+                    {
+                        positionQueue.Add(new Vector3(path[x].PosX, coordinates.y, path[x].PosY));
+                    }
+                    movesLeft -= positionQueue.Count;
+                    highlightTiles(movementHighlights, movementTilesInRange, true);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected bool moveTowardNearestEnemy()
+    {
+        targetPosition = new Vector3(1000, 1000, 1000);
+        for (int i = 0; i < movementTilesInRange.Count; i++)
+        {
+            for (int j = 0; j < _battleGroundController.playerUnits.Count; j++)
+            {
+                Vector3 movementTileVector = new Vector3(movementTilesInRange[i].PosX, transform.position.y, movementTilesInRange[i].PosY);
+                float distance = Vector3.Distance(movementTileVector, _battleGroundController.playerUnits[j].coordinates);
+                float oldDistance = 100000;
+                if (unitToAttack != null)
+                {
+                    oldDistance = Vector3.Distance(targetPosition, unitToAttack.coordinates);
+                }
+                if (distance < oldDistance)
+                {
+                    targetPosition = movementTileVector;
+                    unitToAttack = _battleGroundController.playerUnits[j];
+                }
+            }
+        }
+        if (targetPosition != new Vector3(1000, 1000, 1000))
+        {
+            Tile destination = TileMap.getTile((int)targetPosition.x, (int)targetPosition.z);
+            if (movementTilesInRange.Contains(destination))
+            {
+                for (int x = 0; x < positions.Count; x++)
+                {
+                    TileMap.setTileWalkable((int)positions[x].x, (int)positions[x].z - 1);
+                }
+                List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), destination);
+                for (int i = 0; i < path.Count; i++)
+                {
+                    positionQueue.Add(new Vector3(path[i].PosX, coordinates.y, path[i].PosY));
+                }
+                unitToAttack = null;
+                movesLeft -= positionQueue.Count;
+                highlightTiles(movementHighlights, movementTilesInRange, true);
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected void highlightTiles(List<GameObject> highlights, List<Tile> tiles, bool isMovement)
     {
         Color tileColor;
@@ -151,7 +237,7 @@ public abstract class Enemy :  Unit {
 
     IEnumerator DestroyObjectsDelayed(float waitTime, List<GameObject> objects)
     {
-        yield return new WaitForSeconds(waitTime);
+        yield return new WaitForSeconds(0.5f);
         for (int i = 0; i < objects.Count; i++)
         {
             Destroy(objects[i]);

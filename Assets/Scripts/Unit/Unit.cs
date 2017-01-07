@@ -19,11 +19,14 @@ public class Unit : MonoBehaviour {
     public List<HealingItem> healingItems;
     public Item currentItem;
     public string facingDirection;
+    public List<Vector3> positions;
+    public int type;
 
     protected List<GameObject> movementHighlights;
     protected List<GameObject> weaponHighlights;
     protected List<GameObject> weaponAreaEffectHighlights;
     protected List<Vector3> positionQueue;
+    public List<Vector3> additionalPositions;
     protected Quaternion targetRotation;
     protected Vector3 targetPosition;
     protected TileMapBuilder _tileMapBuilder;
@@ -51,7 +54,7 @@ public class Unit : MonoBehaviour {
         return plane;
     }
 
-    protected void moveToNextStep()
+    protected void moveToNextStep(float offset)
     {
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, moveSpeed * 2.2f * Time.deltaTime);
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
@@ -59,12 +62,24 @@ public class Unit : MonoBehaviour {
         {
             coordinates = positionQueue[0];
             transform.position = new Vector3(positionQueue[0].x + 0.5f, positionQueue[0].y, -positionQueue[0].z + 0.5f);
+            if (facingDirection.Equals("up") || facingDirection.Equals("down"))
+            {
+                transform.position += new Vector3(offset, 0, 0);
+            }
+            else
+            {
+                 transform.position += new Vector3(0, 0, offset);
+            }
+            setPositions();
             positionQueue.RemoveAt(0);
             moving = false;
         }
         if (positionQueue.Count == 0)
         {
-            TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
+            for (int i = 0; i < positions.Count; i++)
+            {
+                TileMap.setTileNotWalkable((int)positions[i].x, (int)positions[i].z - 1);
+            }
         }
     }
 
@@ -75,21 +90,37 @@ public class Unit : MonoBehaviour {
         {
             turnCorrectWay(facingDirection = "up", rotations);
             targetPosition = new Vector3(transform.position.x + 1f, transform.position.y, transform.position.z);
+            if (type == 3)
+            {
+                additionalPositions[0] = targetPosition - new Vector3(1,0,0);
+            }
         }
         else if (positionQueue[0].x < coordinates.x)
         {
             turnCorrectWay(facingDirection = "down", rotations);
             targetPosition = new Vector3(transform.position.x - 1f, transform.position.y, transform.position.z);
+            if (type == 3)
+            {
+                additionalPositions[0] = targetPosition - new Vector3(-1, 0, 0);
+            }
         }
         else if (positionQueue[0].z < coordinates.z)
         {
             turnCorrectWay(facingDirection = "right", rotations);
             targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f);
+            if (type == 3)
+            {
+                additionalPositions[0] = targetPosition - new Vector3(0, 0, 1);
+            }
         }
         else if (positionQueue[0].z > coordinates.z)
         {
             turnCorrectWay(facingDirection = "left", rotations);
             targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f);
+            if (type == 3)
+            {
+                additionalPositions[0] = targetPosition - new Vector3(0, 0, -1);
+            }
         }
         moving = true;
     }
@@ -115,13 +146,25 @@ public class Unit : MonoBehaviour {
 
     protected void turnToEnemy()
     {
-        Debug.Log("ass" + targetRotation);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, moveSpeed * 80f * Time.deltaTime);
         if (Quaternion.Angle(transform.rotation, targetRotation) < 5.0f)
         {
             transform.rotation = targetRotation;
             turningToAttack = false;
             attack = true;
+        }
+    }
+
+    protected void setPositions()
+    {
+        positions.Clear();
+        positions.Add(transform.position);
+        if (additionalPositions != null)
+        {
+            for (int i = 0; i < additionalPositions.Count; i++)
+            {
+                positions.Add(additionalPositions[i]);
+            }
         }
     }
 

@@ -20,6 +20,7 @@ public class BattleGroundController : MonoBehaviour {
     //enemies
     public GameObject _impaler;
     public GameObject _devoured;
+    public GameObject _salamand;
 
     private PlayerUI playerUI;
     private ItemCreator itemCreator;
@@ -137,7 +138,7 @@ public class BattleGroundController : MonoBehaviour {
         PlayerUnitController playerUnitController = playerUnit.GetComponent<PlayerUnitController>();
 
 
-        for (int i = 0; i <3; i++)  //Need to load number of players from scenario/something
+        for (int i = 0; i < 3; i++)  //Need to load number of players from scenario/something
         {
             playerUnits.Add(Instantiate(_playerUnit).GetComponent<PlayerUnitController>());
             if (i == 0)                             // make better loading position for scenarios TODO
@@ -161,27 +162,15 @@ public class BattleGroundController : MonoBehaviour {
         GameObject devoured = _devoured as GameObject;
         Devoured devouredController = devoured.GetComponent<Devoured>();
 
-        for (int i = 0; i < 4; i++)
+        GameObject salamand = _salamand as GameObject;
+        Salamand salamandController = salamand.GetComponent<Salamand>();
+
+        for (int i = 0; i < 1; i++)
         {
-            if (i == 0)
+        if (i == 0)
             {
-                enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
-                enemyUnits[i].createImpaler(12, 12, "down");
-            }
-            else if (i == 1)
-            {
-                enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
-                enemyUnits[i].createImpaler(12, 5, "down");
-            }
-            else if (i == 2)
-            {
-                enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
-                enemyUnits[i].createImpaler(8, 8, "down");
-            }
-            else if (i == 3)
-            {
-                enemyUnits.Add(Instantiate(_devoured).GetComponent<Devoured>());
-                enemyUnits[i].createDevoured(18, 18, "down");
+                enemyUnits.Add(Instantiate(_salamand).GetComponent<Salamand>());
+                enemyUnits[i].createSalamand(18, 3, "down");
             }
         }
 
@@ -261,9 +250,13 @@ public class BattleGroundController : MonoBehaviour {
         Enemy unit = null;
         for (int i = 0; i < enemyUnits.Count; i++)
         {
-            if ((int)enemyUnits[i].transform.position.x == x && (int)enemyUnits[i].transform.position.z == z + 1) //+1 hack beacuse float is rounded to bigger value. Must improve TODO
+            for (int j = 0; j < enemyUnits[i].positions.Count; j++)
             {
-                unit = enemyUnits[i];
+                if ((int)enemyUnits[i].positions[j].x == x && (int)enemyUnits[i].positions[j].z == z + 1) //+1 hack beacuse float is rounded to bigger value. Must improve TODO
+                {
+                    unit = enemyUnits[i];
+                    break;
+                }
             }
         }
         return unit;
