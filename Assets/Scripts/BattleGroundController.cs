@@ -5,7 +5,8 @@ using System.Collections.Generic;
 [RequireComponent(typeof(TileMapBuilder))]
 [RequireComponent(typeof(MouseHighlight))]
 [RequireComponent(typeof(CameraController))]
-public class BattleGroundController : MonoBehaviour {
+public class BattleGroundController : MonoBehaviour
+{
 
     TileMapBuilder _tileMapBuilder;
     MouseHighlight _mouseHighlight;
@@ -33,7 +34,8 @@ public class BattleGroundController : MonoBehaviour {
     private bool playerTurn, enemyTurn, allyTurn, endTurn;
     private int turnNumber;
 
-    void Start () {
+    void Start()
+    {
         _tileMapBuilder = GetComponent<TileMapBuilder>();
         _mouseHighlight = GetComponent<MouseHighlight>();
         _cameraController = GetComponent<CameraController>();
@@ -43,9 +45,10 @@ public class BattleGroundController : MonoBehaviour {
         unitInfo = _unitInfo.GetComponent("UnitInfoPanel") as UnitInfoPanel;
         turnNumber = 1;
         createBattleGround(30, 30);
-	}
-	
-	void Update () {
+    }
+
+    void Update()
+    {
         if (playerTurn && !lastActiveUnit.moving)
         {
             if (Input.GetKeyDown(KeyCode.Q))
@@ -104,7 +107,7 @@ public class BattleGroundController : MonoBehaviour {
         {
             performEnemyTurn();
             bool allEnemiesDone = true;
-            Debug.Log("Enemy turn in progress...");
+            //Debug.Log("Enemy turn in progress...");
             for (int i = 0; i < enemyUnits.Count; i++)
             {
                 if (!enemyUnits[i].turnDone)
@@ -116,7 +119,7 @@ public class BattleGroundController : MonoBehaviour {
             {
                 enemyTurn = false;
                 allyTurn = true;
-            }            
+            }
         }
         if (allyTurn)
         {
@@ -145,7 +148,8 @@ public class BattleGroundController : MonoBehaviour {
             {
                 playerUnits[i].createPlayerUnit(5, 5, 5, "up");
                 lastActiveUnit = playerUnits[i];
-            } else if (i == 1)
+            }
+            else if (i == 1)
             {
                 playerUnits[i].createPlayerUnit(16, 9, 5, "down");
             }
@@ -165,12 +169,17 @@ public class BattleGroundController : MonoBehaviour {
         GameObject salamand = _salamand as GameObject;
         Salamand salamandController = salamand.GetComponent<Salamand>();
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 2; i++)
         {
-        if (i == 0)
+            if (i == 0)
             {
                 enemyUnits.Add(Instantiate(_salamand).GetComponent<Salamand>());
-                enemyUnits[i].createSalamand(18, 3, "down");
+                enemyUnits[i].createSalamand(18, 3, "up");
+            }
+            if (i == 1)
+            {
+                //enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
+                //enemyUnits[i].createImpaler(9, 6, "down");
             }
         }
 
@@ -187,13 +196,14 @@ public class BattleGroundController : MonoBehaviour {
             if (playerUnits[i].isSelected)
             {
                 playerUnits[i].deactivatePlayerUnit();
-                if (i+1 != playerUnits.Count)
+                if (i + 1 != playerUnits.Count)
                 {
-                    playerUnits[i+1].setPlayerUnitActive();
+                    playerUnits[i + 1].setPlayerUnitActive();
                     lastActiveUnit = playerUnits[i + 1];
                     _cameraController.setCameraToActiveUnit(playerUnits[i + 1].transform.position);
                     break;
-                } else
+                }
+                else
                 {
                     playerUnits[0].setPlayerUnitActive();
                     lastActiveUnit = playerUnits[0];
@@ -236,7 +246,7 @@ public class BattleGroundController : MonoBehaviour {
         PlayerUnitController unit = null;
         for (int i = 0; i < playerUnits.Count; i++)
         {
-            if ((int)playerUnits[i].transform.position.x == x && (int)playerUnits[i].transform.position.z == z+1) //+1 hack beacuse float is rounded to bigger value. Must improve TODO
+            if ((int)playerUnits[i].transform.position.x == x && (int)playerUnits[i].transform.position.z == z + 1) //+1 hack beacuse float is rounded to bigger value. Must improve TODO
             {
                 unit = playerUnits[i];
                 lastActiveUnit = unit;
@@ -333,7 +343,7 @@ public class BattleGroundController : MonoBehaviour {
         {
             if (!enemyUnits[i].turnInProgress)
             {
-                if ( i > 0 && enemyUnits[i-1].turnDone)
+                if (i > 0 && enemyUnits[i - 1].turnDone)
                 {
                     enemyUnits[i].performTurn();
                 }
@@ -341,9 +351,9 @@ public class BattleGroundController : MonoBehaviour {
                 {
                     enemyUnits[i].performTurn();
                 }
-                
+
             }
-            
+
         }
     }
 }

@@ -40,7 +40,6 @@ public class Impaler : Enemy {
                 moveToNextStep(0);
                 if (positionQueue.Count == 0)
                 {
-                    TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
                     if (attackUnitIfInRange())
                     {
                         turnDone = false;

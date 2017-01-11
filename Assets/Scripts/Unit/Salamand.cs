@@ -13,15 +13,15 @@ public class Salamand : Enemy {
     override public void createSalamand(int x, int z, string facingDirection)
     {
         standardInitialization(x, z, facingDirection);
-        transform.position = new Vector3(coordinates.x + 1.0f, coordinates.y, -coordinates.z + 0.5f);
+        transform.position = new Vector3(coordinates.x, coordinates.y, -coordinates.z + 0.5f);
         additionalPositions.Add(new Vector3(transform.position.x - 1, transform.position.y, transform.position.z));
         setPositions();
         type = 3;
         name = "Salamandar";
-        maxMovement = 3;
+        maxMovement = 1;
         movesLeft = maxMovement;
         moveSpeed = 3f;
-        attackRange = 10;
+        attackRange = 1;
     }
 
     void Update()
@@ -42,7 +42,6 @@ public class Salamand : Enemy {
                 moveToNextStep(0.5f);
                 if (positionQueue.Count == 0)
                 {
-                    TileMap.setTileNotWalkable((int)coordinates.x, (int)coordinates.z);
                     if (attackUnitIfInRange())
                     {
                         turnDone = false;
@@ -81,6 +80,7 @@ public class Salamand : Enemy {
         turnInProgress = true;
         Tile currentTile = TileMap.getTile((int)coordinates.x, (int)coordinates.z);
         attackTilesInRange = TileHighlight.FindHighlight(currentTile, attackRange, true, false);
+        //movementTilesInRange = TileHighlight.FindHighlight(currentTile, movesLeft, false, false);
         for (int i = 0; i < positions.Count; i++)
         {
             List<Tile> temp = TileHighlight.FindHighlight(TileMap.getTile((int)positions[i].x, (int)positions[i].z - 1), movesLeft, false, false);
@@ -92,7 +92,7 @@ public class Salamand : Enemy {
                 }
             }
         }
-
+        
         if (attackUnitIfInRange())
         {
             return;

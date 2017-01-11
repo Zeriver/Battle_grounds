@@ -58,18 +58,10 @@ public class Unit : MonoBehaviour {
     {
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, moveSpeed * 2.2f * Time.deltaTime);
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-        if (Vector3.Distance(targetPosition, transform.position) <= 0.1f)
+        if (Vector3.Distance(targetPosition, transform.position) <= 0.01f)
         {
             coordinates = positionQueue[0];
-            transform.position = new Vector3(positionQueue[0].x + 0.5f, positionQueue[0].y, -positionQueue[0].z + 0.5f);
-            if (facingDirection.Equals("up") || facingDirection.Equals("down"))
-            {
-                transform.position += new Vector3(offset, 0, 0);
-            }
-            else
-            {
-                 transform.position += new Vector3(0, 0, offset);
-            }
+            transform.position = targetPosition;
             setPositions();
             positionQueue.RemoveAt(0);
             moving = false;
@@ -92,7 +84,7 @@ public class Unit : MonoBehaviour {
             targetPosition = new Vector3(transform.position.x + 1f, transform.position.y, transform.position.z);
             if (type == 3)
             {
-                additionalPositions[0] = targetPosition - new Vector3(1,0,0);
+                additionalPositions[0] = transform.position;
             }
         }
         else if (positionQueue[0].x < coordinates.x)
@@ -101,7 +93,7 @@ public class Unit : MonoBehaviour {
             targetPosition = new Vector3(transform.position.x - 1f, transform.position.y, transform.position.z);
             if (type == 3)
             {
-                additionalPositions[0] = targetPosition - new Vector3(-1, 0, 0);
+                additionalPositions[0] = transform.position;
             }
         }
         else if (positionQueue[0].z < coordinates.z)
@@ -110,7 +102,7 @@ public class Unit : MonoBehaviour {
             targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f);
             if (type == 3)
             {
-                additionalPositions[0] = targetPosition - new Vector3(0, 0, 1);
+                additionalPositions[0] = transform.position;
             }
         }
         else if (positionQueue[0].z > coordinates.z)
@@ -119,9 +111,10 @@ public class Unit : MonoBehaviour {
             targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f);
             if (type == 3)
             {
-                additionalPositions[0] = targetPosition - new Vector3(0, 0, -1);
+                additionalPositions[0] = transform.position;
             }
         }
+        Debug.Log(transform.position + "     " + targetPosition);
         moving = true;
     }
 
