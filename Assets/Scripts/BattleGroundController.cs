@@ -222,6 +222,14 @@ public class BattleGroundController : MonoBehaviour
         }
     }
 
+    public void changePushMode()
+    {
+        if (!lastActiveUnit.moving)
+        {
+            lastActiveUnit.pushMode();
+        }
+    }
+
     private void deactivatePlayerUnits()
     {
         for (int i = 0; i < playerUnits.Count; i++)

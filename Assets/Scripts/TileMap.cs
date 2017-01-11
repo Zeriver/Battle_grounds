@@ -33,6 +33,11 @@ public class TileMap
                     map_data[x, y] = 3;
                     tile_data.Add(new Tile(3, x, y));
                 }
+                else if (x == 4 && (y == 5 || y == 6))
+                {
+                    map_data[x, y] = 4;  // Instead of making special texture in this place, create preffab object with it's own script that allows object to be pushed TODO
+                    tile_data.Add(new Tile(4, x, y));
+                }
                 else if (x == 9 && (y == 9 || y == 10 || y == 11))
                 {
                     map_data[x, y] = 2;

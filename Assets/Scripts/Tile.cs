@@ -16,6 +16,7 @@ public class Tile {
     private int posX, posY;
     private bool isWalkable;
     private bool isUnitOnIt;
+    private bool isPushable;
 
     public Tile(int id, int x, int y)
     {
@@ -24,6 +25,7 @@ public class Tile {
         this.id = id;
         isWalkable = true;
         isUnitOnIt = false;
+        isPushable = false;
         switch (id)
         {
             case 1:
@@ -35,6 +37,11 @@ public class Tile {
             case 3:
                 moveCost = 999;  // not walkable
                 isWalkable = false;
+                break;
+            case 4:
+                moveCost = 1;
+                isWalkable = false;
+                isPushable = true;
                 break;
             default:
                 moveCost = 1;
@@ -76,5 +83,11 @@ public class Tile {
     {
         get { return isUnitOnIt; }
         set { isUnitOnIt = value; }
+    }
+
+    public bool IsPushable
+    {
+        get { return isPushable; }
+        set { isPushable = value; }
     }
 }

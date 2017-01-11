@@ -10,6 +10,7 @@ public class PlayerUnitController : Unit
     public bool isSelected;
     public bool isActionMode;
     public List<GameObject> giveHighlights;
+    public List<GameObject> pushHighlights;
     private List<Tile> validTiles;
     private Vector3 actionMouseHighlight;
     private MouseHighlight _mouseHiglight;
@@ -46,6 +47,7 @@ public class PlayerUnitController : Unit
         healingItems = new List<HealingItem>();
         weaponHighlights = new List<GameObject>();
         giveHighlights = new List<GameObject>();
+        pushHighlights = new List<GameObject>();
         weaponAreaEffectHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
         TileMap.setTileNotWalkable(x, y);
@@ -123,15 +125,12 @@ public class PlayerUnitController : Unit
                     return;
                 }
                 Tile clickedTile = TileMap.getTile((int)_mouseHiglight.getHighlightSelection().position.x, (int)_mouseHiglight.getHighlightSelection().position.z);
-                if (!isActionMode && giveHighlights.Count == 0)
+                if (!isActionMode && giveHighlights.Count == 0 && pushHighlights.Count == 0)
                 {
                     if (validTiles.Contains(clickedTile))
                     {
                         TileMap.setTileWalkable((int)coordinates.x, (int)coordinates.z);
-                        for (int i = 0; i < movementHighlights.Count; i++)
-                        {
-                            Destroy(movementHighlights[i]);
-                        }
+                        destroyMovementHiglights();
                         List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), clickedTile);
                         for (int i = 0; i < path.Count; i++)
                         {
@@ -177,12 +176,46 @@ public class PlayerUnitController : Unit
                         }
                     }
                 }
+                else if (pushHighlights.Count != 0)
+                {
+                    if (clickedTile.IsPushable)
+                    {
+                        Tile pushableTile;
+                        if (coordinates.x > clickedTile.PosX)
+                            pushableTile = TileMap.getTile(clickedTile.PosX - 1, clickedTile.PosY);
+                        else if (coordinates.x < clickedTile.PosX)
+                            pushableTile = TileMap.getTile(clickedTile.PosX + 1, clickedTile.PosY);
+                        else if (coordinates.z > clickedTile.PosY)
+                            pushableTile = TileMap.getTile(clickedTile.PosX, clickedTile.PosY - 1);
+                        else
+                            pushableTile = TileMap.getTile(clickedTile.PosX, clickedTile.PosY + 1);
+                        if (pushableTile.IsWalkable)
+                        {
+                            pushableTile.IsWalkable = false;
+                            pushableTile.IsPushable = true;
+                            pushableTile.Id = 4;
+
+                            TileMap.setTileWalkable((int)coordinates.x, (int)coordinates.z);
+                            clickedTile.IsWalkable = true;
+                            clickedTile.IsPushable = false;
+                            clickedTile.Id = 1;
+
+                            List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), clickedTile);
+                            for (int i = 0; i < path.Count; i++)
+                            {
+                                positionQueue.Add(new Vector3(path[i].PosX, coordinates.y, path[i].PosY));
+                            }
+                            movesLeft -= positionQueue.Count;
+                            pushMode();
+                        }
+                    }
+                }
             }
             if (Input.GetMouseButtonDown(1) && positionQueue.Count == 0 && !isActionUsed) //RIGHT CLICK
             {
                 switchActionMode();
             }
-            if (isActionMode && validTiles != null)
+            if (isActionMode && validTiles != null) //HOVER
             {
                 Tile hoverTile = TileMap.getTile((int)_mouseHiglight.getHighlightSelection().position.x, (int)_mouseHiglight.getHighlightSelection().position.z);
                 if (validTiles.Contains(hoverTile) && currentItem is Weapon)
@@ -210,10 +243,7 @@ public class PlayerUnitController : Unit
 
     public void showAllowedMovements()
     {
-        for (int i = 0; i < movementHighlights.Count; i++)
-        {
-            Destroy(movementHighlights[i]);
-        }
+        destroyMovementHiglights();
         validTiles = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), movesLeft, false, false);
         for (int i = 0; i < validTiles.Count; i++)
         {
@@ -269,21 +299,17 @@ public class PlayerUnitController : Unit
     {
         if (giveHighlights.Count > 0)
         {
-            for (int i = 0; i < giveHighlights.Count; i++)
-            {
-                Destroy(giveHighlights[i]);
-            }
-            giveHighlights.Clear();
-            validTiles.Clear();
+            destroyGiveHiglights();
+        }
+        if (pushHighlights.Count > 0)
+        {
+            destroyPushHiglights();
         }
 
         isActionMode = !isActionMode;
         if (isActionMode && !isActionUsed)
         {
-            for (int i = 0; i < movementHighlights.Count; i++)
-            {
-                Destroy(movementHighlights[i]);
-            }
+            destroyMovementHiglights();
             highlightWeaponRange();
         }
         else
@@ -299,13 +325,35 @@ public class PlayerUnitController : Unit
 
     public void DestroyWeaponHiglights()
     {
-        for (int i = 0; i < weaponHighlights.Count; i++)
+        destroyTiles(weaponHighlights, validTiles);
+    }
+
+    private void destroyMovementHiglights()
+    {
+        destroyTiles(movementHighlights, validTiles);
+    }
+
+    private void destroyGiveHiglights()
+    {
+        destroyTiles(giveHighlights, validTiles);
+        giveHighlights.Clear();
+    }
+
+    private void destroyPushHiglights()
+    {
+        destroyTiles(pushHighlights, validTiles);
+        pushHighlights.Clear();
+    }
+
+    private void destroyTiles(List<GameObject> highlights, List<Tile> tiles)
+    {
+        for (int i = 0; i < highlights.Count; i++)
         {
-            Destroy(weaponHighlights[i]);
+            Destroy(highlights[i]);
         }
-        if (validTiles != null)
+        if (tiles != null)
         {
-            validTiles.Clear();
+            tiles.Clear();
         }
     }
 
@@ -313,20 +361,12 @@ public class PlayerUnitController : Unit
     {
         if (giveHighlights.Count > 0)
         {
-            for (int i = 0; i < giveHighlights.Count; i++)
-            {
-                Destroy(giveHighlights[i]);
-            }
-            giveHighlights.Clear();
-            validTiles.Clear();
-            setActionMode(true);
+            destroyGiveHiglights();
+            setActionMode(false);
         }
         else
         {
-            for (int i = 0; i < movementHighlights.Count; i++)
-            {
-                Destroy(movementHighlights[i]);
-            }
+            destroyMovementHiglights();
             DestroyWeaponHiglights();
 
             validTiles = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), 1, true, false);
@@ -335,6 +375,28 @@ public class PlayerUnitController : Unit
                 int x = Mathf.FloorToInt(validTiles[i].PosX / _tileMapBuilder.tileSize);
                 int z = Mathf.FloorToInt(validTiles[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
                 giveHighlights.Add(createPlane(x, z, new Color(0.85f, 0.85f, 0.0f, 0.5f)));
+            }
+        }
+    }
+
+    public void pushMode()
+    {
+        if (pushHighlights.Count > 0)
+        {
+            destroyPushHiglights();
+            setActionMode(false);
+        }
+        else
+        {
+            destroyMovementHiglights();
+            DestroyWeaponHiglights();
+
+            validTiles = TileHighlight.FindHighlight(TileMap.getTile((int)coordinates.x, (int)coordinates.z), 1, true, false);
+            for (int i = 0; i < validTiles.Count; i++)
+            {
+                int x = Mathf.FloorToInt(validTiles[i].PosX / _tileMapBuilder.tileSize);
+                int z = Mathf.FloorToInt(validTiles[i].PosY * (-1) / _tileMapBuilder.tileSize);  //* -1 because battleGround generates on negative z TODO
+                pushHighlights.Add(createPlane(x, z, new Color(0.85f, 0.85f, 0.5f, 0.5f)));
             }
         }
     }
@@ -351,18 +413,12 @@ public class PlayerUnitController : Unit
         isSelected = false;
         showMoves = false;
         setActionMode(false);
-        for (int i = 0; i < movementHighlights.Count; i++)
-        {
-            Destroy(movementHighlights[i]);
-        }
+        destroyMovementHiglights();
     }
 
     public void resetAfterTurn()
     {
-        for (int i = 0; i < movementHighlights.Count; i++)
-        {
-            Destroy(movementHighlights[i]);
-        }
+        destroyMovementHiglights();
         movesLeft = maxMovement;
         isActionUsed = false;
         setActionMode(false);

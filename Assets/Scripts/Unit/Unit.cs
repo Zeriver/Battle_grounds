@@ -114,7 +114,6 @@ public class Unit : MonoBehaviour {
                 additionalPositions[0] = transform.position;
             }
         }
-        Debug.Log(transform.position + "     " + targetPosition);
         moving = true;
     }
 
