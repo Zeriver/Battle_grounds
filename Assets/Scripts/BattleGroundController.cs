@@ -224,7 +224,7 @@ public class BattleGroundController : MonoBehaviour
 
     public void changePushMode()
     {
-        if (!lastActiveUnit.moving)
+        if (!lastActiveUnit.moving && !lastActiveUnit.isActionUsed)
         {
             lastActiveUnit.pushMode();
         }

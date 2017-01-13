@@ -9,10 +9,11 @@ public class TileMap
 
     static int[,] map_data;
     static List<Tile> tile_data;
+    static List<Obstacle> obstacles;
 
     public TileMap()
     {
-        //Exception TODO
+
     }
 
     public TileMap(int size_x, int size_y)
@@ -20,8 +21,11 @@ public class TileMap
         this.size_x = size_x;
         this.size_y = size_y;
         tile_data = new List<Tile>();
+        obstacles = new List<Obstacle>();
 
         map_data = new int[size_x, size_y];
+
+        UnityEngine.Object obstaclePrefab = Resources.Load("Prefabs/Obstacle_01");
 
         for (int x = 0; x < size_x; x++)
         {
@@ -35,8 +39,12 @@ public class TileMap
                 }
                 else if (x == 4 && (y == 5 || y == 6))
                 {
-                    map_data[x, y] = 4;  // Instead of making special texture in this place, create preffab object with it's own script that allows object to be pushed TODO
+                    map_data[x, y] = 0; 
                     tile_data.Add(new Tile(4, x, y));
+                    GameObject obstacle = (GameObject)GameObject.Instantiate(obstaclePrefab);
+                    Obstacle obstacleController = obstacle.GetComponent<Obstacle>();
+                    obstacleController.createObstacle(x, y);
+                    obstacles.Add(obstacleController);
                 }
                 else if (x == 9 && (y == 9 || y == 10 || y == 11))
                 {
@@ -62,6 +70,19 @@ public class TileMap
     public int getTileAt(int x, int y)
     {
         return map_data[x, y];
+    }
+
+    public static Obstacle getObstacleAt(int x, int z)
+    {
+        Obstacle obstacle = null;
+        for (int i = 0; i < obstacles.Count; i++)
+        {
+            if (obstacles[i].id.Equals(x + "|" + z))
+            {
+                return obstacles[i];
+            }
+        }
+        return obstacle;
     }
 
     static public List<Tile> GetListOfAdjacentTiles(int x, int y)

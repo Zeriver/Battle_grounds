@@ -72,6 +72,7 @@
     <Compile Include="Assets\Scripts\Items\Weapons\Pistol.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Weapon.cs" />
     <Compile Include="Assets\Scripts\MouseHighlight.cs" />
+    <Compile Include="Assets\Scripts\Obstacle.cs" />
     <Compile Include="Assets\Scripts\PlayerUI.cs" />
     <Compile Include="Assets\Scripts\Tile.cs" />
     <Compile Include="Assets\Scripts\TileHighlight.cs" />

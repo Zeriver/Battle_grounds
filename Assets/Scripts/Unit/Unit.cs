@@ -6,7 +6,6 @@ public class Unit : MonoBehaviour {
 
     protected GameObject BattleGroundObject;
     protected Canvas InventoryCanvas;
-    protected bool isActionUsed;
     protected bool showMoves;
     protected bool turningToAttack;
     protected bool attack;
@@ -15,6 +14,7 @@ public class Unit : MonoBehaviour {
 
     public Vector3 coordinates;
     public bool moving;
+    public bool isActionUsed;
     public List<Weapon> weapons;
     public List<HealingItem> healingItems;
     public Item currentItem;

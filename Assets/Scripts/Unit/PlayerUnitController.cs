@@ -200,12 +200,14 @@ public class PlayerUnitController : Unit
                             clickedTile.IsPushable = false;
                             clickedTile.Id = 1;
 
+                            TileMap.getObstacleAt(clickedTile.PosX, clickedTile.PosY).moveOneTile(pushableTile, moveSpeed);
                             List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), clickedTile);
                             for (int i = 0; i < path.Count; i++)
                             {
                                 positionQueue.Add(new Vector3(path[i].PosX, coordinates.y, path[i].PosY));
                             }
                             movesLeft -= positionQueue.Count;
+                            isActionUsed = true;
                             pushMode();
                         }
                     }
