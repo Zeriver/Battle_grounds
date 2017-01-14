@@ -6,6 +6,7 @@ public class UnitInfoPanel : MonoBehaviour {
 
     public Canvas canvas;
     public Text unitName;
+    public Text unitHealth;
 
     void Start()
     {
@@ -27,6 +28,7 @@ public class UnitInfoPanel : MonoBehaviour {
     public void setInfo(Enemy enemy)
     {
         unitName.text = enemy.getEnemyName();
+        unitHealth.text = enemy.health.ToString();
     }
 
     public void changeCanvasEnabled(bool value)

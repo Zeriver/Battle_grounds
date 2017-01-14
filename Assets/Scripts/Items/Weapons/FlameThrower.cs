@@ -10,10 +10,15 @@ public class FlameThrower : Weapon
     {
         name = "Flame Thrower";
         description = "Light them up!";
-        cooldown = 3;
         this.ammunition = ammunition;
+
+        damageType = "fire";
+        damage = 20;
+        cooldown = 2;
         range = 1;
         isDiagonal = false;
+        nextTurnsDamage = new[] { 15, 10, 5 };
+
         pattern = generatePattern();
         areOfEffect = generateAreaOfEffect();
     }

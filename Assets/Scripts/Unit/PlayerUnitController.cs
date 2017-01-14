@@ -15,6 +15,10 @@ public class PlayerUnitController : Unit
     private Vector3 actionMouseHighlight;
     private MouseHighlight _mouseHiglight;
     private Inventory inventory;
+    private Enemy enemyTarget;
+
+
+    private int pistolSkillLevel;
 
     void Start()
     {
@@ -35,10 +39,7 @@ public class PlayerUnitController : Unit
         isActionMode = false;
         isActionUsed = false;
         moving = false;
-        maxMovement = moves;
-        movesLeft = maxMovement;
         coordinates = new Vector3(x, 2.5f, y); //in battle map vertices   // TEMPORARY 2.5f on y because model pivot is incorrect TODO
-        moveSpeed = 6.0f;
         transform.position = new Vector3(coordinates.x + 0.5f, coordinates.y, -coordinates.z + 0.5f);
         targetRotation = transform.rotation;
         validTiles = new List<Tile>();
@@ -51,6 +52,11 @@ public class PlayerUnitController : Unit
         weaponAreaEffectHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
         TileMap.setTileNotWalkable(x, y);
+
+        health = 100;
+        maxMovement = moves;
+        movesLeft = maxMovement;
+        moveSpeed = 6.0f;
 
         switch (facingDirection)
         {
@@ -105,17 +111,22 @@ public class PlayerUnitController : Unit
             {
                 if (currentItem is Weapon)
                 {
-                    ((Weapon)currentItem).useWeapon();
-                    //TODO
+                    if (((Weapon)currentItem).useWeapon())
+                    {
+                        enemyTarget.getAttacked(((Weapon)currentItem));
+                        attack = false;
+                        isActionUsed = true;
+                        switchActionMode();
+                    }
                 }
                 else if (currentItem is HealingItem)
                 {
                     ((HealingItem)currentItem).use();
+                    attack = false;
+                    isActionUsed = true;
+                    switchActionMode();
                     //TODO
                 }
-                attack = false;
-                isActionUsed = true;
-                switchActionMode();
             }
             if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0) //LEFT CLICK
             {
@@ -143,22 +154,40 @@ public class PlayerUnitController : Unit
                 {
                     if (validTiles.Contains(clickedTile))
                     {
-                        if (clickedTile.PosX > coordinates.x)
-                            targetRotation = Quaternion.Euler(-90.0f, 90.0f, 0.0f);
-                        else if (clickedTile.PosX < coordinates.x)
-                            targetRotation = Quaternion.Euler(-90.0f, -90.0f, 0.0f);
-                        else if (clickedTile.PosY < coordinates.z)
-                            targetRotation = Quaternion.Euler(-90.0f, 0.0f, 0.0f);
-                        else if (clickedTile.PosY > coordinates.z)
-                            targetRotation = Quaternion.Euler(-90.0f, 180.0f, 0.0f);
-                        turningToAttack = true;
+                        if (currentItem is Weapon)
+                        {
+                            List<Tile> weaponEffect = ((Weapon)currentItem).getAreaEffect(Math.Abs((int)coordinates.x), Math.Abs((int)coordinates.z), clickedTile.PosX, clickedTile.PosY);
+                            for (int i = 0; i < _battleGroundController.enemyUnits.Count; i++)
+                            {
+                                for (int j = 0; j < weaponEffect.Count; j++)
+                                {
+                                    if (_battleGroundController.enemyUnits[i].getUnitTile().Equals(weaponEffect[j]))
+                                    {
+                                        if (clickedTile.PosX > coordinates.x)
+                                            targetRotation = Quaternion.Euler(-90.0f, 90.0f, 0.0f);
+                                        else if (clickedTile.PosX < coordinates.x)
+                                            targetRotation = Quaternion.Euler(-90.0f, -90.0f, 0.0f);
+                                        else if (clickedTile.PosY < coordinates.z)
+                                            targetRotation = Quaternion.Euler(-90.0f, 0.0f, 0.0f);
+                                        else if (clickedTile.PosY > coordinates.z)
+                                            targetRotation = Quaternion.Euler(-90.0f, 180.0f, 0.0f);
+                                        enemyTarget = _battleGroundController.enemyUnits[i];
+                                        turningToAttack = true;
+                                    }
+                                }
+                            }
+                        }
+                        else if (currentItem is HealingItem)
+                        {
+                            //TODO
+                        }
                     }
                 }
                 else if (giveHighlights.Count != 0)
                 {
                     for (int i = 0; i < _battleGroundController.playerUnits.Count; i++)
                     {
-                        if (_battleGroundController.playerUnits[i].getPlayerUnitTile().Equals(clickedTile))
+                        if (_battleGroundController.playerUnits[i].getUnitTile().Equals(clickedTile))
                         {
                             if (currentItem is Weapon)
                             {
@@ -424,11 +453,6 @@ public class PlayerUnitController : Unit
         movesLeft = maxMovement;
         isActionUsed = false;
         setActionMode(false);
-    }
-
-    public Tile getPlayerUnitTile()
-    {
-        return TileMap.getTile((int)coordinates.x, (int)coordinates.z);
     }
 
 

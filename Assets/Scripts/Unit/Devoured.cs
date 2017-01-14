@@ -16,10 +16,14 @@ public class Devoured : Enemy {
         positions.Add(transform.position);
         type = 2;
         name = "Devoured";
+
+        health = 80;
         maxMovement = 3;
         movesLeft = maxMovement;
         moveSpeed = 3f;
         attackRange = 1;
+        attackStrength = 15;
+        poisonResistance = 100;
     }
 
     void Update()

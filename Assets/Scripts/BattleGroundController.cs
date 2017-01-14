@@ -121,10 +121,18 @@ public class BattleGroundController : MonoBehaviour
                 allyTurn = true;
             }
         }
+        if (checkLoseCondition())
+        {
+            // reset / end game TODO
+        }
         if (allyTurn)
         {
             allyTurn = false;
             endTurn = true;
+        }
+        if (checkWinCondition())
+        {
+            // end game TODO
         }
         if (endTurn)
         {
@@ -188,6 +196,23 @@ public class BattleGroundController : MonoBehaviour
         playerTurn = true;
     }
 
+    private bool checkWinCondition() // add more conditions based on mission objectives TODO
+    {
+        if (enemyUnits.Count == 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private bool checkLoseCondition() // add more conditions based on mission objectives TODO
+    {
+        if (playerUnits.Count == 0)
+        {
+            return true;
+        }
+        return false;
+    }
 
     private void setNextUnitActive()
     {

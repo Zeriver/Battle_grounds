@@ -18,10 +18,14 @@ public class Salamand : Enemy {
         setPositions();
         type = 3;
         name = "Salamandar";
+
+        health = 40;
+        moveSpeed = 3f;
         maxMovement = 1;
         movesLeft = maxMovement;
-        moveSpeed = 3f;
         attackRange = 1;
+        attackStrength = 15;
+        fireResistance = 25;
     }
 
     void Update()

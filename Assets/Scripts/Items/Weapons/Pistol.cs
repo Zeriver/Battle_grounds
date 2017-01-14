@@ -9,8 +9,11 @@ public class Pistol : Weapon {
     {
         name = "Pistol";
         description = "Shoot stuff";
-        cooldown = 0;
         this.ammunition = ammunition;
+
+        damageType = "firearm";
+        damage = 10;
+        cooldown = 0;
         range = 4;
         isDiagonal = false;
     }

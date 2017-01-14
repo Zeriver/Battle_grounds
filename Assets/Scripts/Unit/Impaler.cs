@@ -16,10 +16,13 @@ public class Impaler : Enemy {
         positions.Add(transform.position);
         type = 1;
         name = "Impaler";
+
+        health = 35;
         maxMovement = 4;
         movesLeft = maxMovement;
         moveSpeed = 3f;
         attackRange = 2;
+        attackStrength = 10;
     }
 
     void Update()

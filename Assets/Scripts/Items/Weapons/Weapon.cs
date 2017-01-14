@@ -11,9 +11,9 @@ public class Weapon : Item
     protected int range;
     protected bool isDiagonal;
     protected bool isMelee = false;
-    // type (energetic, melee etc)
-    // damage
-    // modifiers agains types of armor (piercing, good against light armor etc)
+    public string damageType;
+    public int damage;
+    public int[] nextTurnsDamage;
 
 
     protected Weapon(int ammunition)
@@ -60,7 +60,7 @@ public class Weapon : Item
         for (int i = 0; i < pattern.Count; i++)
         {
             Tile tile = TileMap.getTile(x + (int)pattern[i].x, y + (int)pattern[i].z);
-            if (tile != null && !highligts.Contains(tile) && tile.IsWalkable)
+            if (tile != null && !highligts.Contains(tile) && (tile.IsWalkable || tile.IsUnitOnIt))
             {
                 highligts.Add(tile);
             }
@@ -68,14 +68,22 @@ public class Weapon : Item
         return highligts;
     }
 
-    public void useWeapon()
+    public bool useWeapon()
     {
         if (!isMelee)
         {
-            subtractAmmunition(1);
+            if (ammunition > 0)
+            {
+                subtractAmmunition(1);
+                return true;
+            }
+            else
+            {
+                Debug.Log("NO AMMO"); // add visual indication TODO
+                return false;
+            }
         }
-
-        //TODO
+        return true;
     }
 
     public List<Tile> getAreaEffect(int x, int z, int x2 , int z2) //refactoring TODO

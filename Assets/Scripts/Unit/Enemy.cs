@@ -7,6 +7,7 @@ public abstract class Enemy :  Unit {
 
     protected new string name;
     protected int attackRange;
+    protected int attackStrength;
 
     public bool turnDone;
     public bool turnInProgress;
@@ -126,7 +127,7 @@ public abstract class Enemy :  Unit {
     {
         for (int j = 0; j < _battleGroundController.playerUnits.Count; j++)
         {
-            if (attackTilesInRange.Contains(_battleGroundController.playerUnits[j].getPlayerUnitTile()))
+            if (attackTilesInRange.Contains(_battleGroundController.playerUnits[j].getUnitTile()))
             {
                 unitToAttack = _battleGroundController.playerUnits[j];
                 if (unitToAttack.coordinates.x > coordinates.x)
@@ -151,7 +152,7 @@ public abstract class Enemy :  Unit {
             attackTilesInRange = TileHighlight.FindHighlight(movementTilesInRange[i], attackRange, true, false);
             for (int j = 0; j < _battleGroundController.playerUnits.Count; j++)
             {
-                if (attackTilesInRange.Contains(_battleGroundController.playerUnits[j].getPlayerUnitTile()))
+                if (attackTilesInRange.Contains(_battleGroundController.playerUnits[j].getUnitTile()))
                 {
                     for (int x = 0; x < positions.Count; x++)
                     {
