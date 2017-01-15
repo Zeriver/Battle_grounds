@@ -55,11 +55,9 @@ public class Salamand : Enemy {
                     }
                 }
             }
-            if (turningToAttack)
+            if (turningToTarget)
             {
-                //turnToEnemy();
-                turningToAttack = false;
-                attack = true;
+                turnToEnemy();
                 if (weaponHighlights.Count == 0)
                 {
                     highlightTiles(weaponHighlights, attackTilesInRange, false);

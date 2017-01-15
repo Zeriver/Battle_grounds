@@ -61,24 +61,24 @@ public class BattleGroundController : MonoBehaviour
                 {
                     setNextUnitActive();
                 }
-                Transform mousePositin = _mouseHighlight.getHighlightSelection();
+                Transform mousePosition = _mouseHighlight.getHighlightSelection();
                 if (Input.GetMouseButtonDown(0))     /// LEFT CLICK
                 {
-                    if (lastActiveUnit.giveHighlights.Count == 0)
+                    if (lastActiveUnit.giveHighlights.Count == 0 && !lastActiveUnit.isActionMode)
                     {
-                        PlayerUnitController clickedUnit = getClickedUnit((int)mousePositin.position.x, (int)mousePositin.position.z);
+                        PlayerUnitController clickedUnit = getClickedUnit((int)mousePosition.position.x, (int)mousePosition.position.z);
                         if (clickedUnit != null)
                         {
                             deactivatePlayerUnits();
                             clickedUnit.setPlayerUnitActive();
                             _cameraController.setCameraToActiveUnit(clickedUnit.transform.position);
                         }
-                        Tile clickedTile = TileMap.getTile((int)mousePositin.position.x, (int)mousePositin.position.z);
+                        Tile clickedTile = TileMap.getTile((int)mousePosition.position.x, (int)mousePosition.position.z);
                     }
                 }
                 if (!lastActiveUnit.isActionMode)
                 {
-                    Enemy enemy = getHoveredEnemy((int)mousePositin.position.x, (int)mousePositin.position.z);
+                    Enemy enemy = getHoveredEnemy((int)mousePosition.position.x, (int)mousePosition.position.z);
                     if (enemy != null)
                     {
                         enemy.showPossibleMovement();
@@ -262,6 +262,14 @@ public class BattleGroundController : MonoBehaviour
         if (!lastActiveUnit.moving && !lastActiveUnit.isActionUsed)
         {
             lastActiveUnit.pushMode();
+        }
+    }
+
+    public void defendPosition()
+    {
+        if (!lastActiveUnit.moving && !lastActiveUnit.isActionUsed)
+        {
+            lastActiveUnit.defendingPosition();
         }
     }
 

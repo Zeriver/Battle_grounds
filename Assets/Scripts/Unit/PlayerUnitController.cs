@@ -53,7 +53,7 @@ public class PlayerUnitController : Unit
         targets = new List<Unit>();
         TileMap.setTileNotWalkable(x, y);
 
-        health = 100;
+        health = 15;
         maxMovement = moves;
         movesLeft = maxMovement;
         moveSpeed = 6.0f;
@@ -103,7 +103,7 @@ public class PlayerUnitController : Unit
             {
                 moveToNextStep(0);
             }
-            if (turningToAttack)
+            if (turningToTarget)
             {
                 turnToEnemy();
             }
@@ -131,7 +131,7 @@ public class PlayerUnitController : Unit
                     //TODO
                 }
             }
-            if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0) //LEFT CLICK
+            if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0 && !turningToTarget) //LEFT CLICK
             {
                 Vector3 mousePosition = Input.mousePosition;
                 if (mousePosition.y < Screen.height * 0.1681271) //divided by player ui anchor
@@ -173,20 +173,20 @@ public class PlayerUnitController : Unit
                                     }
                                 }
                             }
-                            if (clickedTile.PosX > coordinates.x)
-                                targetRotation = Quaternion.Euler(-90.0f, 90.0f, 0.0f);
-                            else if (clickedTile.PosX < coordinates.x)
-                                targetRotation = Quaternion.Euler(-90.0f, -90.0f, 0.0f);
-                            else if (clickedTile.PosY < coordinates.z)
-                                targetRotation = Quaternion.Euler(-90.0f, 0.0f, 0.0f);
-                            else if (clickedTile.PosY > coordinates.z)
-                                targetRotation = Quaternion.Euler(-90.0f, 180.0f, 0.0f);
-                            turningToAttack = true;
                         }
                         else if (currentItem is HealingItem)
                         {
                             //TODO
                         }
+                        if (clickedTile.PosX > coordinates.x)
+                            targetRotation = Quaternion.Euler(-90.0f, 90.0f, 0.0f);
+                        else if (clickedTile.PosX < coordinates.x)
+                            targetRotation = Quaternion.Euler(-90.0f, -90.0f, 0.0f);
+                        else if (clickedTile.PosY < coordinates.z)
+                            targetRotation = Quaternion.Euler(-90.0f, 0.0f, 0.0f);
+                        else if (clickedTile.PosY > coordinates.z)
+                            targetRotation = Quaternion.Euler(-90.0f, 180.0f, 0.0f);
+                        turningToTarget = true;
                     }
                 }
                 else if (giveHighlights.Count != 0)
@@ -438,6 +438,14 @@ public class PlayerUnitController : Unit
         }
     }
 
+    public void defendingPosition()
+    {
+        deactivatePlayerUnit();
+        movesLeft = 0;
+        isActionUsed = true;
+        defending = true;
+    }
+
     public void setPlayerUnitActive()
     {
         setActionMode(false);
@@ -458,6 +466,7 @@ public class PlayerUnitController : Unit
         destroyMovementHiglights();
         movesLeft = maxMovement;
         isActionUsed = false;
+        defending = false;
         setActionMode(false);
     }
 }

@@ -53,7 +53,7 @@ public class Devoured : Enemy {
                     }
                 }
             }
-            if (turningToAttack)
+            if (turningToTarget)
             {
                 turnToEnemy();
                 if (weaponHighlights.Count == 0)

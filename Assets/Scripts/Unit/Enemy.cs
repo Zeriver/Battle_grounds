@@ -136,7 +136,7 @@ public abstract class Enemy :  Unit {
                     targetRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
                 else if (unitToAttack.coordinates.z > coordinates.z)
                     targetRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-                turningToAttack = true;
+                turningToTarget = true;
                 return true;
             }
         }

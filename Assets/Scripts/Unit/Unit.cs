@@ -7,7 +7,7 @@ public class Unit : MonoBehaviour {
     protected GameObject BattleGroundObject;
     protected Canvas InventoryCanvas;
     protected bool showMoves;
-    protected bool turningToAttack;
+    protected bool turningToTarget;
     protected bool attack;
 
     public Vector3 coordinates;
@@ -42,6 +42,7 @@ public class Unit : MonoBehaviour {
 
     protected float moveSpeed;
     protected int maxMovement, movesLeft;
+    protected bool defending;
 
     void Start () {
 	
@@ -83,6 +84,10 @@ public class Unit : MonoBehaviour {
             }
             finalDamage -= freezeResistance * 0.01f;
         }
+        if (defending)
+        {
+            finalDamage -= finalDamage * 0.4f;
+        }
         health = health - (int)finalDamage;
         if (health <= 0)
         {
@@ -92,6 +97,7 @@ public class Unit : MonoBehaviour {
 
     public void killUnit()
     {
+        TileMap.setTileWalkable((int)coordinates.x, (int)coordinates.z);
         transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, 90.0f));
         if (this is Enemy)
         {
@@ -202,7 +208,7 @@ public class Unit : MonoBehaviour {
         if (Quaternion.Angle(transform.rotation, targetRotation) < 5.0f)
         {
             transform.rotation = targetRotation;
-            turningToAttack = false;
+            turningToTarget = false;
             attack = true;
         }
     }
