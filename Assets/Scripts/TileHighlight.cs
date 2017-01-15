@@ -71,7 +71,7 @@ public class TileHighlight
             {
                 if (isWeapon)
                 {
-                    if (originTile.PosX == adjacentTiles[i].PosX || originTile.PosY == adjacentTiles[i].PosY)
+                    if ((originTile.PosX == adjacentTiles[i].PosX || originTile.PosY == adjacentTiles[i].PosY) && !adjacentTiles[i].IsBlockingWeapons)
                     {
                         TilePath newTilePath = new TilePath(current);
                         newTilePath.addTile(adjacentTiles[i], isWeapon);

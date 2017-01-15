@@ -30,6 +30,7 @@ public class Unit : MonoBehaviour {
     protected TileMapBuilder _tileMapBuilder;
     protected BattleGroundController _battleGroundController;
     protected List<Unit> targets;
+    protected List<Obstacle> obstaclesToAttack;
 
 
     // units parameters

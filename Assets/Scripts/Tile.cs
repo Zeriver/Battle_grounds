@@ -17,6 +17,7 @@ public class Tile {
     private bool isWalkable;
     private bool isUnitOnIt;
     private bool isPushable;
+    private bool isBlockingWeapons;
 
     public Tile(int id, int x, int y)
     {
@@ -42,6 +43,13 @@ public class Tile {
                 moveCost = 1;
                 isWalkable = false;
                 isPushable = true;
+                isUnitOnIt = true;
+                break;
+            case 5:
+                moveCost = 1;
+                isWalkable = false;
+                isPushable = true;
+                isBlockingWeapons = true;
                 break;
             default:
                 moveCost = 1;
@@ -89,5 +97,11 @@ public class Tile {
     {
         get { return isPushable; }
         set { isPushable = value; }
+    }
+
+    public bool IsBlockingWeapons
+    {
+        get { return isBlockingWeapons; }
+        set { isBlockingWeapons = value; }
     }
 }

@@ -46,6 +46,15 @@ public class TileMap
                     obstacleController.createObstacle(x, y);
                     obstacles.Add(obstacleController);
                 }
+                else if (x == 4 && y == 7)
+                {
+                    map_data[x, y] = 0;
+                    tile_data.Add(new Tile(5, x, y));
+                    GameObject obstacle = (GameObject)GameObject.Instantiate(obstaclePrefab); //should load prefab with different model TODO
+                    Obstacle obstacleController = obstacle.GetComponent<Obstacle>();
+                    obstacleController.createObstacle(x, y);
+                    obstacles.Add(obstacleController);
+                }
                 else if (x == 9 && (y == 9 || y == 10 || y == 11))
                 {
                     map_data[x, y] = 2;
@@ -134,5 +143,14 @@ public class TileMap
     {
         getTile(x, y).IsWalkable = true;
         getTile(x, y).IsUnitOnIt = false;
+    }
+
+    public static void resetObstacleTile(Tile tile)
+    {
+        tile.IsWalkable = true;
+        tile.IsPushable = false;
+        tile.IsUnitOnIt = false;
+        tile.IsBlockingWeapons = false;
+        tile.Id = 1;
     }
 }

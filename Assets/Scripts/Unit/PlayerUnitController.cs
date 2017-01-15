@@ -51,6 +51,7 @@ public class PlayerUnitController : Unit
         weaponAreaEffectHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
         targets = new List<Unit>();
+        obstaclesToAttack = new List<Obstacle>();
         TileMap.setTileNotWalkable(x, y);
 
         health = 15;
@@ -117,6 +118,12 @@ public class PlayerUnitController : Unit
                         {
                             targets[i].getAttacked(((Weapon)currentItem));
                         }
+                        for (int i = 0; i < obstaclesToAttack.Count; i++)
+                        {
+                            obstaclesToAttack[i].getDamaged(((Weapon)currentItem));
+                        }
+                        targets.Clear();
+                        obstaclesToAttack.Clear();
                         attack = false;
                         isActionUsed = true;
                         switchActionMode();
@@ -168,14 +175,18 @@ public class PlayerUnitController : Unit
                             List<Unit> unitsInArea = new List<Unit>();
                             unitsInArea.AddRange(_battleGroundController.enemyUnits.Cast<Unit>());
                             unitsInArea.AddRange(_battleGroundController.playerUnits.Cast<Unit>());
-                            for (int i = 0; i < unitsInArea.Count; i++)
+                            for (int j = 0; j < weaponEffect.Count; j++)
                             {
-                                for (int j = 0; j < weaponEffect.Count; j++)
+                                for (int i = 0; i < unitsInArea.Count; i++)
                                 {
                                     if (unitsInArea[i].getUnitTile().Equals(weaponEffect[j]))
                                     {
                                         targets.Add(unitsInArea[i]);
                                     }
+                                }
+                                if (TileMap.getObstacleAt(weaponEffect[j].PosX, weaponEffect[j].PosY) != null)
+                                {
+                                    obstaclesToAttack.Add(TileMap.getObstacleAt(weaponEffect[j].PosX, weaponEffect[j].PosY));
                                 }
                             }
                         }
@@ -234,11 +245,11 @@ public class PlayerUnitController : Unit
                             pushableTile.IsWalkable = false;
                             pushableTile.IsPushable = true;
                             pushableTile.Id = 4;
+                            pushableTile.IsUnitOnIt = clickedTile.IsUnitOnIt;
+                            pushableTile.IsBlockingWeapons = clickedTile.IsBlockingWeapons;
 
                             TileMap.setTileWalkable((int)coordinates.x, (int)coordinates.z);
-                            clickedTile.IsWalkable = true;
-                            clickedTile.IsPushable = false;
-                            clickedTile.Id = 1;
+                            TileMap.resetObstacleTile(clickedTile);
 
                             TileMap.getObstacleAt(clickedTile.PosX, clickedTile.PosY).moveOneTile(pushableTile, moveSpeed);
                             List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), clickedTile);
