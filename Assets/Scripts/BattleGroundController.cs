@@ -177,17 +177,27 @@ public class BattleGroundController : MonoBehaviour
         GameObject salamand = _salamand as GameObject;
         Salamand salamandController = salamand.GetComponent<Salamand>();
 
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 4; i++)
         {
             if (i == 0)
             {
                 enemyUnits.Add(Instantiate(_salamand).GetComponent<Salamand>());
                 enemyUnits[i].createSalamand(18, 3, "up");
             }
-            if (i == 1)
+            else if (i == 1)
             {
-                //enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
-                //enemyUnits[i].createImpaler(9, 6, "down");
+                enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
+                enemyUnits[i].createImpaler(9, 6, "down");
+            }
+            else if(i == 2)
+            {
+                enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
+                enemyUnits[i].createImpaler(20, 6, "down");
+            }
+            else if(i == 3)
+            {
+                enemyUnits.Add(Instantiate(_devoured).GetComponent<Devoured>());
+                enemyUnits[i].createDevoured(15, 13, "down");
             }
         }
 
@@ -311,6 +321,13 @@ public class BattleGroundController : MonoBehaviour
         for (int i = 0; i < playerUnits.Count; i++)
         {
             playerUnits[i].resetAfterTurn();
+        }
+        if (lastActiveUnit.health <= 0)
+        {
+            if (playerUnits.Count != 0)
+            {
+                lastActiveUnit = playerUnits[0];
+            }
         }
         lastActiveUnit.setPlayerUnitActive();
         for (int i = 0; i < enemyUnits.Count; i++)

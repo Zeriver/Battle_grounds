@@ -23,8 +23,7 @@ public class Salamand : Enemy {
         moveSpeed = 3f;
         maxMovement = 1;
         movesLeft = maxMovement;
-        attackRange = 1;
-        attackStrength = 15;
+        currentItem = new Weapon(15, 1, "melee");
         fireResistance = 25;
     }
 
@@ -68,11 +67,7 @@ public class Salamand : Enemy {
             }
             if (attack && weaponHighlights.Count == 0)
             {
-                //ATTACK TODO  
-                //turning to attacked unit
-                unitToAttack = null;
-                attack = false;
-                turnDone = true;
+                attackUnit();
             }
         }
     }
@@ -83,7 +78,7 @@ public class Salamand : Enemy {
         movementTilesInRange.Clear();
         turnInProgress = true;
         Tile currentTile = TileMap.getTile((int)coordinates.x, (int)coordinates.z);
-        attackTilesInRange = TileHighlight.FindHighlight(currentTile, attackRange, true, false);
+        attackTilesInRange = TileHighlight.FindHighlight(currentTile, currentItem.range, true, false);
         //movementTilesInRange = TileHighlight.FindHighlight(currentTile, movesLeft, false, false);
         for (int i = 0; i < positions.Count; i++)
         {

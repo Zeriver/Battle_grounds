@@ -21,8 +21,7 @@ public class Impaler : Enemy {
         maxMovement = 4;
         movesLeft = maxMovement;
         moveSpeed = 3f;
-        attackRange = 2;
-        attackStrength = 10;
+        currentItem = new Weapon(10, 2, "melee");
     }
 
     void Update()
@@ -63,11 +62,7 @@ public class Impaler : Enemy {
             }
             if (attack && weaponHighlights.Count == 0)
             {
-                //ATTACK TODO  
-                //turning to attacked unit
-                unitToAttack = null;
-                attack = false;
-                turnDone = true;
+                attackUnit();
             }
         }
     }
@@ -76,7 +71,7 @@ public class Impaler : Enemy {
     {
         turnInProgress = true;
         Tile currentTile = TileMap.getTile((int)coordinates.x, (int)coordinates.z);
-        attackTilesInRange = TileHighlight.FindHighlight(currentTile, attackRange, true, false);
+        attackTilesInRange = TileHighlight.FindHighlight(currentTile, currentItem.range, true, false);
         movementTilesInRange = TileHighlight.FindHighlight(currentTile, movesLeft, false, false);
         //movementToAttackTilesInRange = TileHighlight.FindHighlight(currentTile, moves + attackRange, false);
 

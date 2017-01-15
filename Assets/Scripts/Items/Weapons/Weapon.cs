@@ -8,7 +8,6 @@ public class Weapon : Item
     public int ammunition;
     protected List<Vector3> pattern;
     protected List<Vector3> areOfEffect;
-    protected int range;
     protected bool isDiagonal;
     protected bool isMelee = false;
     public string damageType;
@@ -21,6 +20,13 @@ public class Weapon : Item
         this.ammunition = ammunition;
     }
 
+    public Weapon(int damage, int range, string damageType)
+    {
+        this.damage = damage;
+        this.range = range;
+        this.damageType = damageType;
+        ammunition = 999;
+    }
 
     protected void addAmmunition(int value)
     {

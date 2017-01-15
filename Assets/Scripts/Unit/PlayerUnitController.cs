@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class PlayerUnitController : Unit
 {
@@ -15,8 +16,6 @@ public class PlayerUnitController : Unit
     private Vector3 actionMouseHighlight;
     private MouseHighlight _mouseHiglight;
     private Inventory inventory;
-    private Enemy enemyTarget;
-
 
     private int pistolSkillLevel;
 
@@ -51,6 +50,7 @@ public class PlayerUnitController : Unit
         pushHighlights = new List<GameObject>();
         weaponAreaEffectHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
+        targets = new List<Unit>();
         TileMap.setTileNotWalkable(x, y);
 
         health = 100;
@@ -113,7 +113,10 @@ public class PlayerUnitController : Unit
                 {
                     if (((Weapon)currentItem).useWeapon())
                     {
-                        enemyTarget.getAttacked(((Weapon)currentItem));
+                        for (int i = 0; i < targets.Count; i++)
+                        {
+                            targets[i].getAttacked(((Weapon)currentItem));
+                        }
                         attack = false;
                         isActionUsed = true;
                         switchActionMode();
@@ -157,25 +160,28 @@ public class PlayerUnitController : Unit
                         if (currentItem is Weapon)
                         {
                             List<Tile> weaponEffect = ((Weapon)currentItem).getAreaEffect(Math.Abs((int)coordinates.x), Math.Abs((int)coordinates.z), clickedTile.PosX, clickedTile.PosY);
-                            for (int i = 0; i < _battleGroundController.enemyUnits.Count; i++)
+                            List<Unit> unitsInArea = new List<Unit>();
+                            unitsInArea.AddRange(_battleGroundController.enemyUnits.Cast<Unit>());
+                            unitsInArea.AddRange(_battleGroundController.playerUnits.Cast<Unit>());
+                            for (int i = 0; i < unitsInArea.Count; i++)
                             {
                                 for (int j = 0; j < weaponEffect.Count; j++)
                                 {
-                                    if (_battleGroundController.enemyUnits[i].getUnitTile().Equals(weaponEffect[j]))
+                                    if (unitsInArea[i].getUnitTile().Equals(weaponEffect[j]))
                                     {
-                                        if (clickedTile.PosX > coordinates.x)
-                                            targetRotation = Quaternion.Euler(-90.0f, 90.0f, 0.0f);
-                                        else if (clickedTile.PosX < coordinates.x)
-                                            targetRotation = Quaternion.Euler(-90.0f, -90.0f, 0.0f);
-                                        else if (clickedTile.PosY < coordinates.z)
-                                            targetRotation = Quaternion.Euler(-90.0f, 0.0f, 0.0f);
-                                        else if (clickedTile.PosY > coordinates.z)
-                                            targetRotation = Quaternion.Euler(-90.0f, 180.0f, 0.0f);
-                                        enemyTarget = _battleGroundController.enemyUnits[i];
-                                        turningToAttack = true;
+                                        targets.Add(unitsInArea[i]);
                                     }
                                 }
                             }
+                            if (clickedTile.PosX > coordinates.x)
+                                targetRotation = Quaternion.Euler(-90.0f, 90.0f, 0.0f);
+                            else if (clickedTile.PosX < coordinates.x)
+                                targetRotation = Quaternion.Euler(-90.0f, -90.0f, 0.0f);
+                            else if (clickedTile.PosY < coordinates.z)
+                                targetRotation = Quaternion.Euler(-90.0f, 0.0f, 0.0f);
+                            else if (clickedTile.PosY > coordinates.z)
+                                targetRotation = Quaternion.Euler(-90.0f, 180.0f, 0.0f);
+                            turningToAttack = true;
                         }
                         else if (currentItem is HealingItem)
                         {
@@ -454,27 +460,4 @@ public class PlayerUnitController : Unit
         isActionUsed = false;
         setActionMode(false);
     }
-
-
-    /*                                      WORKS ONLY IF NOT NEAR EDGE OF THE MAP
-    private void getValidMoves(Tile currentTile, int movePoints)
-    {
-        validMoves.Add(currentTile);
-        foreach(Tile tile in TileMap.GetListOfAdjacentTiles(currentTile.getX(), currentTile.getY()))
-        {
-            if (tile != null)
-            {
-                int nextMoveCost = movePoints - tile.getMoveCost();
-                if (nextMoveCost >= 0 && !validMoves.Contains(tile))
-                {
-                    getValidMoves(tile, nextMoveCost);
-                }
-            } else
-            {
-                return;
-            }
-
-        }
-    }*/
-
 }

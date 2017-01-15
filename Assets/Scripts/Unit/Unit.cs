@@ -29,6 +29,7 @@ public class Unit : MonoBehaviour {
     protected Vector3 targetPosition;
     protected TileMapBuilder _tileMapBuilder;
     protected BattleGroundController _battleGroundController;
+    protected List<Unit> targets;
 
 
     // units parameters

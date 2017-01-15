@@ -21,8 +21,7 @@ public class Devoured : Enemy {
         maxMovement = 3;
         movesLeft = maxMovement;
         moveSpeed = 3f;
-        attackRange = 1;
-        attackStrength = 15;
+        currentItem = new Weapon(15, 1, "melee");
         poisonResistance = 100;
     }
 
@@ -64,11 +63,7 @@ public class Devoured : Enemy {
             }
             if (attack && weaponHighlights.Count == 0)
             {
-                //ATTACK TODO  
-                //turning to attacked unit
-                unitToAttack = null;
-                attack = false;
-                turnDone = true;
+                attackUnit();
             }
         }
     }
@@ -77,7 +72,7 @@ public class Devoured : Enemy {
     {
         turnInProgress = true;
         Tile currentTile = TileMap.getTile((int)coordinates.x, (int)coordinates.z);
-        attackTilesInRange = TileHighlight.FindHighlight(currentTile, attackRange, true, false);
+        attackTilesInRange = TileHighlight.FindHighlight(currentTile, currentItem.range, true, false);
         movementTilesInRange = TileHighlight.FindHighlight(currentTile, movesLeft, false, false);
         //movementToAttackTilesInRange = TileHighlight.FindHighlight(currentTile, moves + attackRange, false);
 

@@ -7,5 +7,6 @@ public class Item {
     public Sprite sprite;
     public GameObject objectItem;
     public string description;
+    public int range;
 
 }

@@ -6,8 +6,6 @@ using System.Linq;
 public abstract class Enemy :  Unit {
 
     protected new string name;
-    protected int attackRange;
-    protected int attackStrength;
 
     public bool turnDone;
     public bool turnInProgress;
@@ -149,7 +147,7 @@ public abstract class Enemy :  Unit {
     {
         for (int i = 0; i < movementTilesInRange.Count; i++)
         {
-            attackTilesInRange = TileHighlight.FindHighlight(movementTilesInRange[i], attackRange, true, false);
+            attackTilesInRange = TileHighlight.FindHighlight(movementTilesInRange[i], currentItem.range, true, false);
             for (int j = 0; j < _battleGroundController.playerUnits.Count; j++)
             {
                 if (attackTilesInRange.Contains(_battleGroundController.playerUnits[j].getUnitTile()))
@@ -214,6 +212,14 @@ public abstract class Enemy :  Unit {
             }
         }
         return false;
+    }
+
+    protected void attackUnit()
+    {
+        unitToAttack.getAttacked(((Weapon)currentItem));
+        unitToAttack = null;
+        attack = false;
+        turnDone = true;
     }
 
     protected void highlightTiles(List<GameObject> highlights, List<Tile> tiles, bool isMovement)
