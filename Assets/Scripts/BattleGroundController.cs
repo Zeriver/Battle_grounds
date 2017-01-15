@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -17,6 +18,7 @@ public class BattleGroundController : MonoBehaviour
     public GameObject _itemCreator;
     public GameObject _inventory;
     public GameObject _unitInfo;
+    public Text playerUIHealth;
 
     //enemies
     public GameObject _impaler;
@@ -71,6 +73,8 @@ public class BattleGroundController : MonoBehaviour
                         {
                             deactivatePlayerUnits();
                             clickedUnit.setPlayerUnitActive();
+                            lastActiveUnit = clickedUnit;
+                            playerUIHealth.text = lastActiveUnit.health.ToString() + " HP";
                             _cameraController.setCameraToActiveUnit(clickedUnit.transform.position);
                         }
                         Tile clickedTile = TileMap.getTile((int)mousePosition.position.x, (int)mousePosition.position.z);
@@ -202,6 +206,7 @@ public class BattleGroundController : MonoBehaviour
         }
 
         lastActiveUnit.setPlayerUnitActive();
+        playerUIHealth.text = lastActiveUnit.health.ToString() + " HP";
         _cameraController.setCameraToActiveUnit(lastActiveUnit.transform.position);
         playerTurn = true;
     }
@@ -236,6 +241,7 @@ public class BattleGroundController : MonoBehaviour
                     playerUnits[i + 1].setPlayerUnitActive();
                     lastActiveUnit = playerUnits[i + 1];
                     _cameraController.setCameraToActiveUnit(playerUnits[i + 1].transform.position);
+                    playerUIHealth.text = lastActiveUnit.health.ToString() + " HP";
                     break;
                 }
                 else
@@ -243,6 +249,7 @@ public class BattleGroundController : MonoBehaviour
                     playerUnits[0].setPlayerUnitActive();
                     lastActiveUnit = playerUnits[0];
                     _cameraController.setCameraToActiveUnit(playerUnits[0].transform.position);
+                    playerUIHealth.text = lastActiveUnit.health.ToString() + " HP";
                     break;
                 }
             }
@@ -346,7 +353,7 @@ public class BattleGroundController : MonoBehaviour
         turnNumber++;
         playerUI.updateTurn(turnNumber);
         playerUI.IsOpen = true;
-
+        playerUIHealth.text = lastActiveUnit.health.ToString() + " HP";
     }
 
     public void endPlayerTurn()

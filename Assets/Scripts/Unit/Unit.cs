@@ -39,6 +39,7 @@ public class Unit : MonoBehaviour {
     protected int fireResistance = 0;
     protected int freezeResistance = 0;
     protected int poisonResistance = 0;
+    protected int defendBonus = 0;
 
     protected float moveSpeed;
     protected int maxMovement, movesLeft;
@@ -86,8 +87,9 @@ public class Unit : MonoBehaviour {
         }
         if (defending)
         {
-            finalDamage -= finalDamage * 0.4f;
+            finalDamage -= finalDamage * 0.35f;
         }
+        finalDamage -= defendBonus * 0.01f;
         health = health - (int)finalDamage;
         if (health <= 0)
         {
@@ -137,6 +139,13 @@ public class Unit : MonoBehaviour {
             for (int i = 0; i < positions.Count; i++)
             {
                 TileMap.setTileNotWalkable((int)positions[i].x, (int)positions[i].z - 1);
+            }
+            if (this is PlayerUnitController)
+            {
+                for (int i = 0; i < _battleGroundController.playerUnits.Count; i++)
+                {
+                    _battleGroundController.playerUnits[i].calculateDefendBonus(); // should check performance TODO
+                }
             }
         }
     }
@@ -222,6 +231,22 @@ public class Unit : MonoBehaviour {
             for (int i = 0; i < additionalPositions.Count; i++)
             {
                 positions.Add(additionalPositions[i]);
+            }
+        }
+    }
+
+    protected void calculateDefendBonus()
+    {
+        defendBonus = 0;
+        List<Tile> nearbyTiles = TileMap.GetListOfAdjacentTiles((int)coordinates.x, (int)coordinates.z);
+        for (int i = 0; i < nearbyTiles.Count; i++)
+        {
+            for (int j = 0; j < _battleGroundController.playerUnits.Count; j++)
+            {
+                if (nearbyTiles[i].Equals(_battleGroundController.playerUnits[j].getUnitTile()))
+                {
+                    defendBonus += 13;
+                }
             }
         }
     }

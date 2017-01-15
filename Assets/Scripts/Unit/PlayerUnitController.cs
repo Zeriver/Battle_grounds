@@ -150,7 +150,12 @@ public class PlayerUnitController : Unit
                         {
                             positionQueue.Add(new Vector3(path[i].PosX, coordinates.y, path[i].PosY));
                         }
-                        movesLeft -= positionQueue.Count;
+                        int pathCost = 0;
+                        for (int i = 0; i < path.Count; i++)
+                        {
+                            pathCost += path[i].MoveCost;
+                        }
+                        movesLeft -= pathCost;
                     }
                 }
                 else if (isActionMode && validTiles != null)
@@ -438,9 +443,11 @@ public class PlayerUnitController : Unit
         }
     }
 
+
     public void defendingPosition()
     {
         deactivatePlayerUnit();
+        isSelected = true;
         movesLeft = 0;
         isActionUsed = true;
         defending = true;
@@ -465,6 +472,7 @@ public class PlayerUnitController : Unit
     {
         destroyMovementHiglights();
         movesLeft = maxMovement;
+        calculateDefendBonus();
         isActionUsed = false;
         defending = false;
         setActionMode(false);
