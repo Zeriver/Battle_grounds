@@ -31,6 +31,8 @@ public class Unit : MonoBehaviour {
     protected BattleGroundController _battleGroundController;
     protected List<Unit> targets;
     protected List<Obstacle> obstaclesToAttack;
+    protected string currentEffect;
+    protected List<int> healthEffects;
 
 
     // units parameters
@@ -95,6 +97,30 @@ public class Unit : MonoBehaviour {
         if (health <= 0)
         {
             killUnit();
+        }
+
+        if (weapon.damageType.Equals("fire"))
+        {
+            if (currentEffect.Contains("freeze"))
+            {
+                currentEffect = "none";
+            }
+            else
+            {
+                healthEffects.Clear();
+                for (int i = 0; i < weapon.nextTurnsDamage.Count; i++)
+                {
+                    healthEffects.Add(weapon.nextTurnsDamage[i] - (int)(fireResistance * 0.01f));
+                }
+            }
+        }
+        else if (weapon.damageType.Equals("freeze"))
+        {
+
+        }
+        else if (weapon.damageType.Equals("poison"))
+        {
+
         }
     }
 
@@ -249,6 +275,25 @@ public class Unit : MonoBehaviour {
                     defendBonus += 13;
                 }
             }
+        }
+    }
+
+    protected void standardReset()
+    {
+        updateHealthModifiers();   //maybe should be moved at the start of the turn instead of the end
+        movesLeft = maxMovement;
+    }
+
+    protected void updateHealthModifiers()
+    {
+        if (healthEffects.Count > 0)
+        {
+            health -= healthEffects[0];
+            if (health <= 0)
+            {
+                killUnit();
+            }
+            healthEffects.RemoveAt(0);
         }
     }
 

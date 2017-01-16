@@ -12,7 +12,7 @@ public class Weapon : Item
     protected bool isMelee = false;
     public string damageType;
     public int damage;
-    public int[] nextTurnsDamage;
+    public List<int> nextTurnsDamage;
 
 
     protected Weapon(int ammunition)

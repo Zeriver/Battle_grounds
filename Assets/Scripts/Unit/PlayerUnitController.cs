@@ -58,6 +58,8 @@ public class PlayerUnitController : Unit
         maxMovement = moves;
         movesLeft = maxMovement;
         moveSpeed = 6.0f;
+        currentEffect = "none";
+        healthEffects = new List<int>();
 
         switch (facingDirection)
         {
@@ -482,7 +484,7 @@ public class PlayerUnitController : Unit
     public void resetAfterTurn()
     {
         destroyMovementHiglights();
-        movesLeft = maxMovement;
+        standardReset();
         calculateDefendBonus();
         isActionUsed = false;
         defending = false;

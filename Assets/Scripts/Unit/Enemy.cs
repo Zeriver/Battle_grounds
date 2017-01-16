@@ -32,6 +32,8 @@ public abstract class Enemy :  Unit {
         positionQueue = new List<Vector3>();
         movementHighlights = new List<GameObject>();
         weaponHighlights = new List<GameObject>();
+        currentEffect = "none";
+        healthEffects = new List<int>();
 
         switch (facingDirection)
         {
@@ -80,10 +82,10 @@ public abstract class Enemy :  Unit {
 
     public void resetAfterTurn()
     {
+        standardReset();
         unitToAttack = null;
         turnDone = false;
         turnInProgress = false;
-        movesLeft = maxMovement;
     }
 
     public void showPossibleMovement()
