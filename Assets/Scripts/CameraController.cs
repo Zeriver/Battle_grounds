@@ -40,10 +40,10 @@ public class CameraController : MonoBehaviour {
 	
 
 	void Update () {
-                    // Camera needs to follow unit if it is on the edge of camera vision or outside view TODO
+        // Camera needs to follow unit if it is on the edge of camera vision or outside view TODO
 
-
-	    if (movingToActive)
+        Vector3 oldPos = Camera.main.transform.position;
+        if (movingToActive)
         {
             Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, target, cameraSpeed * Time.deltaTime);
             float distance = Vector3.Distance(Camera.main.transform.position, target);
@@ -59,7 +59,6 @@ public class CameraController : MonoBehaviour {
         }
 
         //Mouse on edge
-        Vector3 oldPos = Camera.main.transform.position;
         if (Input.mousePosition.x >= Screen.width - cameraEdgeOffset || Input.GetKey("right"))
         {
             Camera.main.transform.position = Camera.main.transform.position + new Vector3(cameraEdgeSpeed, 0.0f, -cameraEdgeSpeed);
@@ -84,6 +83,7 @@ public class CameraController : MonoBehaviour {
             || Camera.main.transform.position.z > -5 || Camera.main.transform.position.z < -_tileMapBuilder.size_z)
         {
             Camera.main.transform.position = oldPos;
+            movingToActive = false;
         }
 
         if (Input.GetAxis("Mouse ScrollWheel") != 0f && !inventory.equipment.enabled)

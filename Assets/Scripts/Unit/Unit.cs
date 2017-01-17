@@ -33,6 +33,7 @@ public class Unit : MonoBehaviour {
     protected List<Obstacle> obstaclesToAttack;
     protected string currentEffect;
     protected List<int> healthEffects;
+    protected List<WeaponSkill> weaponSkills;
 
 
     // units parameters
@@ -61,9 +62,9 @@ public class Unit : MonoBehaviour {
         return TileMap.getTile((int)coordinates.x, (int)coordinates.z);
     }
 
-    public void getAttacked(Weapon weapon)
+    public void getAttacked(Weapon weapon, int bonusDamage)
     {
-        float finalDamage = weapon.damage;
+        float finalDamage = weapon.damage + bonusDamage;
         if (weapon.damageType.Equals("fire") )
         {
             if (fireResistance == 100)
@@ -294,6 +295,41 @@ public class Unit : MonoBehaviour {
                 killUnit();
             }
             healthEffects.RemoveAt(0);
+        }
+    }
+
+    protected int getBonusDamageFromWeaponSkill()
+    {
+        int bonusDamage = -1;
+        for (int i = 0; i < weaponSkills.Count; i++)
+        {
+            if (weaponSkills[i].name.Equals(currentItem.name))
+            {
+                bonusDamage = weaponSkills[i].level * 2;
+            }
+        }
+        if (bonusDamage == -1)
+        {
+            bonusDamage = 0;
+            weaponSkills.Add(new WeaponSkill(currentItem.name));
+        }
+        Debug.Log(bonusDamage);
+        return bonusDamage;
+    }
+
+    protected void weaponSkillUpgrade()
+    {
+        for (int i = 0; i < weaponSkills.Count; i++)
+        {
+            if (weaponSkills[i].name.Equals(currentItem.name))
+            {
+                weaponSkills[i].experience++;
+                if (weaponSkills[i].experience >= weaponSkills[i].levelRequirements[weaponSkills[i].level])
+                {
+                    weaponSkills[i].level++;
+                    Debug.Log(weaponSkills[i].level + " lvl    " + weaponSkills[i].experience);
+                }
+            }
         }
     }
 

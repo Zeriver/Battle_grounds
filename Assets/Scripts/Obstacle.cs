@@ -49,9 +49,9 @@ public class Obstacle : MonoBehaviour
         moving = true;
     }
 
-    public void getDamaged(Weapon weapon)
+    public void getDamaged(Weapon weapon, int bonusDamage)
     {
-        durability -= weapon.damage;
+        durability -= weapon.damage + bonusDamage;
         if (durability <= 0)
         {
             TileMap.resetObstacleTile(TileMap.getTile(x, z));

@@ -5,7 +5,6 @@ using System.Linq;
 
 public class PlayerUnitController : Unit
 {
-
     // mouse events MAYBE should be moved to BattleGroundController TODO
 
     public bool isSelected;
@@ -16,9 +15,7 @@ public class PlayerUnitController : Unit
     private Vector3 actionMouseHighlight;
     private MouseHighlight _mouseHiglight;
     private Inventory inventory;
-
-    private int pistolSkillLevel;
-
+   
     void Start()
     {
 
@@ -52,6 +49,7 @@ public class PlayerUnitController : Unit
         positionQueue = new List<Vector3>();
         targets = new List<Unit>();
         obstaclesToAttack = new List<Obstacle>();
+        weaponSkills = new List<WeaponSkill>();
         TileMap.setTileNotWalkable(x, y);
 
         health = 15;
@@ -78,7 +76,7 @@ public class PlayerUnitController : Unit
         }
 
         //EQ
-        weapons.Add(new Pistol(5));
+        weapons.Add(new Pistol(0));
         weapons.Add(new FlameThrower(5));
         healingItems.Add(new MediumHealingKit(2));
         currentItem = healingItems[0];
@@ -118,18 +116,22 @@ public class PlayerUnitController : Unit
                     {
                         for (int i = 0; i < targets.Count; i++)
                         {
-                            targets[i].getAttacked(((Weapon)currentItem));
+                            targets[i].getAttacked(((Weapon)currentItem), getBonusDamageFromWeaponSkill());
                         }
                         for (int i = 0; i < obstaclesToAttack.Count; i++)
                         {
-                            obstaclesToAttack[i].getDamaged(((Weapon)currentItem));
+                            obstaclesToAttack[i].getDamaged(((Weapon)currentItem), getBonusDamageFromWeaponSkill());
                         }
-                        targets.Clear();
-                        obstaclesToAttack.Clear();
-                        attack = false;
+                        if (targets.Count > 0)
+                        {
+                            weaponSkillUpgrade();
+                        }
                         isActionUsed = true;
-                        switchActionMode();
                     }
+                    targets.Clear();
+                    obstaclesToAttack.Clear();
+                    attack = false;
+                    switchActionMode();
                 }
                 else if (currentItem is HealingItem)
                 {
