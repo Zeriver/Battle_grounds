@@ -127,11 +127,11 @@ public class PlayerUnitController : Unit
                             weaponSkillUpgrade();
                         }
                         isActionUsed = true;
+                        switchActionMode();
                     }
                     targets.Clear();
                     obstaclesToAttack.Clear();
                     attack = false;
-                    switchActionMode();
                 }
                 else if (currentItem is HealingItem)
                 {

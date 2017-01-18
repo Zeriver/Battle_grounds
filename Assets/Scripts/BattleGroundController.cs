@@ -33,7 +33,7 @@ public class BattleGroundController : MonoBehaviour
     public List<Enemy> enemyUnits = new List<Enemy>();
     public PlayerUnitController lastActiveUnit;
 
-    private bool playerTurn, enemyTurn, allyTurn, endTurn;
+    private bool playerTurn, enemyTurn, allyTurn, endTurn, enemyHealthUpdate, playerHealthUpdate;
     private int turnNumber;
 
     void Start()
@@ -51,6 +51,15 @@ public class BattleGroundController : MonoBehaviour
 
     void Update()
     {
+        if (playerHealthUpdate)
+        {
+            for (int i = 0; i < playerUnits.Count; i++)
+            {
+                playerUnits[i].updateHealthModifiers();
+            }
+            playerHealthUpdate = false;
+            playerTurn = true;
+        }
         if (playerTurn && !lastActiveUnit.moving)
         {
             if (Input.GetKeyDown(KeyCode.Q))
@@ -106,6 +115,15 @@ public class BattleGroundController : MonoBehaviour
                     }
                 }
             }
+        }
+        if (enemyHealthUpdate)
+        {
+            for (int i = 0; i < enemyUnits.Count; i++)
+            {
+                enemyUnits[i].updateHealthModifiers();
+            }
+            enemyHealthUpdate = false;
+            enemyTurn = true;
         }
         if (enemyTurn)
         {
@@ -193,12 +211,12 @@ public class BattleGroundController : MonoBehaviour
                 enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
                 enemyUnits[i].createImpaler(9, 6, "down");
             }
-            else if(i == 2)
+            else if (i == 2)
             {
                 enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
                 enemyUnits[i].createImpaler(20, 6, "down");
             }
-            else if(i == 3)
+            else if (i == 3)
             {
                 enemyUnits.Add(Instantiate(_devoured).GetComponent<Devoured>());
                 enemyUnits[i].createDevoured(15, 13, "down");
@@ -208,7 +226,7 @@ public class BattleGroundController : MonoBehaviour
         lastActiveUnit.setPlayerUnitActive();
         playerUIHealth.text = lastActiveUnit.health.ToString() + " HP";
         _cameraController.setCameraToActiveUnit(lastActiveUnit.transform.position);
-        playerTurn = true;
+        playerHealthUpdate = true;
     }
 
     private bool checkWinCondition() // add more conditions based on mission objectives TODO
@@ -349,7 +367,7 @@ public class BattleGroundController : MonoBehaviour
         {
             enemyUnits[i].resetAfterTurn();
         }
-        playerTurn = true;
+        playerHealthUpdate = true;
         turnNumber++;
         playerUI.updateTurn(turnNumber);
         playerUI.IsOpen = true;
@@ -362,7 +380,7 @@ public class BattleGroundController : MonoBehaviour
         {
             deactivatePlayerUnits();
             playerTurn = false;
-            enemyTurn = true;
+            enemyHealthUpdate = true;
             playerUI.IsOpen = false;
         }
     }
@@ -372,7 +390,10 @@ public class BattleGroundController : MonoBehaviour
     {
         if (!inventory.equipment.enabled)
         {
-            lastActiveUnit.DestroyWeaponHiglights();
+            if (lastActiveUnit.isActionMode)
+            {
+                lastActiveUnit.switchActionMode();
+            }
             itemCreator.createItems(lastActiveUnit.weapons.ConvertAll(x => (Item)x));
         }
         else
@@ -416,9 +437,7 @@ public class BattleGroundController : MonoBehaviour
                 {
                     enemyUnits[i].performTurn();
                 }
-
             }
-
         }
     }
 }

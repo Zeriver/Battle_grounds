@@ -281,11 +281,10 @@ public class Unit : MonoBehaviour {
 
     protected void standardReset()
     {
-        updateHealthModifiers();   //maybe should be moved at the start of the turn instead of the end
         movesLeft = maxMovement;
     }
 
-    protected void updateHealthModifiers()
+    public void updateHealthModifiers()
     {
         if (healthEffects.Count > 0)
         {
@@ -313,7 +312,6 @@ public class Unit : MonoBehaviour {
             bonusDamage = 0;
             weaponSkills.Add(new WeaponSkill(currentItem.name));
         }
-        Debug.Log(bonusDamage);
         return bonusDamage;
     }
 
@@ -327,7 +325,6 @@ public class Unit : MonoBehaviour {
                 if (weaponSkills[i].experience >= weaponSkills[i].levelRequirements[weaponSkills[i].level])
                 {
                     weaponSkills[i].level++;
-                    Debug.Log(weaponSkills[i].level + " lvl    " + weaponSkills[i].experience);
                 }
             }
         }
