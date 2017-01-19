@@ -76,7 +76,7 @@ public class PlayerUnitController : Unit
         }
 
         //EQ
-        weapons.Add(new Pistol(0));
+        weapons.Add(new Pistol(5));
         weapons.Add(new FlameThrower(5));
         healingItems.Add(new MediumHealingKit(2));
         currentItem = healingItems[0];
@@ -116,7 +116,7 @@ public class PlayerUnitController : Unit
                     {
                         for (int i = 0; i < targets.Count; i++)
                         {
-                            targets[i].getAttacked(((Weapon)currentItem), getBonusDamageFromWeaponSkill());
+                            targets[i].getAttacked(((Weapon)currentItem), this, getBonusDamageFromWeaponSkill());
                         }
                         for (int i = 0; i < obstaclesToAttack.Count; i++)
                         {

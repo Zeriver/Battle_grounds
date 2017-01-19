@@ -62,9 +62,9 @@ public class Unit : MonoBehaviour {
         return TileMap.getTile((int)coordinates.x, (int)coordinates.z);
     }
 
-    public void getAttacked(Weapon weapon, int bonusDamage)
+    public void getAttacked(Weapon weapon, Unit attacker, int bonusDamage)
     {
-        float finalDamage = weapon.damage + bonusDamage;
+        float finalDamage = weapon.damage + bonusDamage + calculateFlankDamage(attacker);
         if (weapon.damageType.Equals("fire") )
         {
             if (fireResistance == 100)
@@ -122,6 +122,67 @@ public class Unit : MonoBehaviour {
         else if (weapon.damageType.Equals("poison"))
         {
 
+        }
+    }
+
+    private int calculateFlankDamage(Unit attacker)
+    {
+        int damage = 0;
+        if (facingDirection.Equals("up") || facingDirection.Equals("down"))
+        {
+            if ((attacker.coordinates.x < coordinates.x && facingDirection.Equals("up")) || (attacker.coordinates.x > coordinates.x && facingDirection.Equals("down")))
+            {
+                damage = 8;
+            }
+            else if (attacker.coordinates.x == coordinates.x)
+            {
+                damage = 4;
+            }
+        }
+        else if (facingDirection.Equals("right") || facingDirection.Equals("left"))
+        {
+            if ((attacker.coordinates.z > coordinates.z && facingDirection.Equals("right")) || (attacker.coordinates.z < coordinates.z && facingDirection.Equals("left")))
+            {
+                damage = 8;
+            }
+            else if (attacker.coordinates.z == coordinates.z)
+            {
+                damage = 4;
+            }
+        }
+        return damage;
+    }
+
+    protected int getBonusDamageFromWeaponSkill()
+    {
+        int bonusDamage = -1;
+        for (int i = 0; i < weaponSkills.Count; i++)
+        {
+            if (weaponSkills[i].name.Equals(currentItem.name))
+            {
+                bonusDamage = weaponSkills[i].level * 2;
+            }
+        }
+        if (bonusDamage == -1)
+        {
+            bonusDamage = 0;
+            weaponSkills.Add(new WeaponSkill(currentItem.name));
+        }
+        return bonusDamage;
+    }
+
+    protected void weaponSkillUpgrade()
+    {
+        for (int i = 0; i < weaponSkills.Count; i++)
+        {
+            if (weaponSkills[i].name.Equals(currentItem.name))
+            {
+                weaponSkills[i].experience++;
+                if (weaponSkills[i].experience >= weaponSkills[i].levelRequirements[weaponSkills[i].level])
+                {
+                    weaponSkills[i].level++;
+                }
+            }
         }
     }
 
@@ -294,39 +355,6 @@ public class Unit : MonoBehaviour {
                 killUnit();
             }
             healthEffects.RemoveAt(0);
-        }
-    }
-
-    protected int getBonusDamageFromWeaponSkill()
-    {
-        int bonusDamage = -1;
-        for (int i = 0; i < weaponSkills.Count; i++)
-        {
-            if (weaponSkills[i].name.Equals(currentItem.name))
-            {
-                bonusDamage = weaponSkills[i].level * 2;
-            }
-        }
-        if (bonusDamage == -1)
-        {
-            bonusDamage = 0;
-            weaponSkills.Add(new WeaponSkill(currentItem.name));
-        }
-        return bonusDamage;
-    }
-
-    protected void weaponSkillUpgrade()
-    {
-        for (int i = 0; i < weaponSkills.Count; i++)
-        {
-            if (weaponSkills[i].name.Equals(currentItem.name))
-            {
-                weaponSkills[i].experience++;
-                if (weaponSkills[i].experience >= weaponSkills[i].levelRequirements[weaponSkills[i].level])
-                {
-                    weaponSkills[i].level++;
-                }
-            }
         }
     }
 

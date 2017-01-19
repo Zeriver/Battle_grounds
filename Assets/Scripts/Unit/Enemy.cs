@@ -218,7 +218,7 @@ public abstract class Enemy :  Unit {
 
     protected void attackUnit()
     {
-        unitToAttack.getAttacked(((Weapon)currentItem), 0);
+        unitToAttack.getAttacked(((Weapon)currentItem), this, 0);
         unitToAttack = null;
         attack = false;
         turnDone = true;
