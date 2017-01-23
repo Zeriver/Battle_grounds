@@ -25,7 +25,7 @@ public class TileMap
 
         map_data = new int[size_x, size_y];
 
-        UnityEngine.Object obstaclePrefab = Resources.Load("Prefabs/Obstacle_01");
+        UnityEngine.Object obstaclePrefab = Resources.Load("Prefabs/Obstacle_02");
 
         for (int x = 0; x < size_x; x++)
         {
