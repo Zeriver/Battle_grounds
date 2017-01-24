@@ -26,6 +26,7 @@ public class TileMap
         map_data = new int[size_x, size_y];
 
         UnityEngine.Object obstaclePrefab = Resources.Load("Prefabs/Obstacle_02");
+        UnityEngine.Object obstaclePrefab2 = Resources.Load("Prefabs/Obstacle_03");
 
         for (int x = 0; x < size_x; x++)
         {
@@ -50,7 +51,7 @@ public class TileMap
                 {
                     map_data[x, y] = 0;
                     tile_data.Add(new Tile(5, x, y));
-                    GameObject obstacle = (GameObject)GameObject.Instantiate(obstaclePrefab); //should load prefab with different model TODO
+                    GameObject obstacle = (GameObject)GameObject.Instantiate(obstaclePrefab2); //should load prefab with different model TODO
                     Obstacle obstacleController = obstacle.GetComponent<Obstacle>();
                     obstacleController.createObstacle(x, y);
                     obstacles.Add(obstacleController);
