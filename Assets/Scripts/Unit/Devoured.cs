@@ -32,10 +32,10 @@ public class Devoured : Enemy {
             if (positionQueue.Count > 0 && !moving && movementHighlights.Count == 0)
             {
                 setNextStep(new Vector3[]  {            //Temporary fix until proper units models will be in game TODO
-                     new Vector3(0.0f, 90.0f, 0.0f),
-                     new Vector3(0.0f, -90.0f, 0.0f),
+                     new Vector3(0.0f, 180.0f, 0.0f),
                      new Vector3(0.0f, 0.0f, 0.0f),
-                     new Vector3(0.0f, 180.0f, 0.0f)
+                     new Vector3(0.0f, 90.0f, 0.0f),
+                     new Vector3(0.0f, -90.0f, 0.0f)
                  });
             }
             if (moving)
