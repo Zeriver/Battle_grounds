@@ -94,6 +94,7 @@ public class BattleGroundController : MonoBehaviour
                     Enemy enemy = getHoveredEnemy((int)mousePosition.position.x, (int)mousePosition.position.z);
                     if (enemy != null)
                     {
+                        lastActiveUnit.destroyMovementHiglights();
                         enemy.showPossibleMovement();
                         if (!unitInfo.canvas.enabled)
                         {
@@ -111,6 +112,7 @@ public class BattleGroundController : MonoBehaviour
                         if (unitInfo.canvas.enabled)
                         {
                             unitInfo.changeCanvasEnabled(false);
+                            lastActiveUnit.showAllowedMovements();
                         }
                     }
                 }

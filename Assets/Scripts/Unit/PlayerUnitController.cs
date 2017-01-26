@@ -362,6 +362,10 @@ public class PlayerUnitController : Unit
         {
             destroyPushHiglights();
         }
+        for (int i = 0; i < _battleGroundController.enemyUnits.Count; i++)
+        {
+            _battleGroundController.enemyUnits[i].destroyMovementHighlights();
+        }
 
         isActionMode = !isActionMode;
         if (isActionMode && !isActionUsed)
@@ -385,7 +389,7 @@ public class PlayerUnitController : Unit
         destroyTiles(weaponHighlights, validTiles);
     }
 
-    private void destroyMovementHiglights()
+    public void destroyMovementHiglights()
     {
         destroyTiles(movementHighlights, validTiles);
     }

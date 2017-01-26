@@ -351,6 +351,7 @@ public class Unit : MonoBehaviour {
         if (healthEffects.Count > 0)
         {
             health -= healthEffects[0];
+            DamagePopUpController.createPopUpText(healthEffects[0].ToString(), transform);
             if (health <= 0)
             {
                 killUnit();
