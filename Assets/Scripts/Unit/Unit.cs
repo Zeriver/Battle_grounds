@@ -95,6 +95,7 @@ public class Unit : MonoBehaviour {
         }
         finalDamage -= defendBonus * 0.01f;
         health = health - (int)finalDamage;
+        DamagePopUpController.createPopUpText(((int)finalDamage).ToString(), transform);
         if (health <= 0)
         {
             killUnit();

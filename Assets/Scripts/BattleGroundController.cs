@@ -226,6 +226,7 @@ public class BattleGroundController : MonoBehaviour
         lastActiveUnit.setPlayerUnitActive();
         playerUIHealth.text = lastActiveUnit.health.ToString() + " HP";
         _cameraController.setCameraToActiveUnit(lastActiveUnit.transform.position);
+        DamagePopUpController.Initialize();
         playerHealthUpdate = true;
     }
 
