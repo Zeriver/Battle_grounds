@@ -5,6 +5,8 @@ using System.Collections;
 public class UnitInfoPanel : MonoBehaviour {
 
     public Canvas canvas;
+    public GameObject panel;
+    public Slider healthBar;
     public Text unitName;
     public Text unitHealth;
 
@@ -20,15 +22,14 @@ public class UnitInfoPanel : MonoBehaviour {
 
     public void setNewPosition(Vector3 unitPosition)
     {
-        transform.position = new Vector3(unitPosition.x + 2.0f, unitPosition.y + 1.0f, unitPosition.z);
-        transform.LookAt(Camera.main.transform.position);
-        transform.Rotate(0, 180, 0);
+        panel.transform.position = new Vector3(Input.mousePosition.x + 70, Input.mousePosition.y, Input.mousePosition.z);
     }
 
     public void setInfo(Enemy enemy)
     {
         unitName.text = enemy.getEnemyName();
-        unitHealth.text = enemy.health.ToString();
+        unitHealth.text = enemy.health.ToString() + " / " + enemy.maxHealth.ToString();
+        healthBar.value = (float)enemy.health / enemy.maxHealth;
     }
 
     public void changeCanvasEnabled(bool value)

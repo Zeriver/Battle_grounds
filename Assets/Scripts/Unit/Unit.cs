@@ -38,6 +38,7 @@ public class Unit : MonoBehaviour {
 
     // units parameters
 
+    public int maxHealth;
     public int health;
 
     protected int fireResistance = 0;

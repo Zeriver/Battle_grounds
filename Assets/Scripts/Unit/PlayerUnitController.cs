@@ -52,6 +52,7 @@ public class PlayerUnitController : Unit
         weaponSkills = new List<WeaponSkill>();
         TileMap.setTileNotWalkable(x, y);
 
+        maxHealth = 100;
         health = 15;
         maxMovement = moves;
         movesLeft = maxMovement;
@@ -74,6 +75,7 @@ public class PlayerUnitController : Unit
                 transform.rotation = Quaternion.Euler(new Vector3(-90.0f, 0.0f, 0.0f));
                 break;
         }
+        this.facingDirection = facingDirection;
 
         //EQ
         weapons.Add(new Pistol(5));

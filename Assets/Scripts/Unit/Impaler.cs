@@ -17,7 +17,8 @@ public class Impaler : Enemy {
         type = 1;
         name = "Impaler";
 
-        health = 35;
+        maxHealth = 35;
+        health = maxHealth;
         maxMovement = 4;
         movesLeft = maxMovement;
         moveSpeed = 3f;

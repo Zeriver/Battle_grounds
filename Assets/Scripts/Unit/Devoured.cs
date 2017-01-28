@@ -17,7 +17,8 @@ public class Devoured : Enemy {
         type = 2;
         name = "Devoured";
 
-        health = 80;
+        maxHealth = 80;
+        health = maxHealth;
         maxMovement = 3;
         movesLeft = maxMovement;
         moveSpeed = 3f;
