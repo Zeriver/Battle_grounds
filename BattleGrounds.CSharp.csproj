@@ -92,8 +92,8 @@
     <Compile Include="Assets\Scripts\TileMapBuilder.cs" />
     <Compile Include="Assets\Scripts\TilePath.cs" />
     <Compile Include="Assets\Scripts\TilePathFinder.cs" />
-    <Compile Include="Assets\Scripts\UI\DamagePopUp.cs" />
-    <Compile Include="Assets\Scripts\UI\DamagePopUpController.cs" />
+    <Compile Include="Assets\Scripts\UI\HealthPopUp.cs" />
+    <Compile Include="Assets\Scripts\UI\HealthPopUpController.cs" />
     <Compile Include="Assets\Scripts\UI\Inventory.cs" />
     <Compile Include="Assets\Scripts\UI\ItemButton.cs" />
     <Compile Include="Assets\Scripts\UI\ItemCreator.cs" />

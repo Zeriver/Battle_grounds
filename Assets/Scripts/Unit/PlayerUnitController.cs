@@ -137,11 +137,17 @@ public class PlayerUnitController : Unit
                 }
                 else if (currentItem is HealingItem)
                 {
-                    ((HealingItem)currentItem).use();
+                    if (((HealingItem)currentItem).use())
+                    {
+                        for (int i = 0; i < targets.Count; i++)
+                        {
+                            targets[i].getHealed(((HealingItem)currentItem));
+                        }
+                        switchActionMode();
+                        isActionUsed = true;
+                    }
+                    targets.Clear();
                     attack = false;
-                    isActionUsed = true;
-                    switchActionMode();
-                    //TODO
                 }
             }
             if (Input.GetMouseButtonDown(0) && positionQueue.Count == 0 && !turningToTarget) //LEFT CLICK
@@ -185,9 +191,13 @@ public class PlayerUnitController : Unit
                             {
                                 for (int i = 0; i < unitsInArea.Count; i++)
                                 {
-                                    if (unitsInArea[i].getUnitTile().Equals(weaponEffect[j]))
+                                    for (int x = 0; x < unitsInArea[i].positions.Count; x++)
                                     {
-                                        targets.Add(unitsInArea[i]);
+                                        if (TileMap.getTile((int)unitsInArea[i].positions[x].x, (int)unitsInArea[i].positions[x].z - 1).Equals(weaponEffect[j]))
+                                        {
+                                            targets.Add(unitsInArea[i]);
+                                            break;
+                                        }
                                     }
                                 }
                                 if (TileMap.getObstacleAt(weaponEffect[j].PosX, weaponEffect[j].PosY) != null)
@@ -198,7 +208,19 @@ public class PlayerUnitController : Unit
                         }
                         else if (currentItem is HealingItem)
                         {
-                            //TODO
+                            List<Unit> unitsInArea = new List<Unit>();
+                            unitsInArea.AddRange(_battleGroundController.playerUnits.Cast<Unit>());
+                            for (int i = 0; i < unitsInArea.Count; i++)
+                            {
+                                for (int j = 0; j < unitsInArea[i].positions.Count; j++)
+                                {
+                                    if (TileMap.getTile((int)unitsInArea[i].positions[j].x, (int)unitsInArea[i].positions[j].z - 1).Equals(clickedTile))
+                                    {
+                                        targets.Add(unitsInArea[i]);
+                                        break;
+                                    }
+                                }
+                            }
                         }
                         if (clickedTile.PosX > coordinates.x)
                             targetRotation = Quaternion.Euler(-90.0f, 90.0f, 0.0f);

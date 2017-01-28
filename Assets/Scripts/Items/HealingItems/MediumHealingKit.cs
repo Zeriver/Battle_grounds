@@ -9,5 +9,6 @@ public class MediumHealingKit : HealingItem
         name = "Medium Healing kit";
         description = "Oh shit gettup!";
         this.amount = amount;
+        healingPoints = 25;
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class HealingItem : Item
 {
+    public int healingPoints;
     protected int amount;
 
     protected HealingItem(int amount)
@@ -16,9 +17,14 @@ public class HealingItem : Item
         return TileHighlight.FindHighlight(TileMap.getTile(x, y), 1, true, true);
     }
 
-    public void use()
+    public bool use()
     {
-        subtractAmount(1);
+        if (amount > 0)
+        {
+            subtractAmount(1);
+            return true;
+        }
+        return false;
     }
 
     protected void addAmount(int value)

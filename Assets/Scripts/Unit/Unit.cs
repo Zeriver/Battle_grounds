@@ -96,9 +96,11 @@ public class Unit : MonoBehaviour {
         }
         finalDamage -= defendBonus * 0.01f;
         health = health - (int)finalDamage;
-        DamagePopUpController.createPopUpText(((int)finalDamage).ToString(), transform);
+        _battleGroundController.playerUIHealth.text = _battleGroundController.lastActiveUnit.health.ToString() + " HP";
+        HealthPopUpController.createPopUpText(((int)finalDamage).ToString(), transform, true);
         if (health <= 0)
         {
+            _battleGroundController.playerUIHealth.text = 0 + " HP";
             killUnit();
         }
 
@@ -171,6 +173,22 @@ public class Unit : MonoBehaviour {
             weaponSkills.Add(new WeaponSkill(currentItem.name));
         }
         return bonusDamage;
+    }
+
+    public void getHealed(HealingItem healingItem)
+    {
+        int healing = 0;
+        if (health + healingItem.healingPoints > maxHealth)
+        {
+            healing = maxHealth - health;
+        }
+        else
+        {
+            healing = healingItem.healingPoints;
+        }
+        health += healing;
+        _battleGroundController.playerUIHealth.text = _battleGroundController.lastActiveUnit.health.ToString() + " HP";
+        HealthPopUpController.createPopUpText(healing.ToString(), transform, false);
     }
 
     protected void weaponSkillUpgrade()
@@ -352,7 +370,7 @@ public class Unit : MonoBehaviour {
         if (healthEffects.Count > 0)
         {
             health -= healthEffects[0];
-            DamagePopUpController.createPopUpText(healthEffects[0].ToString(), transform);
+            HealthPopUpController.createPopUpText(healthEffects[0].ToString(), transform, true);
             if (health <= 0)
             {
                 killUnit();
