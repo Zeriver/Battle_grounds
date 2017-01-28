@@ -65,7 +65,7 @@ public class Unit : MonoBehaviour {
 
     public void getAttacked(Weapon weapon, Unit attacker, int bonusDamage)
     {
-        float finalDamage = weapon.damage + bonusDamage + calculateFlankDamage(attacker);
+        float finalDamage = weapon.damage + bonusDamage + calculateFlankDamage(attacker, weapon);
         if (weapon.damageType.Equals("fire") )
         {
             if (fireResistance == 100)
@@ -129,29 +129,32 @@ public class Unit : MonoBehaviour {
         }
     }
 
-    private int calculateFlankDamage(Unit attacker)
+    private int calculateFlankDamage(Unit attacker, Weapon weapon)
     {
         int damage = 0;
-        if (facingDirection.Equals("up") || facingDirection.Equals("down"))
+        if (weapon.isFlankingBonus)
         {
-            if ((attacker.coordinates.x < coordinates.x && facingDirection.Equals("up")) || (attacker.coordinates.x > coordinates.x && facingDirection.Equals("down")))
+            if (facingDirection.Equals("up") || facingDirection.Equals("down"))
             {
-                damage = 8;
+                if ((attacker.coordinates.x < coordinates.x && facingDirection.Equals("up")) || (attacker.coordinates.x > coordinates.x && facingDirection.Equals("down")))
+                {
+                    damage = 8;
+                }
+                else if (attacker.coordinates.x == coordinates.x)
+                {
+                    damage = 4;
+                }
             }
-            else if (attacker.coordinates.x == coordinates.x)
+            else if (facingDirection.Equals("right") || facingDirection.Equals("left"))
             {
-                damage = 4;
-            }
-        }
-        else if (facingDirection.Equals("right") || facingDirection.Equals("left"))
-        {
-            if ((attacker.coordinates.z > coordinates.z && facingDirection.Equals("right")) || (attacker.coordinates.z < coordinates.z && facingDirection.Equals("left")))
-            {
-                damage = 8;
-            }
-            else if (attacker.coordinates.z == coordinates.z)
-            {
-                damage = 4;
+                if ((attacker.coordinates.z > coordinates.z && facingDirection.Equals("right")) || (attacker.coordinates.z < coordinates.z && facingDirection.Equals("left")))
+                {
+                    damage = 8;
+                }
+                else if (attacker.coordinates.z == coordinates.z)
+                {
+                    damage = 4;
+                }
             }
         }
         return damage;

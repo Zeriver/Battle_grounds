@@ -10,6 +10,7 @@ public class Weapon : Item
     protected List<Vector3> areOfEffect;
     protected bool isDiagonal;
     protected bool isMelee = false;
+    public bool isFlankingBonus;
     public string damageType;
     public int damage;
     public List<int> nextTurnsDamage;

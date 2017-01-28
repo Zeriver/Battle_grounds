@@ -17,6 +17,7 @@ public class FlameThrower : Weapon
         cooldown = 2;
         range = 1;
         isDiagonal = false;
+        isFlankingBonus = false;
         nextTurnsDamage = new List<int> { 15, 10, 5 };
 
         pattern = generatePattern();

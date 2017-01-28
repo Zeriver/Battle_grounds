@@ -8,5 +8,6 @@ public class Item {
     public GameObject objectItem;
     public string description;
     public int range;
+    public bool isStackable;
 
 }

@@ -16,6 +16,7 @@ public class Pistol : Weapon {
         cooldown = 0;
         range = 4;
         isDiagonal = false;
+        isFlankingBonus = true;
     }
 
 }

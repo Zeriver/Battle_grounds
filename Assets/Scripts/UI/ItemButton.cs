@@ -20,6 +20,14 @@ public class ItemButton : MonoBehaviour {
     {
         item = items;
         description = item.description;
+        if (item is Weapon)
+        {
+            description += "  Ammunition: " + ((Weapon)item).ammunition;
+        }
+        else if (item is HealingItem)
+        {
+            description += "  Amount: " + ((HealingItem)item).amount;
+        }
     }
 
     public void changeItem()

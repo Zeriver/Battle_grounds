@@ -10,5 +10,6 @@ public class MediumHealingKit : HealingItem
         description = "Oh shit gettup!";
         this.amount = amount;
         healingPoints = 25;
+        isStackable = true;
     }
 }

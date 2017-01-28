@@ -47,6 +47,7 @@ public class PlayerUnitController : Unit
         pushHighlights = new List<GameObject>();
         weaponAreaEffectHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
+        setPositions();
         targets = new List<Unit>();
         obstaclesToAttack = new List<Obstacle>();
         weaponSkills = new List<WeaponSkill>();
@@ -145,6 +146,11 @@ public class PlayerUnitController : Unit
                         }
                         switchActionMode();
                         isActionUsed = true;
+                        if (((HealingItem)currentItem).isLastStackable())
+                        {
+                            healingItems.Remove((HealingItem)currentItem);
+                            currentItem = null;
+                        }
                     }
                     targets.Clear();
                     attack = false;
@@ -247,7 +253,19 @@ public class PlayerUnitController : Unit
                             }
                             else if (currentItem is HealingItem)
                             {
-                                _battleGroundController.playerUnits[i].healingItems.Add((HealingItem)currentItem);
+                                if (currentItem.isStackable)
+                                {
+                                    for (int j = 0; j < _battleGroundController.playerUnits[i].healingItems.Count; j++)
+                                    {
+                                        if (_battleGroundController.playerUnits[i].healingItems[j].name.Equals(currentItem.name)){
+                                            _battleGroundController.playerUnits[i].healingItems[j].addAmount(((HealingItem)currentItem).amount);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    _battleGroundController.playerUnits[i].healingItems.Add((HealingItem)currentItem);
+                                }
                                 healingItems.Remove((HealingItem)currentItem);
                                 currentItem = null;
                             }

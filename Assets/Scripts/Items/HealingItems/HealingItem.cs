@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class HealingItem : Item
 {
     public int healingPoints;
-    protected int amount;
+    public int amount;
 
     protected HealingItem(int amount)
     {
@@ -27,7 +27,16 @@ public class HealingItem : Item
         return false;
     }
 
-    protected void addAmount(int value)
+    public bool isLastStackable()
+    {
+        if (amount == 0 && isStackable)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void addAmount(int value)
     {
         amount += value;
     }
