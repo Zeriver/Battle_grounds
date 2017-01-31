@@ -81,6 +81,7 @@ public class PlayerUnitController : Unit
         //EQ
         weapons.Add(new Pistol(5));
         weapons.Add(new FlameThrower(5));
+        weapons.Add(new Axe());
         healingItems.Add(new MediumHealingKit(2));
         currentItem = healingItems[0];
     }

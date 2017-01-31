@@ -9,12 +9,16 @@ public class Weapon : Item
     protected List<Vector3> pattern;
     protected List<Vector3> areOfEffect;
     protected bool isDiagonal;
-    protected bool isMelee = false;
+    public bool isMelee = false;
     public bool isFlankingBonus;
     public string damageType;
     public int damage;
     public List<int> nextTurnsDamage;
 
+    protected Weapon()
+    {
+
+    }
 
     protected Weapon(int ammunition)
     {
@@ -100,7 +104,7 @@ public class Weapon : Item
         {
             area = FlameThrower.getAreaOfEffect(x, z, x2 , z2);
         }
-        else if (name.Equals("Pistol"))
+        else if (name.Equals("Pistol") || name.Equals("Axe"))
         {
             area.Add(TileMap.getTile(x2, z2));
         }

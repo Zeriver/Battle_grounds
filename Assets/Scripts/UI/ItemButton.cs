@@ -20,7 +20,7 @@ public class ItemButton : MonoBehaviour {
     {
         item = items;
         description = item.description;
-        if (item is Weapon)
+        if (item is Weapon && !((Weapon)item).isMelee)
         {
             description += "  Ammunition: " + ((Weapon)item).ammunition;
         }
