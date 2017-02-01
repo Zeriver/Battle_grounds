@@ -35,7 +35,7 @@ public class PlayerUnitController : Unit
         isActionMode = false;
         isActionUsed = false;
         moving = false;
-        coordinates = new Vector3(x, 2.5f, y); //in battle map vertices   // TEMPORARY 2.5f on y because model pivot is incorrect TODO
+        coordinates = new Vector3(x, 0.0f, y);
         transform.position = new Vector3(coordinates.x + 0.5f, coordinates.y, -coordinates.z + 0.5f);
         targetRotation = transform.rotation;
         validTiles = new List<Tile>();
@@ -64,16 +64,16 @@ public class PlayerUnitController : Unit
         switch (facingDirection)
         {
             case "up":
-                transform.rotation = Quaternion.Euler(new Vector3(-90.0f, 90.0f, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 180.0f, 0.0f));
                 break;
             case "right":
-                transform.rotation = Quaternion.Euler(new Vector3(-90.0f, 180.0f, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, -90.0f, 0.0f));
                 break;
             case "down":
-                transform.rotation = Quaternion.Euler(new Vector3(-90.0f, -90.0f, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
                 break;
             case "left":
-                transform.rotation = Quaternion.Euler(new Vector3(-90.0f, 0.0f, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f));
                 break;
         }
         this.facingDirection = facingDirection;
@@ -97,10 +97,10 @@ public class PlayerUnitController : Unit
             if (positionQueue.Count > 0 && !moving)
             {
                 setNextStep(new Vector3[]  {            //Temporary fix until proper units models will be in game TODO
-                     new Vector3(-90.0f, 90.0f, 0.0f),
-                     new Vector3(-90.0f, -90.0f, 0.0f),
-                     new Vector3(-90.0f, 0.0f, 0.0f),
-                     new Vector3(-90.0f, 180.0f, 0.0f)
+                     new Vector3(0.0f, 180.0f, 0.0f),
+                     new Vector3(0.0f, 0.0f, 0.0f),
+                     new Vector3(0.0f, 90.0f, 0.0f),
+                     new Vector3(0.0f, -90.0f, 0.0f)
                  });
                 showMoves = true;
             }
@@ -230,13 +230,13 @@ public class PlayerUnitController : Unit
                             }
                         }
                         if (clickedTile.PosX > coordinates.x)
-                            targetRotation = Quaternion.Euler(-90.0f, 90.0f, 0.0f);
+                            targetRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
                         else if (clickedTile.PosX < coordinates.x)
-                            targetRotation = Quaternion.Euler(-90.0f, -90.0f, 0.0f);
+                            targetRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
                         else if (clickedTile.PosY < coordinates.z)
-                            targetRotation = Quaternion.Euler(-90.0f, 0.0f, 0.0f);
+                            targetRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
                         else if (clickedTile.PosY > coordinates.z)
-                            targetRotation = Quaternion.Euler(-90.0f, 180.0f, 0.0f);
+                            targetRotation = Quaternion.Euler(0.0f, -90.0f, 0.0f);
                         turningToTarget = true;
                     }
                 }

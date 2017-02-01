@@ -81,6 +81,18 @@ public abstract class Enemy :  Unit {
 
     abstract public void performTurn();
 
+    public void enterBattleground(int x, int y)
+    {
+        turnInProgress = true;
+        turnDone = false;
+        Tile destination = TileMap.getTile(x, y);
+        List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), destination);
+        for (int i = 0; i < path.Count; i++)
+        {
+            positionQueue.Add(new Vector3(path[i].PosX, coordinates.y, path[i].PosY));
+        }
+    }
+
     public void resetAfterTurn()
     {
         standardReset();

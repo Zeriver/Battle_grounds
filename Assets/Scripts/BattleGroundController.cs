@@ -33,7 +33,7 @@ public class BattleGroundController : MonoBehaviour
     public List<Enemy> enemyUnits = new List<Enemy>();
     public PlayerUnitController lastActiveUnit;
 
-    private bool playerTurn, enemyTurn, allyTurn, endTurn, enemyHealthUpdate, playerHealthUpdate;
+    private bool playerTurn, enemyTurn, allyTurn, endTurn, enemyHealthUpdate, playerHealthUpdate, initializeNewEnemy, newEnemiesInitialized;
     private int turnNumber;
 
     void Start()
@@ -45,7 +45,6 @@ public class BattleGroundController : MonoBehaviour
         itemCreator = _itemCreator.GetComponent("ItemCreator") as ItemCreator;
         inventory = _inventory.GetComponent("Inventory") as Inventory;
         unitInfo = _unitInfo.GetComponent("UnitInfoPanel") as UnitInfoPanel;
-        turnNumber = 1;
         createBattleGround(30, 30);
     }
 
@@ -152,11 +151,19 @@ public class BattleGroundController : MonoBehaviour
         if (allyTurn)
         {
             allyTurn = false;
-            endTurn = true;
+            initializeNewEnemy = true;
         }
         if (checkWinCondition())
         {
             // end game TODO
+        }
+        if (initializeNewEnemy)
+        {
+            if (enterNewEnemies())
+            {
+                initializeNewEnemy = false;
+                endTurn = true;
+            }
         }
         if (endTurn)
         {
@@ -166,12 +173,10 @@ public class BattleGroundController : MonoBehaviour
 
     public void createBattleGround(int wdith, int height)
     {
+        turnNumber = 1;
         _tileMapBuilder.BuildMesh(wdith, height);
 
         //Create units (player units and enemies)
-        GameObject playerUnit = _playerUnit as GameObject;
-        PlayerUnitController playerUnitController = playerUnit.GetComponent<PlayerUnitController>();
-
 
         for (int i = 0; i < 3; i++)  //Need to load number of players from scenario/something
         {
@@ -191,16 +196,6 @@ public class BattleGroundController : MonoBehaviour
             }
 
         }
-
-        GameObject impaler = _impaler as GameObject;
-        Impaler impalerController = impaler.GetComponent<Impaler>();
-
-        GameObject devoured = _devoured as GameObject;
-        Devoured devouredController = devoured.GetComponent<Devoured>();
-
-        GameObject salamand = _salamand as GameObject;
-        Salamand salamandController = salamand.GetComponent<Salamand>();
-
         for (int i = 0; i < 4; i++)
         {
             if (i == 0)
@@ -248,6 +243,40 @@ public class BattleGroundController : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    private bool enterNewEnemies()
+    {
+        if (!newEnemiesInitialized)
+        {
+            if (turnNumber == 2)
+            {
+                newEnemiesInitialized = true;
+                enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
+                enemyUnits[enemyUnits.Count - 1].createImpaler(2, 2, "down");
+                enemyUnits[enemyUnits.Count - 1].enterBattleground(4, 13);
+            }
+            if (turnNumber == 3)
+            {
+                newEnemiesInitialized = true;
+                enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
+                enemyUnits[enemyUnits.Count - 1].createImpaler(2, 2, "down");
+                enemyUnits[enemyUnits.Count - 1].enterBattleground(4, 13);
+                enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
+                enemyUnits[enemyUnits.Count - 1].createImpaler(4, 4, "down");
+                enemyUnits[enemyUnits.Count - 1].enterBattleground(4, 25);
+            }
+        }
+
+        bool newEnemiesReady = true;
+        for (int i = 0; i < enemyUnits.Count; i++)
+        {
+            if (!enemyUnits[i].turnDone)
+            {
+                newEnemiesReady = false;
+            }
+        }
+        return newEnemiesReady;
     }
 
     private void setNextUnitActive()
@@ -354,6 +383,7 @@ public class BattleGroundController : MonoBehaviour
     public void nextTurn()
     {
         endTurn = false;
+        newEnemiesInitialized = false;
         for (int i = 0; i < playerUnits.Count; i++)
         {
             playerUnits[i].resetAfterTurn();

@@ -31,6 +31,7 @@ public class Weapon : Item
         this.range = range;
         this.damageType = damageType;
         ammunition = 999;
+        isFlankingBonus = true;
     }
 
     protected void addAmmunition(int value)
