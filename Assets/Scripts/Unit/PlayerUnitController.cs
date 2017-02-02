@@ -88,7 +88,7 @@ public class PlayerUnitController : Unit
 
     void Update()
     {
-        if (isSelected && !inventory.equipment.enabled)
+        if (isSelected && !inventory.equipment.enabled && !_battleGroundController.menuController.menu.enabled)
         {
             if (showMoves && positionQueue.Count == 0)
             {

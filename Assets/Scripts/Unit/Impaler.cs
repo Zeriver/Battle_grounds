@@ -27,7 +27,7 @@ public class Impaler : Enemy {
 
     void Update()
     {
-        if (turnInProgress)
+        if (turnInProgress && !_battleGroundController.menuController.menu.enabled)
         {
             if (positionQueue.Count > 0 && !moving && movementHighlights.Count == 0)
             {

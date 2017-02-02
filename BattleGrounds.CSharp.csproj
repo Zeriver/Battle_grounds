@@ -99,6 +99,7 @@
     <Compile Include="Assets\Scripts\UI\ItemButton.cs" />
     <Compile Include="Assets\Scripts\UI\ItemCreator.cs" />
     <Compile Include="Assets\Scripts\UI\ItemPrefab.cs" />
+    <Compile Include="Assets\Scripts\UI\MenuController.cs" />
     <Compile Include="Assets\Scripts\UI\UnitInfoPanel.cs" />
     <Compile Include="Assets\Scripts\Unit\Devoured.cs" />
     <Compile Include="Assets\Scripts\Unit\Enemy.cs" />

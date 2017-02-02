@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(TileMapBuilder))]
 [RequireComponent(typeof(MouseHighlight))]
@@ -17,6 +18,7 @@ public class BattleGroundController : MonoBehaviour
     public GameObject _playerUI;
     public GameObject _itemCreator;
     public GameObject _inventory;
+    public GameObject _menu;
     public GameObject _unitInfo;
     public Text playerUIHealth;
 
@@ -29,6 +31,7 @@ public class BattleGroundController : MonoBehaviour
     private ItemCreator itemCreator;
     private Inventory inventory;
     private UnitInfoPanel unitInfo;
+    public MenuController menuController;
     public List<PlayerUnitController> playerUnits = new List<PlayerUnitController>();
     public List<Enemy> enemyUnits = new List<Enemy>();
     public PlayerUnitController lastActiveUnit;
@@ -44,130 +47,138 @@ public class BattleGroundController : MonoBehaviour
         playerUI = _playerUI.GetComponent("PlayerUI") as PlayerUI;
         itemCreator = _itemCreator.GetComponent("ItemCreator") as ItemCreator;
         inventory = _inventory.GetComponent("Inventory") as Inventory;
+        menuController = _menu.GetComponent("MenuController") as MenuController;
         unitInfo = _unitInfo.GetComponent("UnitInfoPanel") as UnitInfoPanel;
-        createBattleGround(30, 30);
+        createBattleGround(40, 40);
     }
 
     void Update()
     {
-        if (playerHealthUpdate)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            for (int i = 0; i < playerUnits.Count; i++)
-            {
-                playerUnits[i].updateHealthModifiers();
-            }
-            playerHealthUpdate = false;
-            playerTurn = true;
+            menuWindowService();
         }
-        if (playerTurn && !lastActiveUnit.moving)
+        if (!menuController.menu.enabled)
         {
-            if (Input.GetKeyDown(KeyCode.Q))
+            if (playerHealthUpdate)
             {
-                inventoryWindowService();
+                for (int i = 0; i < playerUnits.Count; i++)
+                {
+                    playerUnits[i].updateHealthModifiers();
+                }
+                playerHealthUpdate = false;
+                playerTurn = true;
             }
-            if (!inventory.equipment.enabled)
+            if (playerTurn && !lastActiveUnit.moving)
             {
-                if (Input.GetKeyDown(KeyCode.Tab))
+                if (Input.GetKeyDown(KeyCode.Q))
                 {
-                    setNextUnitActive();
+                    inventoryWindowService();
                 }
-                Transform mousePosition = _mouseHighlight.getHighlightSelection();
-                if (Input.GetMouseButtonDown(0))     /// LEFT CLICK
+                if (!inventory.equipment.enabled)
                 {
-                    if (lastActiveUnit.giveHighlights.Count == 0 && !lastActiveUnit.isActionMode)
+                    if (Input.GetKeyDown(KeyCode.Tab))
                     {
-                        PlayerUnitController clickedUnit = getClickedUnit((int)mousePosition.position.x, (int)mousePosition.position.z);
-                        if (clickedUnit != null)
-                        {
-                            deactivatePlayerUnits();
-                            clickedUnit.setPlayerUnitActive();
-                            lastActiveUnit = clickedUnit;
-                            playerUIHealth.text = lastActiveUnit.health.ToString() + " HP";
-                            _cameraController.setCameraToActiveUnit(clickedUnit.transform.position);
-                        }
-                        Tile clickedTile = TileMap.getTile((int)mousePosition.position.x, (int)mousePosition.position.z);
+                        setNextUnitActive();
                     }
-                }
-                if (!lastActiveUnit.isActionMode)
-                {
-                    Enemy enemy = getHoveredEnemy((int)mousePosition.position.x, (int)mousePosition.position.z);
-                    if (enemy != null)
+                    Transform mousePosition = _mouseHighlight.getHighlightSelection();
+                    if (Input.GetMouseButtonDown(0))     /// LEFT CLICK
                     {
-                        lastActiveUnit.destroyMovementHiglights();
-                        enemy.showPossibleMovement();
-                        if (!unitInfo.canvas.enabled)
+                        if (lastActiveUnit.giveHighlights.Count == 0 && !lastActiveUnit.isActionMode)
                         {
-                            unitInfo.setNewPosition(enemy.transform.position);
-                            unitInfo.setInfo(enemy);
-                            unitInfo.changeCanvasEnabled(true);
+                            PlayerUnitController clickedUnit = getClickedUnit((int)mousePosition.position.x, (int)mousePosition.position.z);
+                            if (clickedUnit != null)
+                            {
+                                deactivatePlayerUnits();
+                                clickedUnit.setPlayerUnitActive();
+                                lastActiveUnit = clickedUnit;
+                                playerUIHealth.text = lastActiveUnit.health.ToString() + " HP";
+                                _cameraController.setCameraToActiveUnit(clickedUnit.transform.position);
+                            }
+                            Tile clickedTile = TileMap.getTile((int)mousePosition.position.x, (int)mousePosition.position.z);
                         }
                     }
-                    else
+                    if (!lastActiveUnit.isActionMode)
                     {
-                        for (int i = 0; i < enemyUnits.Count; i++)
+                        Enemy enemy = getHoveredEnemy((int)mousePosition.position.x, (int)mousePosition.position.z);
+                        if (enemy != null)
                         {
-                            enemyUnits[i].destroyMovementHighlights();
+                            lastActiveUnit.destroyMovementHiglights();
+                            enemy.showPossibleMovement();
+                            if (!unitInfo.canvas.enabled)
+                            {
+                                unitInfo.setNewPosition(enemy.transform.position);
+                                unitInfo.setInfo(enemy);
+                                unitInfo.changeCanvasEnabled(true);
+                            }
                         }
-                        if (unitInfo.canvas.enabled)
+                        else
                         {
-                            unitInfo.changeCanvasEnabled(false);
-                            lastActiveUnit.showAllowedMovements();
+                            for (int i = 0; i < enemyUnits.Count; i++)
+                            {
+                                enemyUnits[i].destroyMovementHighlights();
+                            }
+                            if (unitInfo.canvas.enabled)
+                            {
+                                unitInfo.changeCanvasEnabled(false);
+                                lastActiveUnit.showAllowedMovements();
+                            }
                         }
                     }
                 }
             }
-        }
-        if (enemyHealthUpdate)
-        {
-            for (int i = 0; i < enemyUnits.Count; i++)
+            if (enemyHealthUpdate)
             {
-                enemyUnits[i].updateHealthModifiers();
-            }
-            enemyHealthUpdate = false;
-            enemyTurn = true;
-        }
-        if (enemyTurn)
-        {
-            performEnemyTurn();
-            bool allEnemiesDone = true;
-            //Debug.Log("Enemy turn in progress...");
-            for (int i = 0; i < enemyUnits.Count; i++)
-            {
-                if (!enemyUnits[i].turnDone)
+                for (int i = 0; i < enemyUnits.Count; i++)
                 {
-                    allEnemiesDone = false;
+                    enemyUnits[i].updateHealthModifiers();
+                }
+                enemyHealthUpdate = false;
+                enemyTurn = true;
+            }
+            if (enemyTurn)
+            {
+                performEnemyTurn();
+                bool allEnemiesDone = true;
+                //Debug.Log("Enemy turn in progress...");
+                for (int i = 0; i < enemyUnits.Count; i++)
+                {
+                    if (!enemyUnits[i].turnDone)
+                    {
+                        allEnemiesDone = false;
+                    }
+                }
+                if (allEnemiesDone)
+                {
+                    enemyTurn = false;
+                    allyTurn = true;
                 }
             }
-            if (allEnemiesDone)
+            if (checkLoseCondition())
             {
-                enemyTurn = false;
-                allyTurn = true;
+                // reset / end game TODO
             }
-        }
-        if (checkLoseCondition())
-        {
-            // reset / end game TODO
-        }
-        if (allyTurn)
-        {
-            allyTurn = false;
-            initializeNewEnemy = true;
-        }
-        if (checkWinCondition())
-        {
-            // end game TODO
-        }
-        if (initializeNewEnemy)
-        {
-            if (enterNewEnemies())
+            if (allyTurn)
             {
-                initializeNewEnemy = false;
-                endTurn = true;
+                allyTurn = false;
+                initializeNewEnemy = true;
             }
-        }
-        if (endTurn)
-        {
-            nextTurn();
+            if (checkWinCondition())
+            {
+                // end game TODO
+            }
+            if (initializeNewEnemy)
+            {
+                if (enterNewEnemies())
+                {
+                    initializeNewEnemy = false;
+                    endTurn = true;
+                }
+            }
+            if (endTurn)
+            {
+                nextTurn();
+            }
         }
     }
 
@@ -435,6 +446,26 @@ public class BattleGroundController : MonoBehaviour
             lastActiveUnit.showAllowedMovements();
         }
         inventory.changeCanvasEnabled();
+    }
+
+    public void menuWindowService()
+    {
+        menuController.changeCanvasEnabled();
+    }
+
+    public void restartService()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void saveGameService()
+    {
+
+    }
+
+    public void loadGameService()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void showWeapons()
