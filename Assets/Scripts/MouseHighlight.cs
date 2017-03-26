@@ -29,8 +29,13 @@ public class MouseHighlight : MonoBehaviour
 
             currentTile.z = z;
             currentTile.x = x;
-
-            HighlightSelection.transform.position = currentTile * _tileMapBuilder.tileSize;
+            if (TileMap.getTile(x, z).Id != 49)
+            {
+                HighlightSelection.transform.position = currentTile * _tileMapBuilder.tileSize;
+            } else
+            {
+                HighlightSelection.transform.position = new Vector3(0.0f, -999.0f, 0.0f);
+            }
         }
     }
 

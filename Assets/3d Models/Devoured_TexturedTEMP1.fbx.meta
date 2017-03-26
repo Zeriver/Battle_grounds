@@ -1,27 +1,27 @@
 fileFormatVersion: 2
-guid: 0a67d620b586b8949bda79e987e2fad9
-timeCreated: 1490462026
+guid: cc400cafb86b4be4c870c3e481392b58
+timeCreated: 1490548311
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: Cube.014
-    100002: Cube.017
-    100004: //RootNode
-    100006: Cube.015
-    400000: Cube.014
-    400002: Cube.017
-    400004: //RootNode
-    400006: Cube.015
-    2300000: Cube.014
-    2300002: Cube.017
-    2300004: Cube.015
-    3300000: Cube.014
-    3300002: Cube.017
-    3300004: Cube.015
-    4300000: Cube.014
-    4300002: Cube.017
-    4300004: Cube.015
+    100000: Cube_MeshPart0
+    100002: Cube_MeshPart1
+    100004: Cube_MeshPart2
+    100006: //RootNode
+    400000: Cube_MeshPart0
+    400002: Cube_MeshPart1
+    400004: Cube_MeshPart2
+    400006: //RootNode
+    2300000: Cube_MeshPart0
+    2300002: Cube_MeshPart1
+    2300004: Cube_MeshPart2
+    3300000: Cube_MeshPart0
+    3300002: Cube_MeshPart1
+    3300004: Cube_MeshPart2
+    4300000: Cube_MeshPart0
+    4300002: Cube_MeshPart1
+    4300004: Cube_MeshPart2
   materials:
     importMaterials: 1
     materialName: 0

@@ -51,7 +51,6 @@ public class TileMap
         UnityEngine.Object parkTable1 = Resources.Load("Prefabs/ParkTable1");
 
         string fileName = "MP2.txt";
-        Debug.Log(Application.dataPath);
         string[][] levelMap = FileReader.readFile(Application.dataPath + "/Maps/" + fileName);
 
         for (int y = 0; y < levelMap.Length; y++)
@@ -73,7 +72,7 @@ public class TileMap
                         tile_data.Add(new Tile(3, x, y));
                         break;
                     case notWalkableNotShootable:
-                        map_data[x, y] = 1;
+                        map_data[x, y] = 0; ///1
                         tile_data.Add(new Tile(49, x, y));
                         break;
                     case woodenCrate:
@@ -93,39 +92,39 @@ public class TileMap
                         obstacles.Add(obstacleController2);
                         break;
                     case fountain:
-                        map_data[x, y] = 1;
+                        map_data[x, y] = 0;
                         tile_data.Add(new Tile(49, x, y));
                         GameObject fountainPrefab = (GameObject)GameObject.Instantiate(fountain1, new Vector3(x + 0.5f, 0, -y + 0.5f), Quaternion.identity);
                         break;
                     case tree1:
-                        map_data[x, y] = 1;
+                        map_data[x, y] = 0;
                         tile_data.Add(new Tile(49, x, y));
                         GameObject treePrefab1 = (GameObject)GameObject.Instantiate(tree01, new Vector3(x + 0.5f, 0, -y + 0.5f), Quaternion.identity);
                         break;
                     case tree2:
-                        map_data[x, y] = 1;
+                        map_data[x, y] = 0;
                         tile_data.Add(new Tile(49, x, y));
                         GameObject treePrefab2 = (GameObject)GameObject.Instantiate(tree02, new Vector3(x + 0.5f, 0, -y + 0.5f), Quaternion.identity);
                         break;
                     case parkLight:
-                        map_data[x, y] = 1;
+                        map_data[x, y] = 0;
                         tile_data.Add(new Tile(49, x, y));
                         GameObject parkLightPrefab = (GameObject)GameObject.Instantiate(parkLight1, new Vector3(x + 0.5f, 0, -y + 0.5f), Quaternion.identity);
                         break;
                     case trashbin:
-                        map_data[x, y] = 1;
+                        map_data[x, y] = 0;
                         tile_data.Add(new Tile(49, x, y));
                         GameObject trashbinPrefab = (GameObject)GameObject.Instantiate(trashbin1, new Vector3(x + 0.5f, 0, -y + 0.5f), Quaternion.identity);
                         break;
                     case bench:
-                        map_data[x, y] = 1;
+                        map_data[x, y] = 0;
                         tile_data.Add(new Tile(49, x, y));
                         if (levelMap[y + 1][x].Equals("66")){  //facing down 
                             levelMap[y + 1][x] = "49";
                             GameObject benchPrefab = (GameObject)GameObject.Instantiate(bench1, new Vector3(x + 0.5f, 0, -y), Quaternion.Euler(0, 270, 0));
                         }
                         else if (levelMap[y - 1][x].Equals("66")){ //facing up
-                            map_data[x, y - 1] = 1;
+                            map_data[x, y - 1] = 0;
                             setTileNotWalkable(x, y - 1);
                             GameObject benchPrefab = (GameObject)GameObject.Instantiate(bench1, new Vector3(x + 0.5f, 0, -y + 1f), Quaternion.Euler(0, 90, 0));
                         }
@@ -136,13 +135,13 @@ public class TileMap
                         }
                         else if (levelMap[y][x - 1].Equals("66")) //facing left
                         {
-                            map_data[x - 1, y] = 1;
+                            map_data[x - 1, y] = 0;
                             setTileNotWalkable(x - 1, y);
                             GameObject benchPrefab = (GameObject)GameObject.Instantiate(bench1, new Vector3(x, 0, -y + 0.5f), Quaternion.Euler(0, 0, 0));
                         }
                         break;
                     case parkTable:
-                        map_data[x, y] = 1;
+                        map_data[x, y] = 0;
                         tile_data.Add(new Tile(49, x, y));
                         GameObject parkTablePrefab = (GameObject)GameObject.Instantiate(parkTable1, new Vector3(x + 1f, 0, -y), Quaternion.Euler(0, 90, 0));
                         break;

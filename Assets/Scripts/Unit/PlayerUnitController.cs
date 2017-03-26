@@ -64,16 +64,16 @@ public class PlayerUnitController : Unit
         switch (facingDirection)
         {
             case "up":
-                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 180.0f, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f));
                 break;
             case "right":
-                transform.rotation = Quaternion.Euler(new Vector3(0.0f, -90.0f, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 180.0f, 0.0f));
                 break;
             case "down":
-                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, -90.0f, 0.0f));
                 break;
             case "left":
-                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
                 break;
         }
         this.facingDirection = facingDirection;
@@ -97,10 +97,15 @@ public class PlayerUnitController : Unit
             if (positionQueue.Count > 0 && !moving)
             {
                 setNextStep(new Vector3[]  {            //Temporary fix until proper units models will be in game TODO
-                     new Vector3(0.0f, 180.0f, 0.0f),
+                     /*new Vector3(0.0f, 180.0f, 0.0f),
                      new Vector3(0.0f, 0.0f, 0.0f),
                      new Vector3(0.0f, 90.0f, 0.0f),
-                     new Vector3(0.0f, -90.0f, 0.0f)
+                     new Vector3(0.0f, -90.0f, 0.0f)*/
+                     new Vector3(0.0f, 90.0f, 0.0f),
+                     new Vector3(0.0f, -90.0f, 0.0f),
+                     new Vector3(0.0f, 0.0f, 0.0f),
+                     new Vector3(0.0f, 180.0f, 0.0f)
+
                  });
                 showMoves = true;
             }
@@ -230,13 +235,13 @@ public class PlayerUnitController : Unit
                             }
                         }
                         if (clickedTile.PosX > coordinates.x)
-                            targetRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-                        else if (clickedTile.PosX < coordinates.x)
-                            targetRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-                        else if (clickedTile.PosY < coordinates.z)
                             targetRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
-                        else if (clickedTile.PosY > coordinates.z)
+                        else if (clickedTile.PosX < coordinates.x)
                             targetRotation = Quaternion.Euler(0.0f, -90.0f, 0.0f);
+                        else if (clickedTile.PosY < coordinates.z)
+                            targetRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                        else if (clickedTile.PosY > coordinates.z)
+                            targetRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
                         turningToTarget = true;
                     }
                 }

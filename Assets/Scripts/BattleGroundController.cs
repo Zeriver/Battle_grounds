@@ -272,9 +272,9 @@ public class BattleGroundController : MonoBehaviour
                 enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
                 enemyUnits[enemyUnits.Count - 1].createImpaler(2, 2, "down");
                 enemyUnits[enemyUnits.Count - 1].enterBattleground(4, 13);
-                enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
-                enemyUnits[enemyUnits.Count - 1].createImpaler(4, 4, "down");
-                enemyUnits[enemyUnits.Count - 1].enterBattleground(4, 25);
+                //enemyUnits.Add(Instantiate(_impaler).GetComponent<Impaler>());
+                //enemyUnits[enemyUnits.Count - 1].createImpaler(4, 4, "down");
+                //enemyUnits[enemyUnits.Count - 1].enterBattleground(4, 25);
             }
         }
 

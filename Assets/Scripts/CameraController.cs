@@ -79,7 +79,7 @@ public class CameraController : MonoBehaviour {
             Camera.main.transform.position = Camera.main.transform.position + new Vector3(-cameraEdgeSpeed, 0.0f, -cameraEdgeSpeed);
             movingToActive = false;
         }
-        if (Camera.main.transform.position.x > _tileMapBuilder.size_x/1.4f || Camera.main.transform.position.x < -5
+        if (Camera.main.transform.position.x > _tileMapBuilder.size_x/1.4f || Camera.main.transform.position.x < -2
             || Camera.main.transform.position.z > -5 || Camera.main.transform.position.z < -_tileMapBuilder.size_z)
         {
             Camera.main.transform.position = oldPos;

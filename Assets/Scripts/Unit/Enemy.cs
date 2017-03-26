@@ -38,16 +38,16 @@ public abstract class Enemy :  Unit {
         switch (facingDirection)
         {
             case "up":
-                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 180.0f, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f));
                 break;
             case "right":
-                transform.rotation = Quaternion.Euler(new Vector3(0.0f, -90.0f, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 180.0f, 0.0f));
                 break;
             case "down":
-                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, -90.0f, 0.0f));
                 break;
             case "left":
-                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 90.0f, 0.0f));
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0.0f, 0.0f));
                 break;
         }
         this.facingDirection = facingDirection;
@@ -144,13 +144,13 @@ public abstract class Enemy :  Unit {
             {
                 unitToAttack = _battleGroundController.playerUnits[j];
                 if (unitToAttack.coordinates.x > coordinates.x)
-                    targetRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-                else if (unitToAttack.coordinates.x < coordinates.x)
-                    targetRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-                else if (unitToAttack.coordinates.z < coordinates.z)
                     targetRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f);
-                else if (unitToAttack.coordinates.z > coordinates.z)
+                else if (unitToAttack.coordinates.x < coordinates.x)
                     targetRotation = Quaternion.Euler(0.0f, -90.0f, 0.0f);
+                else if (unitToAttack.coordinates.z < coordinates.z)
+                    targetRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                else if (unitToAttack.coordinates.z > coordinates.z)
+                    targetRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
                 turningToTarget = true;
                 return true;
             }
