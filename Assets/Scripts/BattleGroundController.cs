@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(CameraController))]
 public class BattleGroundController : MonoBehaviour
 {
-
     TileMapBuilder _tileMapBuilder;
     MouseHighlight _mouseHighlight;
     CameraController _cameraController;
@@ -49,7 +48,7 @@ public class BattleGroundController : MonoBehaviour
         inventory = _inventory.GetComponent("Inventory") as Inventory;
         menuController = _menu.GetComponent("MenuController") as MenuController;
         unitInfo = _unitInfo.GetComponent("UnitInfoPanel") as UnitInfoPanel;
-        createBattleGround(40, 40);
+        createBattleGround(25, 25);
     }
 
     void Update()

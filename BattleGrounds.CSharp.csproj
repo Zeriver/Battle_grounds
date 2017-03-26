@@ -75,8 +75,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\BattleGround.cs" />
     <Compile Include="Assets\Scripts\BattleGroundController.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
+    <Compile Include="Assets\Scripts\FileReader.cs" />
     <Compile Include="Assets\Scripts\Items\HealingItems\HealingItem.cs" />
     <Compile Include="Assets\Scripts\Items\HealingItems\MediumHealingKit.cs" />
     <Compile Include="Assets\Scripts\Items\Item.cs" />
@@ -108,6 +110,9 @@
     <Compile Include="Assets\Scripts\Unit\Salamand.cs" />
     <Compile Include="Assets\Scripts\Unit\Unit.cs" />
     <Compile Include="Assets\Scripts\WeaponSkill.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Maps\MP2.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

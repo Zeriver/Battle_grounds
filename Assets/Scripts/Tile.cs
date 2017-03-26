@@ -5,9 +5,20 @@ public class Tile {
 
     /*
      * 0 - normalFloor
-     * 1 - swamps
-     * 2 - wall
-     * 3 - ...
+     * 1 - normalFloor
+     * 87 - slowField
+     * 3 - not walkable
+     * 49 - not walkable, blocking weapons
+     * 
+     * PREFABS
+     * 
+     * 5 - Wooden crate - Obstacle pushable, NOT blocking weapos
+     * 4 - Column - Obstacle pushable, blocking weapos
+     * 22 - fountain model
+     * 81 - tree2
+     * 82 - tree1
+     * 41 - park light
+     * 
     */
 
 
@@ -32,23 +43,28 @@ public class Tile {
             case 1:
                 moveCost = 1;
                 break;
-            case 2:
+            case 87:
                 moveCost = 3;
                 break;
             case 3:
                 moveCost = 999;  // not walkable
                 isWalkable = false;
                 break;
-            case 4:
+            case 5:
                 moveCost = 1;
                 isWalkable = false;
                 isPushable = true;
                 isUnitOnIt = true;
                 break;
-            case 5:
+            case 4:
                 moveCost = 1;
                 isWalkable = false;
                 isPushable = true;
+                isBlockingWeapons = true;
+                break;
+            case 49:
+                moveCost = 999;
+                isWalkable = false;
                 isBlockingWeapons = true;
                 break;
             default:

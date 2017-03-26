@@ -11,6 +11,21 @@ public class TileMap
     static List<Tile> tile_data;
     static List<Obstacle> obstacles;
 
+    private const string normalTile = "0";
+    private const string slowTile = "87";
+    private const string notWalkable = "3"; //but shootable
+    private const string notWalkableNotShootable = "49";
+    private const string woodenCrate = "5";
+    private const string column = "4";
+    private const string fountain = "22";
+    private const string tree2 = "81";
+    private const string tree1 = "82";
+    private const string parkLight = "41";
+    private const string bench = "65";
+    private const string trashbin = "61";
+    private const string parkTable = "76";
+
+
     public TileMap()
     {
 
@@ -27,54 +42,118 @@ public class TileMap
 
         UnityEngine.Object obstaclePrefab = Resources.Load("Prefabs/Obstacle_02");
         UnityEngine.Object obstaclePrefab2 = Resources.Load("Prefabs/Obstacle_03");
+        UnityEngine.Object fountain1 = Resources.Load("Prefabs/Fountain");
+        UnityEngine.Object tree01 = Resources.Load("Prefabs/Tree1");
+        UnityEngine.Object tree02 = Resources.Load("Prefabs/Tree2");
+        UnityEngine.Object parkLight1 = Resources.Load("Prefabs/ParkLight");
+        UnityEngine.Object bench1 = Resources.Load("Prefabs/Bench1");
+        UnityEngine.Object trashbin1 = Resources.Load("Prefabs/Trashbin1");
+        UnityEngine.Object parkTable1 = Resources.Load("Prefabs/ParkTable1");
 
-        for (int x = 0; x < size_x; x++)
+        string fileName = "MP2.txt";
+        Debug.Log(Application.dataPath);
+        string[][] levelMap = FileReader.readFile(Application.dataPath + "/Maps/" + fileName);
+
+        for (int y = 0; y < levelMap.Length; y++)
         {
-            for (int y = 0; y < size_y; y++)
+            for (int x = 0; x < levelMap[0].Length; x++)
             {
-                // Add logic for different kind of tiles TODO
-                if (x == 7 && y == 7)
+                switch (levelMap[y][x])
                 {
-                    map_data[x, y] = 3;
-                    tile_data.Add(new Tile(3, x, y));
+                    case normalTile:
+                        map_data[x, y] = 0;
+                        tile_data.Add(new Tile(0, x, y));
+                        break;
+                    case slowTile:
+                        map_data[x, y] = 2;
+                        tile_data.Add(new Tile(87, x, y));
+                        break;
+                    case notWalkable:
+                        map_data[x, y] = 1;
+                        tile_data.Add(new Tile(3, x, y));
+                        break;
+                    case notWalkableNotShootable:
+                        map_data[x, y] = 1;
+                        tile_data.Add(new Tile(49, x, y));
+                        break;
+                    case woodenCrate:
+                        map_data[x, y] = 0;
+                        tile_data.Add(new Tile(5, x, y));
+                        GameObject obstacle = (GameObject)GameObject.Instantiate(obstaclePrefab);
+                        Obstacle obstacleController = obstacle.GetComponent<Obstacle>();
+                        obstacleController.createObstacle(x, y);
+                        obstacles.Add(obstacleController);
+                        break;
+                    case column:
+                        map_data[x, y] = 0;
+                        tile_data.Add(new Tile(5, x, y));
+                        GameObject obstacle2 = (GameObject)GameObject.Instantiate(obstaclePrefab2);
+                        Obstacle obstacleController2 = obstacle2.GetComponent<Obstacle>();
+                        obstacleController2.createObstacle(x, y);
+                        obstacles.Add(obstacleController2);
+                        break;
+                    case fountain:
+                        map_data[x, y] = 1;
+                        tile_data.Add(new Tile(49, x, y));
+                        GameObject fountainPrefab = (GameObject)GameObject.Instantiate(fountain1, new Vector3(x + 0.5f, 0, -y + 0.5f), Quaternion.identity);
+                        break;
+                    case tree1:
+                        map_data[x, y] = 1;
+                        tile_data.Add(new Tile(49, x, y));
+                        GameObject treePrefab1 = (GameObject)GameObject.Instantiate(tree01, new Vector3(x + 0.5f, 0, -y + 0.5f), Quaternion.identity);
+                        break;
+                    case tree2:
+                        map_data[x, y] = 1;
+                        tile_data.Add(new Tile(49, x, y));
+                        GameObject treePrefab2 = (GameObject)GameObject.Instantiate(tree02, new Vector3(x + 0.5f, 0, -y + 0.5f), Quaternion.identity);
+                        break;
+                    case parkLight:
+                        map_data[x, y] = 1;
+                        tile_data.Add(new Tile(49, x, y));
+                        GameObject parkLightPrefab = (GameObject)GameObject.Instantiate(parkLight1, new Vector3(x + 0.5f, 0, -y + 0.5f), Quaternion.identity);
+                        break;
+                    case trashbin:
+                        map_data[x, y] = 1;
+                        tile_data.Add(new Tile(49, x, y));
+                        GameObject trashbinPrefab = (GameObject)GameObject.Instantiate(trashbin1, new Vector3(x + 0.5f, 0, -y + 0.5f), Quaternion.identity);
+                        break;
+                    case bench:
+                        map_data[x, y] = 1;
+                        tile_data.Add(new Tile(49, x, y));
+                        if (levelMap[y + 1][x].Equals("66")){  //facing down 
+                            levelMap[y + 1][x] = "49";
+                            GameObject benchPrefab = (GameObject)GameObject.Instantiate(bench1, new Vector3(x + 0.5f, 0, -y), Quaternion.Euler(0, 270, 0));
+                        }
+                        else if (levelMap[y - 1][x].Equals("66")){ //facing up
+                            map_data[x, y - 1] = 1;
+                            setTileNotWalkable(x, y - 1);
+                            GameObject benchPrefab = (GameObject)GameObject.Instantiate(bench1, new Vector3(x + 0.5f, 0, -y + 1f), Quaternion.Euler(0, 90, 0));
+                        }
+                        else if (levelMap[y][x + 1].Equals("66")) //facing right
+                        {
+                            levelMap[y][x + 1] = "49";
+                            GameObject benchPrefab = (GameObject)GameObject.Instantiate(bench1, new Vector3(x + 1f, 0, -y + 0.5f), Quaternion.Euler(0, 180, 0));
+                        }
+                        else if (levelMap[y][x - 1].Equals("66")) //facing left
+                        {
+                            map_data[x - 1, y] = 1;
+                            setTileNotWalkable(x - 1, y);
+                            GameObject benchPrefab = (GameObject)GameObject.Instantiate(bench1, new Vector3(x, 0, -y + 0.5f), Quaternion.Euler(0, 0, 0));
+                        }
+                        break;
+                    case parkTable:
+                        map_data[x, y] = 1;
+                        tile_data.Add(new Tile(49, x, y));
+                        GameObject parkTablePrefab = (GameObject)GameObject.Instantiate(parkTable1, new Vector3(x + 1f, 0, -y), Quaternion.Euler(0, 90, 0));
+                        break;
+                    default:
+                        map_data[x, y] = 0;
+                        tile_data.Add(new Tile(0, x, y));
+                        break;
                 }
-                else if (x == 4 && (y == 5 || y == 6))
-                {
-                    map_data[x, y] = 0; 
-                    tile_data.Add(new Tile(4, x, y));
-                    GameObject obstacle = (GameObject)GameObject.Instantiate(obstaclePrefab);
-                    Obstacle obstacleController = obstacle.GetComponent<Obstacle>();
-                    obstacleController.createObstacle(x, y);
-                    obstacles.Add(obstacleController);
-                }
-                else if (x == 4 && y == 7)
-                {
-                    map_data[x, y] = 0;
-                    tile_data.Add(new Tile(5, x, y));
-                    GameObject obstacle = (GameObject)GameObject.Instantiate(obstaclePrefab2); //should load prefab with different model TODO
-                    Obstacle obstacleController = obstacle.GetComponent<Obstacle>();
-                    obstacleController.createObstacle(x, y);
-                    obstacles.Add(obstacleController);
-                }
-                else if (x == 9 && (y == 9 || y == 10 || y == 11))
-                {
-                    map_data[x, y] = 2;
-                    tile_data.Add(new Tile(2, x, y));
-                }
-                else if (x == 0 || y == 0 || x == size_x-1 || y == size_y-1)  //not walkable tile at the edge of the map
-                {
-                    map_data[x, y] = 1;
-                    tile_data.Add(new Tile(3, x, y));
-                }
-                else
-                {
-                    map_data[x, y] = 0;
-                    tile_data.Add(new Tile(0, x, y));
-                }
-
-                
             }
         }
+
     }
 
     public int getTileAt(int x, int y)
