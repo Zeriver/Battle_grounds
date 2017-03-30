@@ -19,7 +19,7 @@ public class Impaler : Enemy {
 
         maxHealth = 35;
         health = maxHealth;
-        maxMovement = 4;
+        maxMovement = 0;
         movesLeft = maxMovement;
         moveSpeed = 3f;
         currentItem = new Weapon(10, 2, "melee");

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class Salamand : Enemy {
 
+    Animator anim;
 
     void Start()
     {
@@ -16,13 +17,15 @@ public class Salamand : Enemy {
         transform.position = new Vector3(coordinates.x, coordinates.y, -coordinates.z + 0.5f);
         additionalPositions.Add(new Vector3(transform.position.x - 1, transform.position.y, transform.position.z));
         setPositions();
+        anim = GetComponent<Animator>();
         type = 3;
         name = "Salamandar";
 
+        Debug.Log(anim);
         maxHealth = 40;
         health = maxHealth;
         moveSpeed = 3f;
-        maxMovement = 1;
+        maxMovement = 10;
         movesLeft = maxMovement;
         currentItem = new Weapon(15, 1, "melee");
         fireResistance = 25;
@@ -43,6 +46,7 @@ public class Salamand : Enemy {
             }
             if (moving)
             {
+                anim.Play("Walk");
                 moveToNextStep(0.5f);
                 if (positionQueue.Count == 0)
                 {
@@ -52,12 +56,16 @@ public class Salamand : Enemy {
                     }
                     else
                     {
+                        playRandomIdleAnimation();
                         turnDone = true;
                     }
                 }
             }
             if (turningToTarget)
             {
+                
+                anim.Play("Attack");
+                //anim.Stop();
                 turnToEnemy();
                 if (weaponHighlights.Count == 0)
                 {
@@ -66,8 +74,26 @@ public class Salamand : Enemy {
             }
             if (attack && weaponHighlights.Count == 0)
             {
+                //anim.Play("Attack");
                 attackUnit();
             }
+        }
+        else if(anim != null && !anim.GetCurrentAnimatorStateInfo(0).IsName("Idle") && !anim.GetCurrentAnimatorStateInfo(0).IsName("Idle 2"))
+        {
+            playRandomIdleAnimation();
+        }
+    }
+
+    private void playRandomIdleAnimation()
+    {
+        float random = Random.Range(0.0f, 3.0f);
+        if (random > 1.2f)
+        {
+            anim.Play("Idle 2");
+        }
+        else
+        {
+            anim.Play("Idle");
         }
     }
 

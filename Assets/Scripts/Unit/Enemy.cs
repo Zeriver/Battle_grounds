@@ -87,9 +87,18 @@ public abstract class Enemy :  Unit {
         turnDone = false;
         Tile destination = TileMap.getTile(x, y);
         List<Tile> path = TilePathFinder.FindPath(TileMap.getTile((int)coordinates.x, (int)coordinates.z), destination);
-        for (int i = 0; i < path.Count; i++)
+        if (path != null)
         {
-            positionQueue.Add(new Vector3(path[i].PosX, coordinates.y, path[i].PosY));
+            for (int i = 0; i < path.Count; i++)
+            {
+                positionQueue.Add(new Vector3(path[i].PosX, coordinates.y, path[i].PosY));
+            }
+        }
+        else
+        {
+            Debug.Log("WARNING: Enemy entering battle didn't find path!");
+            turnInProgress = false;
+            turnDone = true;
         }
     }
 
