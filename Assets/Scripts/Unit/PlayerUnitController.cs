@@ -55,7 +55,7 @@ public class PlayerUnitController : Unit
 
         maxHealth = 100;
         health = 15;
-        maxMovement = 20;
+        maxMovement = 4;
         movesLeft = maxMovement;
         moveSpeed = 6.0f;
         currentEffect = "none";
@@ -88,7 +88,7 @@ public class PlayerUnitController : Unit
 
     void Update()
     {
-        if (isSelected && !inventory.equipment.enabled && !_battleGroundController.menuController.menu.enabled)
+        if (isSelected && !inventory.equipment.enabled && !_battleGroundController.menuController.menu.enabled && !_battleGroundController.dialogController.canvas.enabled)
         {
             if (showMoves && positionQueue.Count == 0)
             {

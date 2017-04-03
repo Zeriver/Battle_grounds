@@ -50,8 +50,8 @@ public class TileMap
         UnityEngine.Object trashbin1 = Resources.Load("Prefabs/Trashbin1");
         UnityEngine.Object parkTable1 = Resources.Load("Prefabs/ParkTable1");
 
-        string fileName = "MP2.txt";
-        string[][] levelMap = FileReader.readFile(Application.dataPath + "/Maps/" + fileName);
+        string fileLevel = "MP2";
+        string[][] levelMap = FileReader.readMapFile(Application.dataPath + "/Maps/" + fileLevel +"/map.txt");
 
         for (int y = 0; y < levelMap.Length; y++)
         {

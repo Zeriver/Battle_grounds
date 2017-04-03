@@ -88,13 +88,13 @@
     <Compile Include="Assets\Scripts\Items\Weapons\Weapon.cs" />
     <Compile Include="Assets\Scripts\MouseHighlight.cs" />
     <Compile Include="Assets\Scripts\Obstacle.cs" />
-    <Compile Include="Assets\Scripts\PlayerUI.cs" />
     <Compile Include="Assets\Scripts\Tile.cs" />
     <Compile Include="Assets\Scripts\TileHighlight.cs" />
     <Compile Include="Assets\Scripts\TileMap.cs" />
     <Compile Include="Assets\Scripts\TileMapBuilder.cs" />
     <Compile Include="Assets\Scripts\TilePath.cs" />
     <Compile Include="Assets\Scripts\TilePathFinder.cs" />
+    <Compile Include="Assets\Scripts\UI\DialogController.cs" />
     <Compile Include="Assets\Scripts\UI\HealthPopUp.cs" />
     <Compile Include="Assets\Scripts\UI\HealthPopUpController.cs" />
     <Compile Include="Assets\Scripts\UI\Inventory.cs" />
@@ -102,6 +102,7 @@
     <Compile Include="Assets\Scripts\UI\ItemCreator.cs" />
     <Compile Include="Assets\Scripts\UI\ItemPrefab.cs" />
     <Compile Include="Assets\Scripts\UI\MenuController.cs" />
+    <Compile Include="Assets\Scripts\UI\PlayerUI.cs" />
     <Compile Include="Assets\Scripts\UI\UnitInfoPanel.cs" />
     <Compile Include="Assets\Scripts\Unit\Devoured.cs" />
     <Compile Include="Assets\Scripts\Unit\Enemy.cs" />
@@ -112,7 +113,8 @@
     <Compile Include="Assets\Scripts\WeaponSkill.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Maps\MP2.txt" />
+    <None Include="Assets\Maps\MP2\dialog.txt" />
+    <None Include="Assets\Maps\MP2\map.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

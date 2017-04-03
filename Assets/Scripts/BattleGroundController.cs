@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using System;
 
 [RequireComponent(typeof(TileMapBuilder))]
 [RequireComponent(typeof(MouseHighlight))]
@@ -15,6 +16,7 @@ public class BattleGroundController : MonoBehaviour
 
     public GameObject _playerUnit;
     public GameObject _playerUI;
+    public GameObject _dialogUI;
     public GameObject _itemCreator;
     public GameObject _inventory;
     public GameObject _menu;
@@ -30,13 +32,17 @@ public class BattleGroundController : MonoBehaviour
     private ItemCreator itemCreator;
     private Inventory inventory;
     private UnitInfoPanel unitInfo;
+    public DialogController dialogController;
     public MenuController menuController;
     public List<PlayerUnitController> playerUnits = new List<PlayerUnitController>();
     public List<Enemy> enemyUnits = new List<Enemy>();
     public PlayerUnitController lastActiveUnit;
 
-    private bool playerTurn, enemyTurn, allyTurn, endTurn, enemyHealthUpdate, playerHealthUpdate, initializeNewEnemy, newEnemiesInitialized;
+    private bool playerTurn, enemyTurn, allyTurn, endTurn, enemyHealthUpdate, playerHealthUpdate, initializeNewEnemy, newEnemiesInitialized, dialog;
     private int turnNumber;
+
+    private string[][] dialogs;
+    private string dialogCache = "empty";
 
     void Start()
     {
@@ -44,6 +50,7 @@ public class BattleGroundController : MonoBehaviour
         _mouseHighlight = GetComponent<MouseHighlight>();
         _cameraController = GetComponent<CameraController>();
         playerUI = _playerUI.GetComponent("PlayerUI") as PlayerUI;
+        dialogController = _dialogUI.GetComponent("DialogController") as DialogController;
         itemCreator = _itemCreator.GetComponent("ItemCreator") as ItemCreator;
         inventory = _inventory.GetComponent("Inventory") as Inventory;
         menuController = _menu.GetComponent("MenuController") as MenuController;
@@ -57,7 +64,22 @@ public class BattleGroundController : MonoBehaviour
         {
             menuWindowService();
         }
-        if (!menuController.menu.enabled)
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            dialog = true;
+        }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            getDialogForCode("T1");
+        }
+        if (dialog)
+        {
+            if (!checkDialogs())
+            {
+                dialog = false;
+            }
+        }
+        if (!menuController.menu.enabled && !dialogController.canvas.enabled)
         {
             if (playerHealthUpdate)
             {
@@ -185,6 +207,8 @@ public class BattleGroundController : MonoBehaviour
     {
         turnNumber = 1;
         _tileMapBuilder.BuildMesh(wdith, height);
+        string fileLevel = "MP2";
+        dialogs = FileReader.readMapDialogs(Application.dataPath + "/Maps/" + fileLevel + "/dialog.txt");
 
         //Create units (player units and enemies)
 
@@ -253,6 +277,58 @@ public class BattleGroundController : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    private bool checkDialogs()
+    {
+        if (dialogCache != null && !dialogCache.Equals("empty"))
+        {
+            int charLocation = dialogCache.IndexOf(";", StringComparison.Ordinal);
+            if (charLocation > 0)
+            {
+                dialogController.setNewText(dialogCache.Substring(0, charLocation));
+                dialogCache = dialogCache.Remove(0, dialogCache.Substring(0, charLocation).Length + 1);
+                return false;
+            }
+            else
+            {
+                dialogCache = "empty";
+                dialogController.changeDialogCanvasEnabled();
+                playerUI.IsOpen = true;
+                return false;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < dialogs.GetLength(0); i++)
+            {
+                if (dialogs[i][0].Equals(turnNumber.ToString()))
+                {
+                    dialogs[i][0] += "- READ";
+                    dialogCache = dialogs[i][1];
+                    dialogController.changeDialogCanvasEnabled();
+                    playerUI.IsOpen = false;
+                    checkDialogs();
+                }
+            }
+        }
+        return false;
+    }
+
+    private void getDialogForCode(string code)
+    {
+        for (int i = 0; i < dialogs.GetLength(0); i++)
+        {
+            if (dialogs[i][0].Equals(code))
+            {
+                dialogs[i][0] += "- READ";
+                dialogCache = dialogs[i][1];
+                dialogController.changeDialogCanvasEnabled();
+                playerUI.IsOpen = false;
+                checkDialogs();
+            }
+        }
+        Debug.Log("Warning: dialog code not found!");
     }
 
     private bool enterNewEnemies()
@@ -411,6 +487,7 @@ public class BattleGroundController : MonoBehaviour
             enemyUnits[i].resetAfterTurn();
         }
         playerHealthUpdate = true;
+        dialog = true;
         turnNumber++;
         playerUI.updateTurn(turnNumber);
         playerUI.IsOpen = true;

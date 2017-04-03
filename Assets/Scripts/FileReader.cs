@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class FileReader { 
 
-    public static string[][] readFile(string file)
+    public static string[][] readMapFile(string file)
     {
         string text = System.IO.File.ReadAllText(file);
         text = text.Replace("[", "");
@@ -16,6 +16,20 @@ public class FileReader {
         for (int i = 0; i < lines.Length; i++)
         {
             string[] stringsOfLine = Regex.Split(lines[i], ",");
+            levelBase[i] = stringsOfLine;
+        }
+        return levelBase;
+    }
+
+    public static string[][] readMapDialogs (string file)
+    {
+        string text = System.IO.File.ReadAllText(file);
+        string[] lines = Regex.Split(text, "\r\n");
+        int rows = lines.Length;
+        string[][] levelBase = new string[rows][];
+        for (int i = 0; i < lines.Length; i++)
+        {
+            string[] stringsOfLine = Regex.Split(lines[i], "]");
             levelBase[i] = stringsOfLine;
         }
         return levelBase;

@@ -21,11 +21,10 @@ public class Salamand : Enemy {
         type = 3;
         name = "Salamandar";
 
-        Debug.Log(anim);
         maxHealth = 40;
         health = maxHealth;
         moveSpeed = 3f;
-        maxMovement = 10;
+        maxMovement = 5;
         movesLeft = maxMovement;
         currentItem = new Weapon(15, 1, "melee");
         fireResistance = 25;
