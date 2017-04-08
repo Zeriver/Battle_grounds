@@ -77,6 +77,8 @@ public class BattleGroundController : MonoBehaviour
             if (!checkDialogs())
             {
                 dialog = false;
+                lastActiveUnit.setPlayerUnitActive();
+                _cameraController.setCameraToActiveUnit(lastActiveUnit.transform.position);
             }
         }
         if (!menuController.menu.enabled && !dialogController.canvas.enabled)
@@ -313,6 +315,7 @@ public class BattleGroundController : MonoBehaviour
                     dialogCache = dialogs[i][1];
                     dialogController.changeDialogCanvasEnabled();
                     playerUI.IsOpen = false;
+                    lastActiveUnit.deactivatePlayerUnit();
                     checkDialogs();
                 }
             }
@@ -487,6 +490,7 @@ public class BattleGroundController : MonoBehaviour
             }
         }
         lastActiveUnit.setPlayerUnitActive();
+        _cameraController.setCameraToActiveUnit(lastActiveUnit.transform.position);
         for (int i = 0; i < enemyUnits.Count; i++)
         {
             enemyUnits[i].resetAfterTurn();
@@ -576,10 +580,12 @@ public class BattleGroundController : MonoBehaviour
             {
                 if (i > 0 && enemyUnits[i - 1].turnDone)
                 {
+                    _cameraController.setCameraToActiveUnit(enemyUnits[i].transform.position);
                     enemyUnits[i].performTurn();
                 }
                 else if (i == 0)
                 {
+                    _cameraController.setCameraToActiveUnit(enemyUnits[i].transform.position);
                     enemyUnits[i].performTurn();
                 }
             }

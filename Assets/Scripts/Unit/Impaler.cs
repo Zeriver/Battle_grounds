@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 public class Impaler : Enemy {
 
-    Animator anim;
-
     void Start()
     {
 
@@ -19,7 +17,7 @@ public class Impaler : Enemy {
         anim = GetComponent<Animator>();
         name = "Impaler";
 
-        maxHealth = 350;
+        maxHealth = 10;
         health = maxHealth;
         maxMovement = 3;
         movesLeft = maxMovement;

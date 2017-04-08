@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 public class Salamand : Enemy {
 
-    Animator anim;
-
     void Start()
     {
 
@@ -23,7 +21,7 @@ public class Salamand : Enemy {
 
         maxHealth = 40;
         health = maxHealth;
-        moveSpeed = 3f;
+        moveSpeed = 1.5f;
         maxMovement = 5;
         movesLeft = maxMovement;
         currentItem = new Weapon(15, 1, "melee");
@@ -77,7 +75,7 @@ public class Salamand : Enemy {
                 attackUnit();
             }
         }
-        else if(anim != null && !anim.GetCurrentAnimatorStateInfo(0).IsName("Idle") && !anim.GetCurrentAnimatorStateInfo(0).IsName("Idle 2"))
+        else if(anim != null && !anim.GetCurrentAnimatorStateInfo(0).IsName("Idle") && !anim.GetCurrentAnimatorStateInfo(0).IsName("Idle 2") && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
         {
             playRandomIdleAnimation();
         }

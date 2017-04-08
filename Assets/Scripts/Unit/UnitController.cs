@@ -21,6 +21,7 @@ public class UnitController : MonoBehaviour {
     public int type;
     public List<Vector3> additionalPositions;
     private GameObject currentVisualEffect;
+    protected Animator anim;
 
     protected List<GameObject> movementHighlights;
     protected List<GameObject> weaponHighlights;
@@ -66,6 +67,11 @@ public class UnitController : MonoBehaviour {
 
     public void getAttacked(Weapon weapon, UnitController attacker, int bonusDamage)
     {
+        if (anim != null)
+        {
+            anim.Play("Attacked");
+        }
+
         float finalDamage = weapon.damage + bonusDamage + calculateFlankDamage(attacker, weapon);
         if (weapon.damageType.Equals("fire") )
         {
@@ -237,7 +243,6 @@ public class UnitController : MonoBehaviour {
     public void killUnit()
     {
         TileMap.setTileWalkable((int)coordinates.x, (int)coordinates.z);
-        transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, 90.0f));
         if (currentVisualEffect != null)
         {
             Destroy(currentVisualEffect);
@@ -249,6 +254,10 @@ public class UnitController : MonoBehaviour {
         else if (this is PlayerUnitController)
         {
             _battleGroundController.playerUnits.Remove((PlayerUnitController)this);
+        }
+        if (anim != null)
+        {
+            StartCoroutine(Die());
         }
     }
 
@@ -413,6 +422,20 @@ public class UnitController : MonoBehaviour {
                 Destroy(currentVisualEffect);
             }
         }
+    }
+
+    IEnumerator Die()
+    {
+        anim.Play("Death");
+        while (anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+        {
+            yield return null;
+        }
+        if (currentVisualEffect != null)
+        {
+            Destroy(currentVisualEffect);
+        }
+        Destroy(gameObject); //maybe dead models should stay on map TODO
     }
 
 }
