@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-public class PlayerUnitController : Unit
+public class PlayerUnitController : UnitController
 {
     // mouse events MAYBE should be moved to BattleGroundController TODO
 
@@ -48,7 +48,7 @@ public class PlayerUnitController : Unit
         weaponAreaEffectHighlights = new List<GameObject>();
         positionQueue = new List<Vector3>();
         setPositions();
-        targets = new List<Unit>();
+        targets = new List<UnitController>();
         obstaclesToAttack = new List<Obstacle>();
         weaponSkills = new List<WeaponSkill>();
         TileMap.setTileNotWalkable(x, y);
@@ -196,9 +196,9 @@ public class PlayerUnitController : Unit
                         if (currentItem is Weapon)
                         {
                             List<Tile> weaponEffect = ((Weapon)currentItem).getAreaEffect(Math.Abs((int)coordinates.x), Math.Abs((int)coordinates.z), clickedTile.PosX, clickedTile.PosY);
-                            List<Unit> unitsInArea = new List<Unit>();
-                            unitsInArea.AddRange(_battleGroundController.enemyUnits.Cast<Unit>());
-                            unitsInArea.AddRange(_battleGroundController.playerUnits.Cast<Unit>());
+                            List<UnitController> unitsInArea = new List<UnitController>();
+                            unitsInArea.AddRange(_battleGroundController.enemyUnits.Cast<UnitController>());
+                            unitsInArea.AddRange(_battleGroundController.playerUnits.Cast<UnitController>());
                             for (int j = 0; j < weaponEffect.Count; j++)
                             {
                                 for (int i = 0; i < unitsInArea.Count; i++)
@@ -220,8 +220,8 @@ public class PlayerUnitController : Unit
                         }
                         else if (currentItem is HealingItem)
                         {
-                            List<Unit> unitsInArea = new List<Unit>();
-                            unitsInArea.AddRange(_battleGroundController.playerUnits.Cast<Unit>());
+                            List<UnitController> unitsInArea = new List<UnitController>();
+                            unitsInArea.AddRange(_battleGroundController.playerUnits.Cast<UnitController>());
                             for (int i = 0; i < unitsInArea.Count; i++)
                             {
                                 for (int j = 0; j < unitsInArea[i].positions.Count; j++)

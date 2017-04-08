@@ -14,6 +14,7 @@ public class Weapon : Item
     public string damageType;
     public int damage;
     public List<int> nextTurnsDamage;
+    public string visualEffect;
 
     protected Weapon()
     {

@@ -110,6 +110,7 @@
     <Compile Include="Assets\Scripts\Unit\PlayerUnitController.cs" />
     <Compile Include="Assets\Scripts\Unit\Salamand.cs" />
     <Compile Include="Assets\Scripts\Unit\Unit.cs" />
+    <Compile Include="Assets\Scripts\Unit\UnitController.cs" />
     <Compile Include="Assets\Scripts\WeaponSkill.cs" />
   </ItemGroup>
   <ItemGroup>

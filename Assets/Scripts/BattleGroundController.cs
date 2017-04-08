@@ -230,7 +230,7 @@ public class BattleGroundController : MonoBehaviour
             }
 
         }
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
         {
             if (i == 0)
             {
@@ -251,6 +251,11 @@ public class BattleGroundController : MonoBehaviour
             {
                 enemyUnits.Add(Instantiate(_devoured).GetComponent<Devoured>());
                 enemyUnits[i].createDevoured(15, 13, "down");
+            } 
+            else if (i == 4)
+            {
+                enemyUnits.Add(Instantiate(_salamand).GetComponent<Salamand>());
+                enemyUnits[i].createSalamand(20, 18, "left");
             }
         }
 

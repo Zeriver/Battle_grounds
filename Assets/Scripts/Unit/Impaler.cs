@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class Impaler : Enemy {
 
+    Animator anim;
 
     void Start()
     {
@@ -15,13 +16,14 @@ public class Impaler : Enemy {
         standardInitialization(x, z, facingDirection);
         positions.Add(transform.position);
         type = 1;
+        anim = GetComponent<Animator>();
         name = "Impaler";
 
-        maxHealth = 35;
+        maxHealth = 350;
         health = maxHealth;
         maxMovement = 3;
         movesLeft = maxMovement;
-        moveSpeed = 3f;
+        moveSpeed = 2f;
         currentItem = new Weapon(10, 2, "melee");
     }
 
@@ -40,6 +42,7 @@ public class Impaler : Enemy {
             }
             if (moving)
             {
+                anim.Play("Walk");
                 moveToNextStep(0);
                 if (positionQueue.Count == 0)
                 {
@@ -49,22 +52,37 @@ public class Impaler : Enemy {
                     }
                     else
                     {
+                        anim.Play("Idle1");
                         turnDone = true;
                     }
                 }
             }
             if (turningToTarget)
             {
+                anim.Play("AttackLong");
                 turnToEnemy();
                 if (weaponHighlights.Count == 0)
                 {
                     highlightTiles(weaponHighlights, attackTilesInRange, false);
                 }
             }
-            if (attack && weaponHighlights.Count == 0)
+            if (attack && weaponHighlights.Count == 0 && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
             {
                 attackUnit();
             }
+        }
+        else if (anim != null && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+        {
+            float random = Random.Range(0.0f, 3.0f);
+            if (random > 2.996f)
+            {
+                anim.Play("Idle2");
+            }
+            else
+            {
+                anim.Play("Idle1");
+            }
+            
         }
     }
 

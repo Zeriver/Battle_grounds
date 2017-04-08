@@ -19,6 +19,7 @@ public class FlameThrower : Weapon
         isDiagonal = false;
         isFlankingBonus = false;
         nextTurnsDamage = new List<int> { 15, 10, 5 };
+        visualEffect = "Fire1";
 
         pattern = generatePattern();
         areOfEffect = generateAreaOfEffect();

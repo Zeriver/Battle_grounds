@@ -71,7 +71,7 @@ public class Salamand : Enemy {
                     highlightTiles(weaponHighlights, attackTilesInRange, false);
                 }
             }
-            if (attack && weaponHighlights.Count == 0)
+            if (attack && weaponHighlights.Count == 0 && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
             {
                 //anim.Play("Attack");
                 attackUnit();

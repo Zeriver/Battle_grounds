@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public abstract class Enemy :  Unit {
+public abstract class Enemy :  UnitController {
 
     protected new string name;
 
