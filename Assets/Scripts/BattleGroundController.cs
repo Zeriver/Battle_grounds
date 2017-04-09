@@ -27,6 +27,7 @@ public class BattleGroundController : MonoBehaviour
     public GameObject _impaler;
     public GameObject _devoured;
     public GameObject _salamand;
+    public GameObject _tuber;
 
     private PlayerUI playerUI;
     private ItemCreator itemCreator;
@@ -232,7 +233,7 @@ public class BattleGroundController : MonoBehaviour
             }
 
         }
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 6; i++)
         {
             if (i == 0)
             {
@@ -258,6 +259,11 @@ public class BattleGroundController : MonoBehaviour
             {
                 enemyUnits.Add(Instantiate(_salamand).GetComponent<Salamand>());
                 enemyUnits[i].createSalamand(20, 18, "left");
+            }
+            else if (i == 5)
+            {
+                enemyUnits.Add(Instantiate(_tuber).GetComponent<Tuber>());
+                enemyUnits[i].createTuber(10, 18, "left");
             }
         }
 

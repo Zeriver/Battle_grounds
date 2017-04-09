@@ -1,31 +1,30 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class Salamand : Enemy {
+
+public class Tuber : Enemy
+{
 
     void Start()
     {
 
     }
 
-    override public void createSalamand(int x, int z, string facingDirection)
+    override public void createTuber(int x, int z, string facingDirection)
     {
         standardInitialization(x, z, facingDirection);
-        transform.position = new Vector3(coordinates.x, coordinates.y, -coordinates.z + 0.5f);
-        additionalPositions.Add(new Vector3(transform.position.x - 1, transform.position.y, transform.position.z));
-        setPositions();
+        positions.Add(transform.position);
+        type = 1;
         anim = GetComponent<Animator>();
-        type = 3;
-        name = "Salamandar";
+        name = "Tuber";
 
         maxHealth = 1;
         health = maxHealth;
-        moveSpeed = 1.5f;
-        maxMovement = 5;
+        maxMovement = 3;
         movesLeft = maxMovement;
-        currentItem = new Weapon(15, 1, "melee");
-        fireResistance = 25;
+        moveSpeed = 1.5f;
+        currentItem = new Weapon(10, 5, "melee");
     }
 
     void Update()
@@ -44,7 +43,7 @@ public class Salamand : Enemy {
             if (moving)
             {
                 anim.Play("Walk");
-                moveToNextStep(0.5f);
+                moveToNextStep(0);
                 if (positionQueue.Count == 0)
                 {
                     if (attackUnitIfInRange())
@@ -53,16 +52,14 @@ public class Salamand : Enemy {
                     }
                     else
                     {
-                        playRandomIdleAnimation();
+                        anim.Play("Idle3");
                         turnDone = true;
                     }
                 }
             }
             if (turningToTarget)
             {
-                
                 anim.Play("Attack");
-                //anim.Stop();
                 turnToEnemy();
                 if (weaponHighlights.Count == 0)
                 {
@@ -71,49 +68,32 @@ public class Salamand : Enemy {
             }
             if (attack && weaponHighlights.Count == 0 && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
             {
-                //anim.Play("Attack");
                 attackUnit();
             }
         }
-        else if(anim != null && !anim.GetCurrentAnimatorStateInfo(0).IsName("Idle") && !anim.GetCurrentAnimatorStateInfo(0).IsName("Idle 2") && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+        else if (anim != null && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
         {
-            playRandomIdleAnimation();
-        }
-    }
+            float random = Random.Range(0.0f, 3.0f);
+            if (random > 2.994f)
+            {
+                anim.Play("Idle2");
+            }
+            else
+            {
+                anim.Play("Idle3");
+            }
 
-    private void playRandomIdleAnimation()
-    {
-        float random = Random.Range(0.0f, 3.0f);
-        if (random > 1.2f)
-        {
-            anim.Play("Idle 2");
-        }
-        else
-        {
-            anim.Play("Idle");
         }
     }
 
     override public void performTurn()
     {
-        attackTilesInRange.Clear();
-        movementTilesInRange.Clear();
         turnInProgress = true;
         Tile currentTile = TileMap.getTile((int)coordinates.x, (int)coordinates.z);
         attackTilesInRange = TileHighlight.FindHighlight(currentTile, currentItem.range, true, false);
-        //movementTilesInRange = TileHighlight.FindHighlight(currentTile, movesLeft, false, false);
-        for (int i = 0; i < positions.Count; i++)
-        {
-            List<Tile> temp = TileHighlight.FindHighlight(TileMap.getTile((int)positions[i].x, (int)positions[i].z - 1), movesLeft, false, false);
-            for (int j = 0; j < temp.Count; j++)
-            {
-                if (!movementTilesInRange.Contains(temp[j]))  //maybe hashsets would be more efficient
-                {
-                    movementTilesInRange.Add(temp[j]);
-                }
-            }
-        }
-        
+        movementTilesInRange = TileHighlight.FindHighlight(currentTile, movesLeft, false, false);
+        //movementToAttackTilesInRange = TileHighlight.FindHighlight(currentTile, moves + attackRange, false);
+
         if (attackUnitIfInRange())
         {
             return;

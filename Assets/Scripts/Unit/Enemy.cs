@@ -74,6 +74,12 @@ public abstract class Enemy :  UnitController {
 
     }
 
+    virtual public void createTuber(int x, int z, string facingDirection)
+    {
+
+    }
+
+
     void Update()
     {
 

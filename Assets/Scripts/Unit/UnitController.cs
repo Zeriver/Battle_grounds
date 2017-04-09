@@ -257,7 +257,12 @@ public class UnitController : MonoBehaviour {
         }
         if (anim != null)
         {
-            StartCoroutine(Die());
+            anim.Play("Death");
+            StartCoroutine(waitForTimeBeforeDeath(6.85f));
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 
@@ -424,18 +429,42 @@ public class UnitController : MonoBehaviour {
         }
     }
 
-    IEnumerator Die()
+    private void die()
     {
-        anim.Play("Death");
-        while (anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
-        {
-            yield return null;
-        }
         if (currentVisualEffect != null)
         {
             Destroy(currentVisualEffect);
         }
         Destroy(gameObject); //maybe dead models should stay on map TODO
+    }
+
+    IEnumerator waitForTimeBeforeDeath(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        die();
+    }
+
+
+    bool isAnimRunning(Animator animator)
+    {
+        for (int i = 0; i < animator.layerCount; i++)
+        {
+            AnimatorClipInfo[] nextAnim = animator.GetNextAnimatorClipInfo(i);
+            Debug.Log(animator.GetNextAnimatorClipInfo(i));
+            if (nextAnim.Length > 0 && nextAnim[0].clip.isLooping == false)
+            {
+                return true;
+            }
+
+
+            AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(i);
+            if (info.loop == false && info.normalizedTime < 0.95)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

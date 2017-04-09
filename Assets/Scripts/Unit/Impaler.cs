@@ -17,7 +17,7 @@ public class Impaler : Enemy {
         anim = GetComponent<Animator>();
         name = "Impaler";
 
-        maxHealth = 10;
+        maxHealth = 1;
         health = maxHealth;
         maxMovement = 3;
         movesLeft = maxMovement;
@@ -57,7 +57,15 @@ public class Impaler : Enemy {
             }
             if (turningToTarget)
             {
-                anim.Play("AttackLong");
+                float distance = Vector3.Distance(coordinates, new Vector3(unitToAttack.getUnitTile().PosX, 0.0f, unitToAttack.getUnitTile().PosY));
+                if (distance >= 2)
+                {
+                    anim.Play("AttackLong");
+                }
+                else
+                {
+                    anim.Play("AttackShort");
+                }
                 turnToEnemy();
                 if (weaponHighlights.Count == 0)
                 {
