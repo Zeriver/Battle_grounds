@@ -23,6 +23,11 @@ public class BattleGroundController : MonoBehaviour
     public GameObject _unitInfo;
     public Text playerUIHealth;
 
+    public AudioSource _AudioSource;
+
+    public AudioClip playerMusic;
+    public AudioClip enemyMusic;
+
     //enemies
     public GameObject _impaler;
     public GameObject _devoured;
@@ -92,6 +97,8 @@ public class BattleGroundController : MonoBehaviour
                 }
                 playerHealthUpdate = false;
                 playerTurn = true;
+                _AudioSource.clip = playerMusic;
+                _AudioSource.Play();
             }
             if (playerTurn && !lastActiveUnit.moving)
             {
@@ -517,6 +524,8 @@ public class BattleGroundController : MonoBehaviour
             playerTurn = false;
             enemyHealthUpdate = true;
             playerUI.IsOpen = false;
+            _AudioSource.clip = enemyMusic;
+            _AudioSource.Play();
         }
     }
 

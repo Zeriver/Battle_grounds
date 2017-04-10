@@ -362,8 +362,8 @@ ModelImporter:
     - serializedVersion: 16
       name: Idle2
       takeName: Armature|Idle 2
-      firstFrame: 0
-      lastFrame: 270
+      firstFrame: 7
+      lastFrame: 110
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

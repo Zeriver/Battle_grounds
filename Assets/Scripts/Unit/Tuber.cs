@@ -19,7 +19,7 @@ public class Tuber : Enemy
         anim = GetComponent<Animator>();
         name = "Tuber";
 
-        maxHealth = 1;
+        maxHealth = 40;
         health = maxHealth;
         maxMovement = 3;
         movesLeft = maxMovement;

@@ -1,385 +1,558 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class Unit : MonoBehaviour {
+public class Unit {
 
-    protected GameObject BattleGroundObject;
-    protected Canvas InventoryCanvas;
-    protected bool showMoves;
-    protected bool turningToTarget;
-    protected bool attack;
+    private GameObject battleGroundObject;
+    private Canvas inventoryCanvas;
+    private bool showMoves;
+    private bool turningToTarget;
+    private bool attack;
 
-    public Vector3 coordinates;
-    public bool moving;
-    public bool isActionUsed;
-    public List<Weapon> weapons;
-    public List<HealingItem> healingItems;
-    public Item currentItem;
-    public string facingDirection;
-    public List<Vector3> positions;
-    public int type;
-    public List<Vector3> additionalPositions;
+    private Vector3 coordinates;
+    private bool moving;
+    private bool isActionUsed;
+    private List<Weapon> weapons;
+    private List<HealingItem> healingItems;
+    private Item currentItem;
+    private string facingDirection;
+    private List<Vector3> positions;
+    private int type;
+    private List<Vector3> additionalPositions;
 
-    protected List<GameObject> movementHighlights;
-    protected List<GameObject> weaponHighlights;
-    protected List<GameObject> weaponAreaEffectHighlights;
-    protected List<Vector3> positionQueue;
-    protected Quaternion targetRotation;
-    protected Vector3 targetPosition;
-    protected TileMapBuilder _tileMapBuilder;
-    protected BattleGroundController _battleGroundController;
-    protected List<Unit> targets;
-    protected List<Obstacle> obstaclesToAttack;
-    protected string currentEffect;
-    protected List<int> healthEffects;
-    protected List<WeaponSkill> weaponSkills;
+    private List<GameObject> movementHighlights;
+    private List<GameObject> weaponHighlights;
+    private List<GameObject> weaponAreaEffectHighlights;
+    private List<Vector3> positionQueue;
+    private Quaternion targetRotation;
+    private Vector3 targetPosition;
+    private TileMapBuilder tileMapBuilder;
+    private BattleGroundController battleGroundController;
+    private List<UnitController> targets;
+    private List<Obstacle> obstaclesToAttack;
+    private string currentEffect;
+    private List<int> healthEffects;
+    private List<WeaponSkill> weaponSkills;
 
 
     // units parameters
 
-    public int maxHealth;
-    public int health;
+    private int maxHealth;
+    private int health;
 
-    protected int fireResistance = 0;
-    protected int freezeResistance = 0;
-    protected int poisonResistance = 0;
-    protected int defendBonus = 0;
+    private int fireResistance = 0;
+    private int freezeResistance = 0;
+    private int poisonResistance = 0;
+    private int defendBonus = 0;
 
-    protected float moveSpeed;
-    protected int maxMovement, movesLeft;
-    protected bool defending;
+    private float moveSpeed;
+    private int movesLeft;
+    private bool defending;
+    private int maxMovement;
 
-    void Start () {
-	
-	}
-	
-	void Update () {
-	
-	}
 
-    public Tile getUnitTile()
+
+
+
+
+
+
+
+
+
+
+    protected GameObject BattleGroundObject
     {
-        return TileMap.getTile((int)coordinates.x, (int)coordinates.z);
-    }
-
-    public void getAttacked(Weapon weapon, Unit attacker, int bonusDamage)
-    {
-        float finalDamage = weapon.damage + bonusDamage + calculateFlankDamage(attacker, weapon);
-        if (weapon.damageType.Equals("fire") )
+        get
         {
-            if (fireResistance == 100)
-            {
-                return; //Should tell player that unit is resistant to fire
-            }
-            finalDamage -= fireResistance * 0.01f;
-        }
-        if (weapon.damageType.Equals("poison"))
-        {
-            if (poisonResistance == 100)
-            {
-                return;
-            }
-            finalDamage -= poisonResistance * 0.01f;
-        }
-        if (weapon.damageType.Equals("freeze"))
-        {
-            if (freezeResistance == 100)
-            {
-                return;
-            }
-            finalDamage -= freezeResistance * 0.01f;
-        }
-        if (defending)
-        {
-            finalDamage -= finalDamage * 0.35f;
-        }
-        finalDamage -= defendBonus * 0.01f;
-        health = health - (int)finalDamage;
-        _battleGroundController.playerUIHealth.text = _battleGroundController.lastActiveUnit.health.ToString() + " HP";
-        HealthPopUpController.createPopUpText(((int)finalDamage).ToString(), transform, true);
-        if (health <= 0)
-        {
-            _battleGroundController.playerUIHealth.text = 0 + " HP";
-            killUnit();
+            return battleGroundObject;
         }
 
-        if (weapon.damageType.Equals("fire"))
+        set
         {
-            if (currentEffect.Contains("freeze"))
-            {
-                currentEffect = "none";
-            }
-            else
-            {
-                healthEffects.Clear();
-                for (int i = 0; i < weapon.nextTurnsDamage.Count; i++)
-                {
-                    healthEffects.Add(weapon.nextTurnsDamage[i] - (int)(fireResistance * 0.01f));
-                }
-            }
-        }
-        else if (weapon.damageType.Equals("freeze"))
-        {
-
-        }
-        else if (weapon.damageType.Equals("poison"))
-        {
-
+            battleGroundObject = value;
         }
     }
 
-    private int calculateFlankDamage(Unit attacker, Weapon weapon)
+    protected Canvas InventoryCanvas
     {
-        int damage = 0;
-        if (weapon.isFlankingBonus)
+        get
         {
-            if (facingDirection.Equals("up") || facingDirection.Equals("down"))
-            {
-                if ((attacker.coordinates.x < coordinates.x && facingDirection.Equals("up")) || (attacker.coordinates.x > coordinates.x && facingDirection.Equals("down")))
-                {
-                    damage = 8;
-                }
-                else if (attacker.coordinates.x == coordinates.x)
-                {
-                    damage = 4;
-                }
-            }
-            else if (facingDirection.Equals("right") || facingDirection.Equals("left"))
-            {
-                if ((attacker.coordinates.z > coordinates.z && facingDirection.Equals("right")) || (attacker.coordinates.z < coordinates.z && facingDirection.Equals("left")))
-                {
-                    damage = 8;
-                }
-                else if (attacker.coordinates.z == coordinates.z)
-                {
-                    damage = 4;
-                }
-            }
+            return inventoryCanvas;
         }
-        return damage;
-    }
 
-    protected int getBonusDamageFromWeaponSkill()
-    {
-        int bonusDamage = -1;
-        for (int i = 0; i < weaponSkills.Count; i++)
+        set
         {
-            if (weaponSkills[i].name.Equals(currentItem.name))
-            {
-                bonusDamage = weaponSkills[i].level * 2;
-            }
-        }
-        if (bonusDamage == -1)
-        {
-            bonusDamage = 0;
-            weaponSkills.Add(new WeaponSkill(currentItem.name));
-        }
-        return bonusDamage;
-    }
-
-    public void getHealed(HealingItem healingItem)
-    {
-        int healing = 0;
-        if (health + healingItem.healingPoints > maxHealth)
-        {
-            healing = maxHealth - health;
-        }
-        else
-        {
-            healing = healingItem.healingPoints;
-        }
-        health += healing;
-        _battleGroundController.playerUIHealth.text = _battleGroundController.lastActiveUnit.health.ToString() + " HP";
-        HealthPopUpController.createPopUpText(healing.ToString(), transform, false);
-    }
-
-    protected void weaponSkillUpgrade()
-    {
-        for (int i = 0; i < weaponSkills.Count; i++)
-        {
-            if (weaponSkills[i].name.Equals(currentItem.name))
-            {
-                weaponSkills[i].experience++;
-                if (weaponSkills[i].experience >= weaponSkills[i].levelRequirements[weaponSkills[i].level])
-                {
-                    weaponSkills[i].level++;
-                }
-            }
+            inventoryCanvas = value;
         }
     }
 
-    public void killUnit()
+    protected bool ShowMoves
     {
-        TileMap.setTileWalkable((int)coordinates.x, (int)coordinates.z);
-        transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y, 90.0f));
-        if (this is Enemy)
+        get
         {
-            _battleGroundController.enemyUnits.Remove((Enemy)this);
+            return showMoves;
         }
-        else if (this is PlayerUnitController)
+
+        set
         {
-            _battleGroundController.playerUnits.Remove((PlayerUnitController)this);
+            showMoves = value;
         }
     }
 
-    protected GameObject createPlane(int x, int z, Color color)   // needs to create mesh from sratch for better performance TODO
+    protected bool TurningToTarget
     {
-        GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        plane.transform.localScale = new Vector3(0.1f, 1.0f, 0.1f);
-        plane.transform.position = new Vector3(x, 0.05f, z) * _tileMapBuilder.tileSize;
-        plane.transform.position = new Vector3(plane.transform.position.x + 0.5f, plane.transform.position.y, plane.transform.position.z + 0.5f);
-        plane.GetComponent<Renderer>().material.color = color;
-        plane.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
-        return plane;
-    }
-
-    protected void moveToNextStep(float offset)
-    {
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, moveSpeed * 2.2f * Time.deltaTime);
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-        if (Vector3.Distance(targetPosition, transform.position) <= 0.01f)
+        get
         {
-            coordinates = positionQueue[0];
-            transform.position = targetPosition;
-            setPositions();
-            positionQueue.RemoveAt(0);
-            moving = false;
+            return turningToTarget;
         }
-        if (positionQueue.Count == 0)
+
+        set
         {
-            for (int i = 0; i < positions.Count; i++)
-            {
-                TileMap.setTileNotWalkable((int)positions[i].x, (int)positions[i].z - 1);
-            }
-            if (this is PlayerUnitController)
-            {
-                for (int i = 0; i < _battleGroundController.playerUnits.Count; i++)
-                {
-                    _battleGroundController.playerUnits[i].calculateDefendBonus(); // should check performance TODO
-                }
-            }
+            turningToTarget = value;
         }
     }
 
-
-    protected void setNextStep(Vector3 [] rotations)
+    protected bool Attack
     {
-        if (positionQueue[0].x > coordinates.x)
+        get
         {
-            turnCorrectWay(facingDirection = "up", rotations);
-            targetPosition = new Vector3(transform.position.x + 1f, transform.position.y, transform.position.z);
-            if (type == 3)
-            {
-                additionalPositions[0] = transform.position;
-            }
+            return attack;
         }
-        else if (positionQueue[0].x < coordinates.x)
-        {
-            turnCorrectWay(facingDirection = "down", rotations);
-            targetPosition = new Vector3(transform.position.x - 1f, transform.position.y, transform.position.z);
-            if (type == 3)
-            {
-                additionalPositions[0] = transform.position;
-            }
-        }
-        else if (positionQueue[0].z < coordinates.z)
-        {
-            turnCorrectWay(facingDirection = "right", rotations);
-            targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1f);
-            if (type == 3)
-            {
-                additionalPositions[0] = transform.position;
-            }
-        }
-        else if (positionQueue[0].z > coordinates.z)
-        {
-            turnCorrectWay(facingDirection = "left", rotations);
-            targetPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z - 1f);
-            if (type == 3)
-            {
-                additionalPositions[0] = transform.position;
-            }
-        }
-        moving = true;
-    }
 
-    protected void turnCorrectWay(string direction, Vector3[] rotations)
-    {
-        switch (direction)
+        set
         {
-            case "up":
-                targetRotation = Quaternion.Euler(rotations[0]);
-                break;
-            case "right":
-                targetRotation = Quaternion.Euler(rotations[2]);
-                break;
-            case "down":
-                targetRotation = Quaternion.Euler(rotations[1]);
-                break;
-            case "left":
-                targetRotation = Quaternion.Euler(rotations[3]);
-                break;
+            attack = value;
         }
     }
 
-    protected void turnToEnemy()
+    public Vector3 Coordinates
     {
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, moveSpeed * 80f * Time.deltaTime);
-        if (Quaternion.Angle(transform.rotation, targetRotation) < 5.0f)
+        get
         {
-            transform.rotation = targetRotation;
-            turningToTarget = false;
-            attack = true;
+            return coordinates;
+        }
+
+        set
+        {
+            coordinates = value;
         }
     }
 
-    protected void setPositions()
+    public bool Moving
     {
-        positions.Clear();
-        positions.Add(transform.position);
-        if (additionalPositions != null)
+        get
         {
-            for (int i = 0; i < additionalPositions.Count; i++)
-            {
-                positions.Add(additionalPositions[i]);
-            }
+            return moving;
+        }
+
+        set
+        {
+            moving = value;
         }
     }
 
-    protected void calculateDefendBonus()
+    public bool IsActionUsed
     {
-        defendBonus = 0;
-        List<Tile> nearbyTiles = TileMap.GetListOfAdjacentTiles((int)coordinates.x, (int)coordinates.z);
-        for (int i = 0; i < nearbyTiles.Count; i++)
+        get
         {
-            for (int j = 0; j < _battleGroundController.playerUnits.Count; j++)
-            {
-                if (nearbyTiles[i].Equals(_battleGroundController.playerUnits[j].getUnitTile()))
-                {
-                    defendBonus += 13;
-                }
-            }
+            return isActionUsed;
+        }
+
+        set
+        {
+            isActionUsed = value;
         }
     }
 
-    protected void standardReset()
+    public List<Weapon> Weapons
     {
-        movesLeft = maxMovement;
-    }
-
-    public void updateHealthModifiers()
-    {
-        if (healthEffects.Count > 0)
+        get
         {
-            health -= healthEffects[0];
-            HealthPopUpController.createPopUpText(healthEffects[0].ToString(), transform, true);
-            if (health <= 0)
-            {
-                killUnit();
-            }
-            healthEffects.RemoveAt(0);
+            return weapons;
+        }
+
+        set
+        {
+            weapons = value;
         }
     }
 
+    public List<HealingItem> HealingItems
+    {
+        get
+        {
+            return healingItems;
+        }
+
+        set
+        {
+            healingItems = value;
+        }
+    }
+
+    public Item CurrentItem
+    {
+        get
+        {
+            return currentItem;
+        }
+
+        set
+        {
+            currentItem = value;
+        }
+    }
+
+    public string FacingDirection
+    {
+        get
+        {
+            return facingDirection;
+        }
+
+        set
+        {
+            facingDirection = value;
+        }
+    }
+
+    public List<Vector3> Positions
+    {
+        get
+        {
+            return positions;
+        }
+
+        set
+        {
+            positions = value;
+        }
+    }
+
+    public int Type
+    {
+        get
+        {
+            return type;
+        }
+
+        set
+        {
+            type = value;
+        }
+    }
+
+    public List<Vector3> AdditionalPositions
+    {
+        get
+        {
+            return additionalPositions;
+        }
+
+        set
+        {
+            additionalPositions = value;
+        }
+    }
+
+    protected List<GameObject> MovementHighlights
+    {
+        get
+        {
+            return movementHighlights;
+        }
+
+        set
+        {
+            movementHighlights = value;
+        }
+    }
+
+    protected List<GameObject> WeaponHighlights
+    {
+        get
+        {
+            return weaponHighlights;
+        }
+
+        set
+        {
+            weaponHighlights = value;
+        }
+    }
+
+    protected List<GameObject> WeaponAreaEffectHighlights
+    {
+        get
+        {
+            return weaponAreaEffectHighlights;
+        }
+
+        set
+        {
+            weaponAreaEffectHighlights = value;
+        }
+    }
+
+    protected List<Vector3> PositionQueue
+    {
+        get
+        {
+            return positionQueue;
+        }
+
+        set
+        {
+            positionQueue = value;
+        }
+    }
+
+    protected Quaternion TargetRotation
+    {
+        get
+        {
+            return targetRotation;
+        }
+
+        set
+        {
+            targetRotation = value;
+        }
+    }
+
+    protected Vector3 TargetPosition
+    {
+        get
+        {
+            return targetPosition;
+        }
+
+        set
+        {
+            targetPosition = value;
+        }
+    }
+
+    protected TileMapBuilder TileMapBuilder
+    {
+        get
+        {
+            return tileMapBuilder;
+        }
+
+        set
+        {
+            tileMapBuilder = value;
+        }
+    }
+
+    protected BattleGroundController BattleGroundController
+    {
+        get
+        {
+            return battleGroundController;
+        }
+
+        set
+        {
+            battleGroundController = value;
+        }
+    }
+
+    protected List<UnitController> Targets
+    {
+        get
+        {
+            return targets;
+        }
+
+        set
+        {
+            targets = value;
+        }
+    }
+
+    protected List<Obstacle> ObstaclesToAttack
+    {
+        get
+        {
+            return obstaclesToAttack;
+        }
+
+        set
+        {
+            obstaclesToAttack = value;
+        }
+    }
+
+    protected string CurrentEffect
+    {
+        get
+        {
+            return currentEffect;
+        }
+
+        set
+        {
+            currentEffect = value;
+        }
+    }
+
+    protected List<int> HealthEffects
+    {
+        get
+        {
+            return healthEffects;
+        }
+
+        set
+        {
+            healthEffects = value;
+        }
+    }
+
+    protected List<WeaponSkill> WeaponSkills
+    {
+        get
+        {
+            return weaponSkills;
+        }
+
+        set
+        {
+            weaponSkills = value;
+        }
+    }
+
+    public int MaxHealth
+    {
+        get
+        {
+            return maxHealth;
+        }
+
+        set
+        {
+            maxHealth = value;
+        }
+    }
+
+    public int Health
+    {
+        get
+        {
+            return health;
+        }
+
+        set
+        {
+            health = value;
+        }
+    }
+
+    protected int FireResistance
+    {
+        get
+        {
+            return fireResistance;
+        }
+
+        set
+        {
+            fireResistance = value;
+        }
+    }
+
+    protected int FreezeResistance
+    {
+        get
+        {
+            return freezeResistance;
+        }
+
+        set
+        {
+            freezeResistance = value;
+        }
+    }
+
+    protected int PoisonResistance
+    {
+        get
+        {
+            return poisonResistance;
+        }
+
+        set
+        {
+            poisonResistance = value;
+        }
+    }
+
+    protected int DefendBonus
+    {
+        get
+        {
+            return defendBonus;
+        }
+
+        set
+        {
+            defendBonus = value;
+        }
+    }
+
+    protected float MoveSpeed
+    {
+        get
+        {
+            return moveSpeed;
+        }
+
+        set
+        {
+            moveSpeed = value;
+        }
+    }
+
+    protected int MaxMovement
+    {
+        get
+        {
+            return maxMovement;
+        }
+
+        set
+        {
+            maxMovement = value;
+        }
+    }
+
+    protected int MovesLeft
+    {
+        get
+        {
+            return movesLeft;
+        }
+
+        set
+        {
+            movesLeft = value;
+        }
+    }
+
+    protected bool Defending
+    {
+        get
+        {
+            return defending;
+        }
+
+        set
+        {
+            defending = value;
+        }
+    }
 }

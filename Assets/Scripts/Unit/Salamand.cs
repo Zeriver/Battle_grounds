@@ -19,7 +19,7 @@ public class Salamand : Enemy {
         type = 3;
         name = "Salamandar";
 
-        maxHealth = 1;
+        maxHealth = 40;
         health = maxHealth;
         moveSpeed = 1.5f;
         maxMovement = 5;
