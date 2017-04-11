@@ -114,6 +114,8 @@ public abstract class Enemy :  UnitController {
         unitToAttack = null;
         turnDone = false;
         turnInProgress = false;
+        isHealthUpdated = false;
+        isUpdatingHealth = false;
     }
 
     public void showPossibleMovement()
@@ -274,7 +276,7 @@ public abstract class Enemy :  UnitController {
 
     IEnumerator DestroyObjectsDelayed(float waitTime, List<GameObject> objects)
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(waitTime);
         for (int i = 0; i < objects.Count; i++)
         {
             Destroy(objects[i]);

@@ -13,6 +13,8 @@ public class UnitController : MonoBehaviour {
     public Vector3 coordinates;
     public bool moving;
     public bool isActionUsed;
+    public bool isHealthUpdated;
+    public bool isUpdatingHealth;
     public List<Weapon> weapons;
     public List<HealingItem> healingItems;
     public Item currentItem;
@@ -71,7 +73,6 @@ public class UnitController : MonoBehaviour {
         {
             anim.Play("Attacked");
         }
-
         float finalDamage = weapon.damage + bonusDamage + calculateFlankDamage(attacker, weapon);
         if (weapon.damageType.Equals("fire") )
         {
@@ -79,7 +80,7 @@ public class UnitController : MonoBehaviour {
             {
                 return; //Should tell player that unit is resistant to fire
             }
-            finalDamage -= fireResistance * 0.01f;
+            finalDamage -= finalDamage * (fireResistance * 0.01f);
         }
         if (weapon.damageType.Equals("poison"))
         {
@@ -87,7 +88,7 @@ public class UnitController : MonoBehaviour {
             {
                 return;
             }
-            finalDamage -= poisonResistance * 0.01f;
+            finalDamage -= finalDamage * (poisonResistance * 0.01f);
         }
         if (weapon.damageType.Equals("freeze"))
         {
@@ -95,7 +96,7 @@ public class UnitController : MonoBehaviour {
             {
                 return;
             }
-            finalDamage -= freezeResistance * 0.01f;
+            finalDamage -= finalDamage * (freezeResistance * 0.01f);
         }
         if (defending)
         {
@@ -122,7 +123,9 @@ public class UnitController : MonoBehaviour {
                 healthEffects.Clear();
                 for (int i = 0; i < weapon.nextTurnsDamage.Count; i++)
                 {
-                    healthEffects.Add(weapon.nextTurnsDamage[i] - (int)(fireResistance * 0.01f));
+                    float value = weapon.nextTurnsDamage[i];
+                    value -= value * (fireResistance * 0.01f);
+                    healthEffects.Add((int)value);
                 }
             }
         }
@@ -140,6 +143,14 @@ public class UnitController : MonoBehaviour {
             currentVisualEffect = (GameObject)GameObject.Instantiate(visualEffect, new Vector3(positions[0].x, positions[0].y + 2.0f, positions[0].z - 0.2f), Quaternion.Euler(-90, 0, 0));
             currentVisualEffect.transform.parent = gameObject.transform;
             currentVisualEffect.transform.localScale = new Vector3(currentVisualEffect.transform.localScale.x * gameObject.transform.localScale.x, currentVisualEffect.transform.localScale.y * gameObject.transform.localScale.y, currentVisualEffect.transform.localScale.z * gameObject.transform.localScale.z);
+        }
+    }
+
+    private void getDamaged()
+    {
+        if (anim != null)
+        {
+            anim.Play("Attacked");
         }
     }
 
@@ -411,22 +422,51 @@ public class UnitController : MonoBehaviour {
         movesLeft = maxMovement;
     }
 
-    public void updateHealthModifiers()
+    public void checkHealthModifiers()
     {
         if (healthEffects.Count > 0)
         {
-            health -= healthEffects[0];
-            HealthPopUpController.createPopUpText(healthEffects[0].ToString(), transform, true);
-            if (health <= 0)
+            isUpdatingHealth = true;
+            StartCoroutine(waitForTimeBeforeHealthUpdate(1.5f));
+        } 
+        else
+        {
+            isUpdatingHealth = false;
+            isHealthUpdated = true;
+        }
+    }
+
+    private void updateHealthModifiers()
+    {
+        health -= healthEffects[0];
+        if (healthEffects[0] > 0)
+        {
+            if (anim != null)
             {
-                killUnit();
-            }
-            healthEffects.RemoveAt(0);
-            if (!(healthEffects.Count > 0) && currentVisualEffect != null)
-            {
-                Destroy(currentVisualEffect);
+                if (health <= 0)
+                {
+                    anim.Play("Death");
+                }
+                else
+                {
+                    anim.Play("Attacked");
+                }
             }
         }
+        else
+        {
+            if (anim != null)
+            {
+                //anim.Play("Healed"); TODO
+            }
+        }
+        HealthPopUpController.createPopUpText(healthEffects[0].ToString(), transform, true);
+        healthEffects.RemoveAt(0);
+        if (!(healthEffects.Count > 0) && currentVisualEffect != null)
+        {
+            Destroy(currentVisualEffect);
+        }
+        StartCoroutine(waitForTimeBeforeHealthUpdated(1.5f));
     }
 
     private void die()
@@ -444,13 +484,29 @@ public class UnitController : MonoBehaviour {
         die();
     }
 
+    IEnumerator waitForTimeBeforeHealthUpdate(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        updateHealthModifiers();
+    }
+
+    IEnumerator waitForTimeBeforeHealthUpdated(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        isHealthUpdated = true;
+        isUpdatingHealth = false;
+        if (health <= 0)
+        {
+            killUnit();
+        }
+    }
+
 
     bool isAnimRunning(Animator animator)
     {
         for (int i = 0; i < animator.layerCount; i++)
         {
             AnimatorClipInfo[] nextAnim = animator.GetNextAnimatorClipInfo(i);
-            Debug.Log(animator.GetNextAnimatorClipInfo(i));
             if (nextAnim.Length > 0 && nextAnim[0].clip.isLooping == false)
             {
                 return true;

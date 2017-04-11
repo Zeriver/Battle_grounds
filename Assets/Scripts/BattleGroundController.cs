@@ -93,7 +93,7 @@ public class BattleGroundController : MonoBehaviour
             {
                 for (int i = 0; i < playerUnits.Count; i++)
                 {
-                    playerUnits[i].updateHealthModifiers();
+                    playerUnits[i].checkHealthModifiers();
                 }
                 playerHealthUpdate = false;
                 playerTurn = true;
@@ -162,10 +162,33 @@ public class BattleGroundController : MonoBehaviour
             {
                 for (int i = 0; i < enemyUnits.Count; i++)
                 {
-                    enemyUnits[i].updateHealthModifiers();
+                    if (!enemyUnits[i].isUpdatingHealth && !enemyUnits[i].isHealthUpdated)
+                    {
+                        if (i > 0 && enemyUnits[i - 1].isHealthUpdated)
+                        {
+                            _cameraController.setCameraToActiveUnit(enemyUnits[i].transform.position);
+                            enemyUnits[i].checkHealthModifiers();
+                        }
+                        else if (i == 0)
+                        {
+                            _cameraController.setCameraToActiveUnit(enemyUnits[i].transform.position);
+                            enemyUnits[i].checkHealthModifiers();
+                        }
+                    }
                 }
-                enemyHealthUpdate = false;
-                enemyTurn = true;
+                bool allEnemiesHealthUpdated = true;
+                for (int i = 0; i < enemyUnits.Count; i++)
+                {
+                    if (!enemyUnits[i].isHealthUpdated)
+                    {
+                        allEnemiesHealthUpdated = false;
+                    }
+                }
+                if (allEnemiesHealthUpdated)
+                {
+                    enemyHealthUpdate = false;
+                    enemyTurn = true;
+                }
             }
             if (enemyTurn)
             {

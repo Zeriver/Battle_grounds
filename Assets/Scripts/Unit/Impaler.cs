@@ -17,7 +17,7 @@ public class Impaler : Enemy {
         anim = GetComponent<Animator>();
         name = "Impaler";
 
-        maxHealth = 40;
+        maxHealth = 25;
         health = maxHealth;
         maxMovement = 3;
         movesLeft = maxMovement;

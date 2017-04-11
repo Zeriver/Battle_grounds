@@ -55,7 +55,7 @@ public class PlayerUnitController : UnitController
 
         maxHealth = 100;
         health = 15;
-        maxMovement = 4;
+        maxMovement = 50;
         movesLeft = maxMovement;
         moveSpeed = 6.0f;
         currentEffect = "none";
@@ -205,7 +205,7 @@ public class PlayerUnitController : UnitController
                                 {
                                     for (int x = 0; x < unitsInArea[i].positions.Count; x++)
                                     {
-                                        if (TileMap.getTile((int)unitsInArea[i].positions[x].x, (int)unitsInArea[i].positions[x].z - 1).Equals(weaponEffect[j]))
+                                        if (TileMap.getTile((int)unitsInArea[i].positions[x].x, (int)unitsInArea[i].positions[x].z - 1).Equals(weaponEffect[j]) && !targets.Contains(unitsInArea[i]))
                                         {
                                             targets.Add(unitsInArea[i]);
                                             break;
