@@ -43,7 +43,7 @@ public class Salamand : Enemy {
             }
             if (moving)
             {
-                anim.Play("Walk");
+                anim.SetBool("isWalk", true);
                 moveToNextStep(0.5f);
                 if (positionQueue.Count == 0)
                 {
@@ -53,6 +53,7 @@ public class Salamand : Enemy {
                     }
                     else
                     {
+                        anim.SetBool("isWalk", false);
                         playRandomIdleAnimation();
                         turnDone = true;
                     }
@@ -60,18 +61,17 @@ public class Salamand : Enemy {
             }
             if (turningToTarget)
             {
-                
-                anim.Play("Attack");
-                //anim.Stop();
+
+                anim.SetBool("isWalk", false);
+                anim.SetBool("isAttack", true);
                 turnToEnemy();
                 if (weaponHighlights.Count == 0)
                 {
                     highlightTiles(weaponHighlights, attackTilesInRange, false);
                 }
             }
-            if (attack && weaponHighlights.Count == 0 && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+            if (attack && weaponHighlights.Count == 0 && !anim.GetBool("isAttack"))
             {
-                //anim.Play("Attack");
                 attackUnit();
             }
         }
@@ -86,11 +86,11 @@ public class Salamand : Enemy {
         float random = Random.Range(0.0f, 3.0f);
         if (random > 1.2f)
         {
-            anim.Play("Idle 2");
+            anim.SetBool("isIdle2", true);
         }
         else
         {
-            anim.Play("Idle");
+            anim.SetBool("isIdle", true);
         }
     }
 

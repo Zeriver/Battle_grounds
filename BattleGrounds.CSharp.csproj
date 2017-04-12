@@ -112,6 +112,7 @@
     <Compile Include="Assets\Scripts\Unit\Tuber.cs" />
     <Compile Include="Assets\Scripts\Unit\Unit.cs" />
     <Compile Include="Assets\Scripts\Unit\UnitController.cs" />
+    <Compile Include="Assets\Scripts\Unit\endAnimation.cs" />
     <Compile Include="Assets\Scripts\WeaponSkill.cs" />
   </ItemGroup>
   <ItemGroup>

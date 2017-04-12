@@ -40,7 +40,7 @@ public class Impaler : Enemy {
             }
             if (moving)
             {
-                anim.Play("Walk");
+                anim.SetBool("isWalk", true);
                 moveToNextStep(0);
                 if (positionQueue.Count == 0)
                 {
@@ -50,7 +50,7 @@ public class Impaler : Enemy {
                     }
                     else
                     {
-                        anim.Play("Idle1");
+                        anim.SetBool("isWalk", false);
                         turnDone = true;
                     }
                 }
@@ -60,11 +60,13 @@ public class Impaler : Enemy {
                 float distance = Vector3.Distance(coordinates, new Vector3(unitToAttack.getUnitTile().PosX, 0.0f, unitToAttack.getUnitTile().PosY));
                 if (distance >= 2)
                 {
-                    anim.Play("AttackLong");
+                    anim.SetBool("isWalk", false);
+                    anim.SetBool("isAttackLong", true);
                 }
                 else
                 {
-                    anim.Play("AttackShort");
+                    anim.SetBool("isWalk", false);
+                    anim.SetBool("isAttackShort", true);
                 }
                 turnToEnemy();
                 if (weaponHighlights.Count == 0)
@@ -72,21 +74,21 @@ public class Impaler : Enemy {
                     highlightTiles(weaponHighlights, attackTilesInRange, false);
                 }
             }
-            if (attack && weaponHighlights.Count == 0 && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+            if (attack && weaponHighlights.Count == 0 && !anim.GetBool("isAttackShort") && !anim.GetBool("isAttackLong"))
             {
                 attackUnit();
             }
         }
-        else if (anim != null && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+        else if (anim != null && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f && !anim.IsInTransition(0))
         {
             float random = Random.Range(0.0f, 3.0f);
-            if (random > 2.996f)
+            if (random > 2.997f)
             {
-                anim.Play("Idle2");
+                anim.SetBool("isIdle2", true);
             }
             else
             {
-                anim.Play("Idle1");
+                anim.SetBool("isIdle1", true);
             }
             
         }

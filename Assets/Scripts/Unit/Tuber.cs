@@ -42,7 +42,7 @@ public class Tuber : Enemy
             }
             if (moving)
             {
-                anim.Play("Walk");
+                anim.SetBool("isWalk", true);
                 moveToNextStep(0);
                 if (positionQueue.Count == 0)
                 {
@@ -52,35 +52,36 @@ public class Tuber : Enemy
                     }
                     else
                     {
-                        anim.Play("Idle3");
+                        anim.SetBool("isWalk", false);
                         turnDone = true;
                     }
                 }
             }
             if (turningToTarget)
             {
-                anim.Play("Attack");
+                anim.SetBool("isWalk", false);
+                anim.SetBool("isAttack", true);
                 turnToEnemy();
                 if (weaponHighlights.Count == 0)
                 {
                     highlightTiles(weaponHighlights, attackTilesInRange, false);
                 }
             }
-            if (attack && weaponHighlights.Count == 0 && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+            if (attack && weaponHighlights.Count == 0 && !anim.GetBool("isAttack"))
             {
                 attackUnit();
             }
         }
-        else if (anim != null && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f)
+        else if (anim != null && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f && !anim.IsInTransition(0))
         {
             float random = Random.Range(0.0f, 3.0f);
-            if (random > 2.994f)
+            if (random > 2.993f)
             {
-                anim.Play("Idle2");
+                anim.SetBool("isIdle2", true);
             }
             else
             {
-                anim.Play("Idle3");
+                anim.SetBool("isIdle3", true);
             }
 
         }

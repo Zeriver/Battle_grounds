@@ -71,7 +71,7 @@ public class UnitController : MonoBehaviour {
     {
         if (anim != null)
         {
-            anim.Play("Attacked");
+            anim.SetBool("isAttacked", true);
         }
         float finalDamage = weapon.damage + bonusDamage + calculateFlankDamage(attacker, weapon);
         if (weapon.damageType.Equals("fire") )
@@ -146,13 +146,6 @@ public class UnitController : MonoBehaviour {
         }
     }
 
-    private void getDamaged()
-    {
-        if (anim != null)
-        {
-            anim.Play("Attacked");
-        }
-    }
 
     private bool checkIfIsResitant(string damageType)
     {
@@ -268,7 +261,7 @@ public class UnitController : MonoBehaviour {
         }
         if (anim != null)
         {
-            anim.Play("Death");
+            anim.SetBool("isDeath", true);
             StartCoroutine(waitForTimeBeforeDeath(6.85f));
         }
         else
@@ -445,11 +438,11 @@ public class UnitController : MonoBehaviour {
             {
                 if (health <= 0)
                 {
-                    anim.Play("Death");
+                    anim.SetBool("isDeath", true);
                 }
                 else
                 {
-                    anim.Play("Attacked");
+                    anim.SetBool("isAttacked", true);
                 }
             }
         }
