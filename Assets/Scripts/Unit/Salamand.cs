@@ -12,7 +12,6 @@ public class Salamand : Enemy {
     override public void createSalamand(int x, int z, string facingDirection)
     {
         standardInitialization(x, z, facingDirection);
-        transform.position = new Vector3(coordinates.x, coordinates.y, -coordinates.z + 0.5f);
         additionalPositions.Add(new Vector3(transform.position.x - 1, transform.position.y, transform.position.z));
         setPositions();
         anim = GetComponent<Animator>();

@@ -55,7 +55,7 @@ public class PlayerUnitController : UnitController
 
         maxHealth = 100;
         health = 15;
-        maxMovement = 50;
+        maxMovement = 4;
         movesLeft = maxMovement;
         moveSpeed = 6.0f;
         currentEffect = "none";

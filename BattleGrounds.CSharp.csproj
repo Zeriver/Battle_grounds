@@ -82,6 +82,7 @@
     <Compile Include="Assets\Scripts\Items\HealingItems\HealingItem.cs" />
     <Compile Include="Assets\Scripts\Items\HealingItems\MediumHealingKit.cs" />
     <Compile Include="Assets\Scripts\Items\Item.cs" />
+    <Compile Include="Assets\Scripts\Items\RotateAround.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Axe.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\FlameThrower.cs" />
     <Compile Include="Assets\Scripts\Items\Weapons\Pistol.cs" />
