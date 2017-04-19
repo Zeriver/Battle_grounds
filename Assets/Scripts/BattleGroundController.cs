@@ -98,6 +98,7 @@ public class BattleGroundController : MonoBehaviour
                 playerHealthUpdate = false;
                 playerTurn = true;
                 _AudioSource.clip = playerMusic;
+                _AudioSource.time = 61.0f;
                 _AudioSource.Play();
             }
             if (playerTurn && !lastActiveUnit.moving)
@@ -548,6 +549,7 @@ public class BattleGroundController : MonoBehaviour
             enemyHealthUpdate = true;
             playerUI.IsOpen = false;
             _AudioSource.clip = enemyMusic;
+            _AudioSource.time = 0.0f;
             _AudioSource.Play();
         }
     }
