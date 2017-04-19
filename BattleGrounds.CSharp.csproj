@@ -77,6 +77,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\BattleGround.cs" />
     <Compile Include="Assets\Scripts\BattleGroundController.cs" />
+    <Compile Include="Assets\Scripts\BirdShadowController.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\FileReader.cs" />
     <Compile Include="Assets\Scripts\Items\HealingItems\HealingItem.cs" />

@@ -46,6 +46,7 @@ public class BattleGroundController : MonoBehaviour
 
     private bool playerTurn, enemyTurn, allyTurn, endTurn, enemyHealthUpdate, playerHealthUpdate, initializeNewEnemy, newEnemiesInitialized, dialog;
     private int turnNumber;
+    private UnityEngine.Object birdShadower;
 
     private string[][] dialogs;
     private string dialogCache = "empty";
@@ -61,6 +62,7 @@ public class BattleGroundController : MonoBehaviour
         inventory = _inventory.GetComponent("Inventory") as Inventory;
         menuController = _menu.GetComponent("MenuController") as MenuController;
         unitInfo = _unitInfo.GetComponent("UnitInfoPanel") as UnitInfoPanel;
+        birdShadower = Resources.Load("Prefabs/BirdShadower2");
         createBattleGround(25, 25);
     }
 
@@ -70,7 +72,7 @@ public class BattleGroundController : MonoBehaviour
         {
             menuWindowService();
         }
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && dialogController.canvas.enabled)
         {
             dialog = true;
         }
@@ -303,6 +305,7 @@ public class BattleGroundController : MonoBehaviour
         _cameraController.setCameraToActiveUnit(lastActiveUnit.transform.position);
         HealthPopUpController.Initialize();
         playerHealthUpdate = true;
+        StartCoroutine(createBirdShadowers());
     }
 
     private bool checkWinCondition() // add more conditions based on mission objectives TODO
@@ -630,5 +633,19 @@ public class BattleGroundController : MonoBehaviour
                 }
             }
         }
+    }
+
+    IEnumerator createBirdShadowers()
+    {
+        GameObject birdShadowerPrefab = (GameObject)GameObject.Instantiate(birdShadower, new Vector3(80.4f, 26.1f, -70.3f), Quaternion.Euler(0, 33.73f, 0));
+        GameObject birdShadowerPrefab1 = (GameObject)GameObject.Instantiate(birdShadower, new Vector3(80.4f, 26.1f, -73.3f), Quaternion.Euler(0, 33.73f, 0));
+        yield return new WaitForSeconds(0.2f);
+        GameObject birdShadowerPrefab2 = (GameObject)GameObject.Instantiate(birdShadower, new Vector3(76.03f, 26.1f, -72.3f), Quaternion.Euler(0, 33.73f, 0));
+        yield return new WaitForSeconds(0.5f);
+        GameObject birdShadowerPrefab3 = (GameObject)GameObject.Instantiate(birdShadower, new Vector3(81f, 26.1f, -72.8f), Quaternion.Euler(0, 33.73f, 0));
+        yield return new WaitForSeconds(0.2f);
+        GameObject birdShadowerPrefab4 = (GameObject)GameObject.Instantiate(birdShadower, new Vector3(78.4f, 26.1f, -68.3f), Quaternion.Euler(0, 33.73f, 0));
+        yield return new WaitForSeconds(60.0f);
+        StartCoroutine(createBirdShadowers());
     }
 }
