@@ -47,7 +47,7 @@ public class TileMap
         UnityEngine.Object tree02 = Resources.Load("Prefabs/Tree2");
         UnityEngine.Object parkLight1 = Resources.Load("Prefabs/ParkLight");
         UnityEngine.Object bench1 = Resources.Load("Prefabs/Bench1");
-        UnityEngine.Object trashbin1 = Resources.Load("Prefabs/Trashbin1");
+        UnityEngine.Object trashbin1 = Resources.Load("Prefabs/TrashBin1T");
         UnityEngine.Object parkTable1 = Resources.Load("Prefabs/ParkTable1");
 
         string fileLevel = "MP2";

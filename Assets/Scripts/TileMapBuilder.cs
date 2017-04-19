@@ -12,7 +12,7 @@ public class TileMapBuilder : MonoBehaviour {
     public Texture2D terrainTiles;
     public int size_x, size_z;
 
-    private int tileResolution = 128;
+    private int tileResolution = 512;
 
     void Start () {
 
