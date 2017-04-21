@@ -42,13 +42,13 @@ public class TileMap
 
         UnityEngine.Object obstaclePrefab = Resources.Load("Prefabs/Obstacle_02");
         UnityEngine.Object obstaclePrefab2 = Resources.Load("Prefabs/Obstacle_03");
-        UnityEngine.Object fountain1 = Resources.Load("Prefabs/Fountain");
-        UnityEngine.Object tree01 = Resources.Load("Prefabs/Tree1");
-        UnityEngine.Object tree02 = Resources.Load("Prefabs/Tree2");
-        UnityEngine.Object parkLight1 = Resources.Load("Prefabs/ParkLight");
-        UnityEngine.Object bench1 = Resources.Load("Prefabs/Bench1");
+        UnityEngine.Object fountain1 = Resources.Load("Prefabs/FountainBiggetT");
+        UnityEngine.Object tree01 = Resources.Load("Prefabs/Tree1T");
+        UnityEngine.Object tree02 = Resources.Load("Prefabs/Tree2T");
+        UnityEngine.Object parkLight1 = Resources.Load("Prefabs/StreetLight2T");
+        UnityEngine.Object bench1 = Resources.Load("Prefabs/Bench1T");
         UnityEngine.Object trashbin1 = Resources.Load("Prefabs/TrashBin1T");
-        UnityEngine.Object parkTable1 = Resources.Load("Prefabs/ParkTable1");
+        UnityEngine.Object parkTable1 = Resources.Load("Prefabs/ParkTable1T");
 
         string fileLevel = "MP2";
         string[][] levelMap = FileReader.readMapFile(Application.dataPath + "/Maps/" + fileLevel +"/map.txt");

@@ -29,7 +29,7 @@ public class MouseHighlight : MonoBehaviour
 
             currentTile.z = z;
             currentTile.x = x;
-            if (TileMap.getTile(x, z).Id != 49)
+            if (TileMap.getTile(x, z) != null && TileMap.getTile(x, z).Id != 49)
             {
                 HighlightSelection.transform.position = currentTile * _tileMapBuilder.tileSize;
             } else
